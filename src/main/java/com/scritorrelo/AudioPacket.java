@@ -12,9 +12,9 @@ public class AudioPacket {
     void addFrame(AudioFrame frame) {
 
         if (isNull(data)) {
-            streamID = frame.getStreamid();
+            streamID = frame.getStream_id();
             data = frame.getData().clone();
-        } else if (streamID == frame.getStreamid()) {
+        } else if (streamID == frame.getStream_id()) {
             data = ArrayUtils.addAll(data, frame.getData());
         }
     }

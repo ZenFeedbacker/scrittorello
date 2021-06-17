@@ -10,8 +10,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 @SpringBootApplication
-public class EchoClient
-{
+public class EchoClient {
     private static final String SERVER = "wss://zello.io/ws";
 
     /**
@@ -25,8 +24,7 @@ public class EchoClient
     /**
      * The entry point of this command line application.
      */
-    public static void main(String[] args) throws Exception
-    {
+    public static void main(String[] args) throws Exception {
         // Connect to the echo server.
         WebSocket ws = connect();
 
@@ -38,29 +36,21 @@ public class EchoClient
 
 
         String json = Json.createObjectBuilder()
-                        .add("command", "logon")
-                        .add("seq", 1)
-                        .add("auth_token", auth_token)
-                        .add("channel", "Test1653")
-                        .add("listen_only", "true")
-                        .build()
-                        .toString();
+                .add("command", "logon")
+                .add("seq", 1)
+                .add("auth_token", auth_token)
+                .add("channel", "Test1653")
+                .add("listen_only", "true")
+                .build()
+                .toString();
 
         ws.sendText(json);
 
 
-        // Read lines until "exit" is entered.
-        while ((text = in.readLine()) != null)
-        {
-            // If the input string is "exit".
-            if (text.equals("exit"))
-            {
-                // Finish this application.
+        while ((text = in.readLine()) != null) {
+            if (text.equals("exit")) {
                 break;
             }
-
-            // Send the text to the server.
-            ws.sendText(text);
         }
 
         // Close the web socket.
@@ -71,8 +61,7 @@ public class EchoClient
     /**
      * Connect to the server.
      */
-    private static WebSocket connect() throws Exception
-    {
+    private static WebSocket connect() throws Exception {
         return new WebSocketFactory()
                 .setConnectionTimeout(TIMEOUT)
                 .createSocket(SERVER)
