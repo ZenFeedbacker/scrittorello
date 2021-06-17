@@ -53,7 +53,6 @@ public class EchoClient {
             }
         }
 
-        // Close the web socket.
         ws.disconnect();
     }
 
