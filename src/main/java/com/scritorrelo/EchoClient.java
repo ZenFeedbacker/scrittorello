@@ -3,11 +3,13 @@ package com.scritorrelo;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketExtension;
 import com.neovisionaries.ws.client.WebSocketFactory;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.json.Json;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+@SpringBootApplication
 public class EchoClient
 {
     private static final String SERVER = "wss://zello.io/ws";
