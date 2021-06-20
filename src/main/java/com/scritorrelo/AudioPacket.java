@@ -9,10 +9,10 @@ import java.util.Arrays;
 import static java.util.Objects.isNull;
 
 @NoArgsConstructor
-@Getter
 public class AudioPacket {
 
     int streamID;
+    @Getter
     byte[][] data;
 
     void addFrame(AudioFrame frame) {

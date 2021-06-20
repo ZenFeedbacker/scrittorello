@@ -15,7 +15,6 @@ public class AudioFrame {
     byte[] data;
 
 
-
     public AudioFrame(byte[] binary) {
         type = Arrays.copyOfRange(binary, 0, 1);
         stream_id = new BigInteger(Arrays.copyOfRange(binary, 1, 5)).intValue();
@@ -30,7 +29,7 @@ public class AudioFrame {
                 "Type: " + Hex.encodeHexString(type) + "\n" +
                 "Stream ID: " + stream_id + "\n" +
                 "Packet ID: " + packet_id + "\n" +
-                "Data: " + Hex.encodeHexString(data) + "\n" +
-                "Packet length: " + data.length + "\n";
+                "Packet length: " + data.length + "\n" +
+                "Data: " + Hex.encodeHexString(data) + "\n";
     }
 }

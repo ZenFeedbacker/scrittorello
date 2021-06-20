@@ -3,11 +3,23 @@ package com.scritorrelo;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketExtension;
 import com.neovisionaries.ws.client.WebSocketFactory;
+import org.gagravarr.ogg.OggFile;
+import org.gagravarr.ogg.OggPacketReader;
+import org.gagravarr.opus.OpusAudioData;
+import org.gagravarr.opus.OpusFile;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.json.Json;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
+
+import org.lwjgl.util.opus.Opus;
+
+import static java.util.Objects.isNull;
 
 @SpringBootApplication
 public class EchoClient {
@@ -25,6 +37,24 @@ public class EchoClient {
      * The entry point of this command line application.
      */
     public static void main(String[] args) throws Exception {
+
+        /*OpusStream opusStream = new OpusStream("src/main/resources/speech.opus");
+
+        byte [] packet = new byte[0];
+        while (!isNull(packet)){
+            packet = opusStream.get_next_opus_packet();
+        }*/
+
+
+//        OpusInfoTool info = new OpusInfoTool();
+//        info.process(new File("src/main/resources/speech.opus"), true);
+
+        OggFile oggFile = new OggFile(new FileInputStream("src/main/resources/speech.opus"));
+        OggPacketReader reader = oggFile.getPacketReader();
+        OggPacket packet = new OggPacket(reader.getNextPacket().getData());
+        System.out.println(packet.toString());
+        System.exit(0);
+
         // Connect to the echo server.
         WebSocket ws = connect();
 
@@ -33,7 +63,6 @@ public class EchoClient {
 
         // A text read from the standard input.
         String text;
-
 
         String json = Json.createObjectBuilder()
                 .add("command", "logon")
@@ -73,6 +102,8 @@ public class EchoClient {
     /**
      * Wrap the standard input with BufferedReader.
      */
+    @NotNull
+    @Contract(" -> new")
     private static BufferedReader getInput() {
         return new BufferedReader(new InputStreamReader(System.in));
     }
