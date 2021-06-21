@@ -18,18 +18,18 @@ public class OggPacketCommentHeader extends OggPacket {
 
         super(data);
 
-        signature = readByteStreamToString(8);
-        vendorStrLen = readByteStreamToInt(4);
-        vendorStr = readByteStreamToString(vendorStrLen);
-        userCommentListLen = readByteStreamToInt(4);
+        signature = Utils.readByteStreamToString(stream, 8);
+        vendorStrLen = Utils.readByteStreamToInt(stream, 4);
+        vendorStr = Utils.readByteStreamToString(stream, vendorStrLen);
+        userCommentListLen = Utils.readByteStreamToInt(stream, 4);
 
         userComments = new ArrayList<>();
         userCommentLens = new ArrayList<>();
 
         for (int i = 0; i < userCommentListLen; i++) {
-            int len = readByteStreamToInt(4);
+            int len = Utils.readByteStreamToInt(stream, 4);
             userCommentLens.add(len);
-            userComments.add(readByteStreamToString(len));
+            userComments.add(Utils.readByteStreamToString(stream, len));
         }
     }
 

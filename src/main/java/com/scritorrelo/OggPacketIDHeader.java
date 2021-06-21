@@ -19,17 +19,17 @@ public class OggPacketIDHeader extends OggPacket {
 
         super(data);
 
-        signature = readByteStreamToString(8);
-        version = readByteStream();
-        channelCount = readByteStream();
-        preskip = readByteStreamToInt(2);
-        sampleRate = readByteStreamToInt(4);
-        outputGain = readByteStreamToInt(2);
-        channelMappingFamily = readByteStreamToInt();
+        signature = Utils.readByteStreamToString(stream, 8);
+        version = Utils.readByteStream(stream);
+        channelCount = Utils.readByteStream(stream);
+        preskip = Utils.readByteStreamToInt(stream, 2);
+        sampleRate = Utils.readByteStreamToInt(stream, 4);
+        outputGain = Utils.readByteStreamToInt(stream, 2);
+        channelMappingFamily = Utils.readByteStreamToInt(stream);
         if (channelMappingFamily != 0) {
-            streamCount = readByteStreamToInt();
-            coupleStreamCount = readByteStreamToInt();
-            channelMapping = readByteStreamToString(8 * channelCount);
+            streamCount = Utils.readByteStreamToInt(stream);
+            coupleStreamCount = Utils.readByteStreamToInt(stream);
+            channelMapping = Utils.readByteStreamToString(stream, 8 * channelCount);
         }
     }
 

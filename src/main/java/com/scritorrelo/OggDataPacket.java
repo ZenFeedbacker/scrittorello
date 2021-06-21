@@ -13,7 +13,7 @@ public class OggDataPacket extends OggPacket {
 
         super(data);
 
-        BitSet tocBi = BitSet.valueOf(new byte[]{readByteStream()});
+        BitSet tocBi = BitSet.valueOf(new byte[]{Utils.readByteStream(stream)});
 
 
         String tocStr = bitSetToString(tocBi);
