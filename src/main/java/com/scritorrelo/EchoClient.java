@@ -4,20 +4,20 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketExtension;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import org.gagravarr.ogg.OggFile;
+import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
-import org.gagravarr.opus.OpusAudioData;
-import org.gagravarr.opus.OpusFile;
+import org.gagravarr.ogg.OggPage;
+import org.gagravarr.opus.OpusPacket;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.json.Json;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-
-import org.lwjgl.util.opus.Opus;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import static java.util.Objects.isNull;
 
@@ -38,21 +38,35 @@ public class EchoClient {
      */
     public static void main(String[] args) throws Exception {
 
-        /*OpusStream opusStream = new OpusStream("src/main/resources/speech.opus");
-
-        byte [] packet = new byte[0];
-        while (!isNull(packet)){
-            packet = opusStream.get_next_opus_packet();
-        }*/
-
-
-//        OpusInfoTool info = new OpusInfoTool();
-//        info.process(new File("src/main/resources/speech.opus"), true);
-
         OggFile oggFile = new OggFile(new FileInputStream("src/main/resources/speech.opus"));
         OggPacketReader reader = oggFile.getPacketReader();
-        OggPacket packet = new OggPacket(reader.getNextPacket().getData());
-        System.out.println(packet.toString());
+        OggPacket packet = reader.getNextPacket();
+        com.scritorrelo.OggPage oggPage = new  com.scritorrelo.OggPage(getPage(packet).getData());
+
+        OggPacketIDHeader header = new OggPacketIDHeader(packet.getData());
+        System.out.println(header);
+        OggPacketCommentHeader commentHeader = new OggPacketCommentHeader(reader.getNextPacket().getData());
+        System.out.println(commentHeader);
+        int count = 0;
+
+        while(true) {
+            packet = reader.getNextPacket();
+            if(isNull(packet)){
+                break;
+            }
+
+
+
+            byte[] data = packet.getData();
+            OggDataPacket oggPacket = new OggDataPacket(data);
+
+            count += 1;
+            System.out.println("Packet: " + count );
+            System.out.println(oggPacket);
+
+
+        }
+
         System.exit(0);
 
         // Connect to the echo server.
@@ -107,4 +121,13 @@ public class EchoClient {
     private static BufferedReader getInput() {
         return new BufferedReader(new InputStreamReader(System.in));
     }
+
+    private static  OggPage getPage(org.gagravarr.ogg.OggPacket packet) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        Class<? extends OggPacket> packetClass = packet.getClass();
+        Method method = packetClass.getDeclaredMethod("_getParent");
+        method.setAccessible(true);
+        return (OggPage) method.invoke(packet);
+    }
+
 }
