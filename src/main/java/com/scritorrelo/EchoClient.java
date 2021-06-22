@@ -1,23 +1,30 @@
 package com.scritorrelo;
 
+import com.google.common.primitives.Bytes;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketExtension;
 import com.neovisionaries.ws.client.WebSocketFactory;
+import org.apache.commons.io.FileUtils;
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.ogg.OggPage;
-import org.gagravarr.opus.OpusPacket;
+import org.gagravarr.opus.OpusAudioData;
+import org.gagravarr.opus.OpusFile;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.json.Json;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 import static java.util.Objects.isNull;
 
@@ -38,36 +45,12 @@ public class EchoClient {
      */
     public static void main(String[] args) throws Exception {
 
-        OggFile oggFile = new OggFile(new FileInputStream("src/main/resources/speech.opus"));
-        OggPacketReader reader = oggFile.getPacketReader();
-        OggPacket packet = reader.getNextPacket();
-        com.scritorrelo.OggPage oggPage = new  com.scritorrelo.OggPage(getPage(packet).getData());
-
-        OggPacketIDHeader header = new OggPacketIDHeader(packet.getData());
-        System.out.println(header);
-        OggPacketCommentHeader commentHeader = new OggPacketCommentHeader(reader.getNextPacket().getData());
-        System.out.println(commentHeader);
-        int count = 0;
-
-        while(true) {
-            packet = reader.getNextPacket();
-            if(isNull(packet)){
-                break;
-            }
-
-
-
-            byte[] data = packet.getData();
-            OggDataPacket oggPacket = new OggDataPacket(data);
-
-            count += 1;
-            System.out.println("Packet: " + count );
-            System.out.println(oggPacket);
-
-
-        }
-
+        //getDataWithVorbis();
+        openFileManually();
+        splitFileAsArray();
+        //openFileWithVorbis();
         System.exit(0);
+
 
         // Connect to the echo server.
         WebSocket ws = connect();
@@ -99,6 +82,84 @@ public class EchoClient {
         ws.disconnect();
     }
 
+    private static void splitFileAsArray() throws IOException {
+        byte[] file = FileUtils.readFileToByteArray(new File("src/main/resources/speech.opus"));
+
+        int index = 0;
+        int subindex;
+        List<Integer> indexes = new ArrayList<>();
+
+        while (true) {
+            subindex = Bytes.indexOf(Arrays.copyOfRange(file, index, file.length), "OggS".getBytes(StandardCharsets.US_ASCII));
+            if (subindex == -1) {
+                break;
+            }
+            indexes.add(index + subindex);
+            index += subindex + 3;
+        }
+
+        indexes.add(file.length);
+
+        List<byte[]> packets = new ArrayList<>();
+
+        for(int i = 0; i<indexes.size()-1; i++){
+            packets.add(Arrays.copyOfRange(file,indexes.get(0),indexes.get(i+1)));
+        }
+
+        System.out.println(indexes);
+    }
+
+    private static void openFileManually() throws IOException {
+
+        byte[] file = FileUtils.readFileToByteArray(new File("src/main/resources/speech.opus"));
+        ByteArrayInputStream fileStream = new ByteArrayInputStream(file);
+        com.scritorrelo.OggPage page = new com.scritorrelo.OggPage(fileStream);
+        System.out.println(page);
+    }
+
+    private static void getDataWithVorbis() throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+
+        OggFile oggFile = new OggFile(new FileInputStream("src/main/resources/speech.opus"));
+        OggPacketReader reader = oggFile.getPacketReader();
+        OggPacket packet = reader.getNextPacket();
+        OggPage page = getPage(packet);
+        System.out.println(getSiD(page));
+    }
+
+    private static void openFileWithVorbis() throws Exception {
+
+        testWriteAudio();
+
+        OggFile oggFile = new OggFile(new FileInputStream("src/main/resources/speech.opus"));
+        OggPacketReader reader = oggFile.getPacketReader();
+        OggPacket packet = reader.getNextPacket();
+        com.scritorrelo.OggPage oggPage = new com.scritorrelo.OggPage(packet.getData());
+
+        System.out.println(oggPage);
+        OggPacketIDHeader header = new OggPacketIDHeader(packet.getData());
+        System.out.println(header);
+        OggPacketCommentHeader commentHeader = new OggPacketCommentHeader(reader.getNextPacket().getData());
+        System.out.println(commentHeader);
+        int count = 0;
+
+        while (true) {
+            packet = reader.getNextPacket();
+            if (isNull(packet)) {
+                break;
+            }
+
+
+            byte[] data = packet.getData();
+            OggDataPacket oggPacket = new OggDataPacket(data);
+
+            count += 1;
+//            System.out.println("Packet: " + count );
+//            System.out.println(oggPacket);
+
+
+        }
+    }
+
 
     /**
      * Connect to the server.
@@ -122,7 +183,7 @@ public class EchoClient {
         return new BufferedReader(new InputStreamReader(System.in));
     }
 
-    private static  OggPage getPage(org.gagravarr.ogg.OggPacket packet) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    private static OggPage getPage(org.gagravarr.ogg.OggPacket packet) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         Class<? extends OggPacket> packetClass = packet.getClass();
         Method method = packetClass.getDeclaredMethod("_getParent");
@@ -130,4 +191,66 @@ public class EchoClient {
         return (OggPage) method.invoke(packet);
     }
 
+    private static Long getChecksum(OggPage oggPage) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        Class<? extends OggPage> pageClass = oggPage.getClass();
+        Method method = pageClass.getDeclaredMethod("getChecksum");
+        method.setAccessible(true);
+        return (Long) method.invoke(oggPage);
+    }
+
+    private static int getSiD(OggPage oggPage) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        Class<? extends OggPage> pageClass = oggPage.getClass();
+        Method method = pageClass.getDeclaredMethod("getSid");
+        method.setAccessible(true);
+        return (int) method.invoke(oggPage);
+    }
+
+    public static void testWriteAudio() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        // Setup a new empty file
+        OpusFile opus = new OpusFile(baos);
+        opus.getInfo().setSampleRate(48000);
+        opus.getInfo().setNumChannels(2);
+        opus.getTags().addComment("title", "Test Dummy Audio");
+        OpusAudioData audio = null;
+
+        // Add some dummy audio data to it
+        // This should really be proper PCM data, but we're just testing!
+        byte[][] data = new byte[20][];
+        for (int i = 0; i < data.length; i++) {
+            byte[] td = new byte[i * 50];
+            for (int j = 0; j < td.length; j++) {
+                td[j] = (byte) (j % 99);
+            }
+            data[i] = td;
+
+            audio = new OpusAudioData(td);
+            opus.writeAudioData(audio);
+        }
+
+        // Write it out and re-read
+        opus.close();
+        OggFile ogg = new OggFile(new ByteArrayInputStream(baos.toByteArray()));
+        opus = new OpusFile(ogg);
+
+        // Check it looks as expected
+        assertEquals(2, opus.getInfo().getNumChannels());
+        assertEquals(48000, opus.getInfo().getSampleRate());
+        assertEquals("Test Dummy Audio", opus.getTags().getTitle());
+
+        // Check the dummy data
+        int count = 0;
+        while ((audio = opus.getNextAudioPacket()) != null) {
+            byte[] exp = data[count];
+            assertEquals(exp.length, audio.getData().length);
+            for (int i = 0; i < exp.length; i++) {
+                assertEquals(exp[i], audio.getData()[i]);
+            }
+            count++;
+        }
+        assertEquals(data.length, count);
+    }
 }

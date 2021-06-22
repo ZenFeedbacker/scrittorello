@@ -3,6 +3,8 @@ package com.scritorrelo;
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.util.BitSet;
 
 public class Utils {
 
@@ -35,6 +37,13 @@ public class Utils {
         return data;
     }
 
+    public static long readByteStreamToLong(ByteArrayInputStream stream, int len) throws EOFException {
+        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+        buffer.put(readByteStream(stream,len));
+        buffer.flip();//need flip
+        return buffer.getLong();
+    }
+
     public static int readByteStreamToInt(ByteArrayInputStream stream, int len) throws EOFException {
 
 
@@ -45,6 +54,18 @@ public class Utils {
 
 
         return Integer.reverseBytes(new BigInteger(readByteStream(stream, 1)).intValue());
+    }
+
+    public static int readByteStreamToIntBigEndian(ByteArrayInputStream stream, int len) throws EOFException {
+
+
+        return new BigInteger(readByteStream(stream,len)).intValue();
+    }
+
+    public static int readByteStreamToIntBigEndian(ByteArrayInputStream stream) throws EOFException {
+
+
+        return new BigInteger(readByteStream(stream, 1)).intValue();
     }
 
     public static String readByteStreamToString(ByteArrayInputStream stream, int len) throws EOFException {
@@ -60,5 +81,16 @@ public class Utils {
         }
 
         return new String(data);
+    }
+
+    public static  String bitSetToString(BitSet bi) {
+
+        StringBuilder s = new StringBuilder();
+
+        for (int i = 0; i < bi.length(); i++) {
+            s.append(bi.get(i) ? 1 : 0);
+        }
+
+        return s.toString();
     }
 }
