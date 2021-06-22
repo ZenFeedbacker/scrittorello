@@ -1,29 +1,13 @@
 package com.scritorrelo;
 
-import com.google.common.primitives.Bytes;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketExtension;
 import com.neovisionaries.ws.client.WebSocketFactory;
-import com.scritorrelo.opus.OpusDataPacket;
-import com.scritorrelo.opus.OpusPacketCommentHeader;
-import com.scritorrelo.opus.OpusPacketIDHeader;
-import org.apache.commons.io.FileUtils;
-import org.gagravarr.ogg.OggFile;
-import org.gagravarr.ogg.OggPacket;
-import org.gagravarr.ogg.OggPacketReader;
-import org.gagravarr.ogg.OggPage;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.json.Json;
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static java.util.Objects.isNull;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 @SpringBootApplication
 public class EchoClient {
@@ -39,12 +23,8 @@ public class EchoClient {
 
     public static void main(String[] args) throws Exception {
 
-        //getDataWithVorbis();
-        openFileManually();
         com.scritorrelo.OggFile file = new com.scritorrelo.OggFile("src/main/resources/speech.opus");
-        //openFileWithVorbis();
         System.exit(0);
-
 
         // Connect to the echo server.
         WebSocket ws = connect();
@@ -76,56 +56,6 @@ public class EchoClient {
         ws.disconnect();
     }
 
-    private static void openFileManually() throws IOException {
-
-        byte[] file = FileUtils.readFileToByteArray(new File("src/main/resources/speech.opus"));
-        ByteArrayInputStream fileStream = new ByteArrayInputStream(file);
-        com.scritorrelo.OggPage page = new com.scritorrelo.OggPage(fileStream);
-        System.out.println(page);
-    }
-
-    private static void getDataWithVorbis() throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-
-        OggFile oggFile = new OggFile(new FileInputStream("src/main/resources/speech.opus"));
-        OggPacketReader reader = oggFile.getPacketReader();
-        OggPacket packet = reader.getNextPacket();
-        OggPage page = getPage(packet);
-        System.out.println(getSiD(page));
-    }
-
-    private static void openFileWithVorbis() throws Exception {
-
-        OggFile oggFile = new OggFile(new FileInputStream("src/main/resources/speech.opus"));
-        OggPacketReader reader = oggFile.getPacketReader();
-        OggPacket packet = reader.getNextPacket();
-        com.scritorrelo.OggPage oggPage = new com.scritorrelo.OggPage(packet.getData());
-
-        System.out.println(oggPage);
-        OpusPacketIDHeader header = new OpusPacketIDHeader(packet.getData());
-        System.out.println(header);
-        OpusPacketCommentHeader commentHeader = new OpusPacketCommentHeader(reader.getNextPacket().getData());
-        System.out.println(commentHeader);
-        int count = 0;
-
-        while (true) {
-            packet = reader.getNextPacket();
-            if (isNull(packet)) {
-                break;
-            }
-
-
-            byte[] data = packet.getData();
-            OpusDataPacket oggPacket = new OpusDataPacket(data);
-
-            count += 1;
-            System.out.println("Packet: " + count);
-            System.out.println(oggPacket);
-
-
-        }
-    }
-
-
     /**
      * Connect to the server.
      */
@@ -144,29 +74,5 @@ public class EchoClient {
      */
     private static BufferedReader getInput() {
         return new BufferedReader(new InputStreamReader(System.in));
-    }
-
-    private static OggPage getPage(org.gagravarr.ogg.OggPacket packet) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-
-        Class<? extends OggPacket> packetClass = packet.getClass();
-        Method method = packetClass.getDeclaredMethod("_getParent");
-        method.setAccessible(true);
-        return (OggPage) method.invoke(packet);
-    }
-
-    private static Long getChecksum(OggPage oggPage) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-
-        Class<? extends OggPage> pageClass = oggPage.getClass();
-        Method method = pageClass.getDeclaredMethod("getChecksum");
-        method.setAccessible(true);
-        return (Long) method.invoke(oggPage);
-    }
-
-    private static int getSiD(OggPage oggPage) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-
-        Class<? extends OggPage> pageClass = oggPage.getClass();
-        Method method = pageClass.getDeclaredMethod("getSid");
-        method.setAccessible(true);
-        return (int) method.invoke(oggPage);
     }
 }

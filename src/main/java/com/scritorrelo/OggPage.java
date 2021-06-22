@@ -28,10 +28,11 @@ public class OggPage {
     List<Integer> segment_table;
 
 
-    public OggPage(byte[] data) {
+    public OggPage(byte[] data) throws EOFException {
+
+        this(new ByteArrayInputStream(data));
 
         this.data = data;
-        this.stream = new ByteArrayInputStream(this.data);
     }
 
     public OggPage(ByteArrayInputStream stream) throws EOFException {

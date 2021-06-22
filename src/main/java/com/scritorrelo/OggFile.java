@@ -15,7 +15,7 @@ public class OggFile {
     byte[] file;
 
     public OggFile(String filename) throws IOException {
-        byte[] file = FileUtils.readFileToByteArray(new File(filename));
+        file = FileUtils.readFileToByteArray(new File(filename));
 
         int index = 0;
         int subindex;
@@ -38,6 +38,7 @@ public class OggFile {
             packets.add(Arrays.copyOfRange(file, indexes.get(0), indexes.get(i + 1)));
         }
 
-        System.out.println(indexes);
+        OggPage first = new OggPage(packets.get(0));
+        System.out.println(first);
     }
 }
