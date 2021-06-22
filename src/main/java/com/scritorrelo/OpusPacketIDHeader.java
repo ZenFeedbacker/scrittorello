@@ -2,7 +2,7 @@ package com.scritorrelo;
 
 import java.io.EOFException;
 
-public class OggPacketIDHeader extends OggPacket {
+public class OpusPacketIDHeader extends OpusPacket {
 
     String signature;
     int version;
@@ -15,7 +15,7 @@ public class OggPacketIDHeader extends OggPacket {
     int coupleStreamCount;
     String channelMapping;
 
-    public OggPacketIDHeader(byte[] data) throws EOFException {
+    public OpusPacketIDHeader(byte[] data) throws EOFException {
 
         super(data);
 

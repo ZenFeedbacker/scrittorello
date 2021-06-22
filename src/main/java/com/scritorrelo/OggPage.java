@@ -58,7 +58,7 @@ public class OggPage {
             segment_table.add(Utils.readByteStreamToIntBigEndian(stream));
         }
 
-        OggPacketIDHeader header = new OggPacketIDHeader(Utils.readByteStream(stream, segment_table.get(0)));
+        OpusPacketIDHeader header = new OpusPacketIDHeader(Utils.readByteStream(stream, segment_table.get(0)));
         System.out.println(header);
     }
 

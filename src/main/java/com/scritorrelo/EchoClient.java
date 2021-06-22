@@ -136,9 +136,9 @@ public class EchoClient {
         com.scritorrelo.OggPage oggPage = new com.scritorrelo.OggPage(packet.getData());
 
         System.out.println(oggPage);
-        OggPacketIDHeader header = new OggPacketIDHeader(packet.getData());
+        OpusPacketIDHeader header = new OpusPacketIDHeader(packet.getData());
         System.out.println(header);
-        OggPacketCommentHeader commentHeader = new OggPacketCommentHeader(reader.getNextPacket().getData());
+        OpusPacketCommentHeader commentHeader = new OpusPacketCommentHeader(reader.getNextPacket().getData());
         System.out.println(commentHeader);
         int count = 0;
 
@@ -150,11 +150,11 @@ public class EchoClient {
 
 
             byte[] data = packet.getData();
-            OggDataPacket oggPacket = new OggDataPacket(data);
+            OpusDataPacket oggPacket = new OpusDataPacket(data);
 
             count += 1;
-//            System.out.println("Packet: " + count );
-//            System.out.println(oggPacket);
+            System.out.println("Packet: " + count );
+            System.out.println(oggPacket);
 
 
         }

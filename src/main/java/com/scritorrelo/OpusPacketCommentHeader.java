@@ -4,7 +4,7 @@ import java.io.EOFException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OggPacketCommentHeader extends OggPacket {
+public class OpusPacketCommentHeader extends OpusPacket {
 
     String signature;
     int vendorStrLen;
@@ -14,7 +14,7 @@ public class OggPacketCommentHeader extends OggPacket {
     List<String> userComments;
 
 
-    public OggPacketCommentHeader(byte[] data) throws EOFException {
+    public OpusPacketCommentHeader(byte[] data) throws EOFException {
 
         super(data);
 

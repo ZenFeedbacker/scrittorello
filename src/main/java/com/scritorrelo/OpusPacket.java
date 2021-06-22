@@ -1,12 +1,26 @@
 package com.scritorrelo;
 
-public class OpusPacket {
+import lombok.Getter;
 
+import java.io.ByteArrayInputStream;
+
+public abstract class OpusPacket {
+
+    @Getter
     byte[] data;
+    ByteArrayInputStream stream;
+
+    public OpusPacket(byte[] data) {
+
+        this.data = data;
+        this.stream = new ByteArrayInputStream(this.data);
+
+    }
 
     @Override
-    public String toString(){
+    public String toString() {
 
-        return "";
+
+        return "Length: " + this.data.length + "\n";
     }
 }

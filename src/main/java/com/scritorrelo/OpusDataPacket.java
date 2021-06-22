@@ -3,13 +3,13 @@ package com.scritorrelo;
 import java.io.EOFException;
 import java.util.BitSet;
 
-public class OggDataPacket extends OggPacket {
+public class OpusDataPacket extends OpusPacket {
 
     int config;
     boolean stereo;
     int code;
 
-    public OggDataPacket(byte[] data) throws EOFException {
+    public OpusDataPacket(byte[] data) throws EOFException {
 
         super(data);
 
