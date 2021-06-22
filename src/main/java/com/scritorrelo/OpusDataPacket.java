@@ -17,9 +17,9 @@ public class OpusDataPacket extends OpusPacket {
 
 
         String tocStr = Utils.bitSetToString(tocBi);
-        config = Integer.parseInt(tocStr.substring(0,5), 2);
+        config = Integer.parseInt(tocStr.substring(0, 5), 2);
         stereo = tocBi.get(5);
-        code  = Integer.parseInt(tocStr.substring(6,8),2);
+        code = Integer.parseInt(tocStr.substring(6, 8), 2);
     }
 
 

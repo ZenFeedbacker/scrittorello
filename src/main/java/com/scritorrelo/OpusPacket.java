@@ -7,8 +7,9 @@ import java.io.ByteArrayInputStream;
 public abstract class OpusPacket {
 
     @Getter
+    final
     byte[] data;
-    ByteArrayInputStream stream;
+    final ByteArrayInputStream stream;
 
     public OpusPacket(byte[] data) {
 

@@ -9,8 +9,6 @@ import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.ogg.OggPage;
-import org.gagravarr.opus.OpusAudioData;
-import org.gagravarr.opus.OpusFile;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,8 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 import static java.util.Objects.isNull;
 
 @SpringBootApplication
@@ -37,7 +33,7 @@ public class EchoClient {
      */
     private static final int TIMEOUT = 5000;
 
-    static String auth_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJXa002ZW1WdVptVmxaRG94LjNYWXdFaDZoeUlNMk9xR2lBcDB0RjFQWXZIblVJZVBCdWhrNWFpYnZrOGs9IiwiZXhwIjoxNjI2NDQ0NjQ2LCJhenAiOiJkZXYifQ==.Jk8AoJEixXNGbv8k1bHz9m/d6OoiyGc76znd6D5sCuBQYWBghSBcB5EC4TddD+oDOYUIkx6NRRxBGUCPIC/5+msbXs4QHPsw7MVpTZDuloZPPk5KY6VzTxrvyTVnzFolMInMPf8R/VMt11vD8G+ZICC+IDLiuCDB4obIcmsikVvdLIew5Hjm09segEThAOOlzzHhq2cHKsgVgeS9QqtTil7ddC+a4AXT+8oFavpHLwre+NS0xftk33HTVcyKyqprG2jsNZFvcEZeqbPj7A6Igx8oKKwjX8bqjeB2iYjayHcAgs/HHp/kg7RnnIm1iOLriHQe+zMHqmG9ODB+4qGlnA==";
+    static final String auth_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJXa002ZW1WdVptVmxaRG94LjNYWXdFaDZoeUlNMk9xR2lBcDB0RjFQWXZIblVJZVBCdWhrNWFpYnZrOGs9IiwiZXhwIjoxNjI2NDQ0NjQ2LCJhenAiOiJkZXYifQ==.Jk8AoJEixXNGbv8k1bHz9m/d6OoiyGc76znd6D5sCuBQYWBghSBcB5EC4TddD+oDOYUIkx6NRRxBGUCPIC/5+msbXs4QHPsw7MVpTZDuloZPPk5KY6VzTxrvyTVnzFolMInMPf8R/VMt11vD8G+ZICC+IDLiuCDB4obIcmsikVvdLIew5Hjm09segEThAOOlzzHhq2cHKsgVgeS9QqtTil7ddC+a4AXT+8oFavpHLwre+NS0xftk33HTVcyKyqprG2jsNZFvcEZeqbPj7A6Igx8oKKwjX8bqjeB2iYjayHcAgs/HHp/kg7RnnIm1iOLriHQe+zMHqmG9ODB+4qGlnA==";
 
 
     /**
@@ -128,8 +124,6 @@ public class EchoClient {
 
     private static void openFileWithVorbis() throws Exception {
 
-        testWriteAudio();
-
         OggFile oggFile = new OggFile(new FileInputStream("src/main/resources/speech.opus"));
         OggPacketReader reader = oggFile.getPacketReader();
         OggPacket packet = reader.getNextPacket();
@@ -205,52 +199,5 @@ public class EchoClient {
         Method method = pageClass.getDeclaredMethod("getSid");
         method.setAccessible(true);
         return (int) method.invoke(oggPage);
-    }
-
-    public static void testWriteAudio() throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        // Setup a new empty file
-        OpusFile opus = new OpusFile(baos);
-        opus.getInfo().setSampleRate(48000);
-        opus.getInfo().setNumChannels(2);
-        opus.getTags().addComment("title", "Test Dummy Audio");
-        OpusAudioData audio = null;
-
-        // Add some dummy audio data to it
-        // This should really be proper PCM data, but we're just testing!
-        byte[][] data = new byte[20][];
-        for (int i = 0; i < data.length; i++) {
-            byte[] td = new byte[i * 50];
-            for (int j = 0; j < td.length; j++) {
-                td[j] = (byte) (j % 99);
-            }
-            data[i] = td;
-
-            audio = new OpusAudioData(td);
-            opus.writeAudioData(audio);
-        }
-
-        // Write it out and re-read
-        opus.close();
-        OggFile ogg = new OggFile(new ByteArrayInputStream(baos.toByteArray()));
-        opus = new OpusFile(ogg);
-
-        // Check it looks as expected
-        assertEquals(2, opus.getInfo().getNumChannels());
-        assertEquals(48000, opus.getInfo().getSampleRate());
-        assertEquals("Test Dummy Audio", opus.getTags().getTitle());
-
-        // Check the dummy data
-        int count = 0;
-        while ((audio = opus.getNextAudioPacket()) != null) {
-            byte[] exp = data[count];
-            assertEquals(exp.length, audio.getData().length);
-            for (int i = 0; i < exp.length; i++) {
-                assertEquals(exp[i], audio.getData()[i]);
-            }
-            count++;
-        }
-        assertEquals(data.length, count);
     }
 }

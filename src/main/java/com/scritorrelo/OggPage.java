@@ -11,7 +11,7 @@ import static java.util.Objects.isNull;
 public class OggPage {
 
     byte[] data;
-    ByteArrayInputStream stream;
+    final ByteArrayInputStream stream;
 
 
     String signature;
@@ -27,7 +27,7 @@ public class OggPage {
     List<Integer> segment_table;
 
 
-    public OggPage(byte[] data) throws EOFException {
+    public OggPage(byte[] data) {
 
         this.data = data;
         this.stream = new ByteArrayInputStream(this.data);
@@ -65,27 +65,27 @@ public class OggPage {
     @Override
     public String toString() {
 
-        String str = "";
+        StringBuilder str = new StringBuilder();
 
         if (!isNull(data)) {
-            str += "Length: " + data.length + "\n";
+            str.append("Length: ").append(data.length).append("\n");
         }
 
-        str += "Signature: " + signature + "\n" +
-                "Version: " + version + "\n" +
-                "Is Continuation: " + continuation + "\n" +
-                "Beginning of Stream: " + BoS + "\n" +
-                "End of Stream: " + EoS + "\n" +
-                "Granule Position: " + granule_position + "\n" +
-                "Bitstream serial number: " + bitstream_serial_number + "\n" +
-                "Page Sequence Number: " + page_sequence_number + "\n" +
-                "CRC Checksum: " + CRC_checksum + "\n" +
-                "Number page segments: " + number_page_segments + "\n";
+        str.append("Signature: ").append(signature).append("\n").
+                append("Version: ").append(version).append("\n").
+                append("Is Continuation: ").append(continuation).append("\n").
+                append("Beginning of Stream: ").append(BoS).append("\n").
+                append("End of Stream: ").append(EoS).append("\n").
+                append("Granule Position: ").append(granule_position).append("\n").
+                append("Bitstream serial number: ").append(bitstream_serial_number).append("\n").
+                append("Page Sequence Number: ").append(page_sequence_number).append("\n").
+                append("CRC Checksum: ").append(CRC_checksum).append("\n").
+                append("Number page segments: ").append(number_page_segments).append("\n");
 
         for (int i = 0; i < number_page_segments; i++) {
-            str += "Lacing Value #" + i + ": " + segment_table.get(i) + "\n";
+            str.append("Lacing Value #").append(i).append(": ").append(segment_table.get(i)).append("\n");
         }
 
-        return str;
+        return str.toString();
     }
 }

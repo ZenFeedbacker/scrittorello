@@ -4,7 +4,7 @@ import com.neovisionaries.ws.client.WebSocket;
 
 public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdapter {
 
-    AudioPacket packet = new AudioPacket();
+    final AudioPacket packet = new AudioPacket();
 
     public void onTextMessage(WebSocket websocket, String message) {
         System.out.println(message);
