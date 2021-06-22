@@ -39,7 +39,7 @@ public class Utils {
     public static int readByteStreamToInt(ByteArrayInputStream stream, int len) throws EOFException {
 
 
-        return Integer.reverseBytes(new BigInteger(readByteStream(stream,len)).intValue());
+        return Integer.reverseBytes(new BigInteger(readByteStream(stream, len)).intValue());
     }
 
     public static int readByteStreamToInt(ByteArrayInputStream stream) throws EOFException {
@@ -69,7 +69,7 @@ public class Utils {
         return new String(data);
     }
 
-    public static  String bitSetToString(BitSet bi) {
+    public static String bitSetToString(BitSet bi) {
 
         StringBuilder s = new StringBuilder();
 

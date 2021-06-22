@@ -1,4 +1,6 @@
-package com.scritorrelo;
+package com.scritorrelo.opus;
+
+import com.scritorrelo.Utils;
 
 import java.io.EOFException;
 import java.util.ArrayList;

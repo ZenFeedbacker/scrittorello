@@ -1,4 +1,4 @@
-package com.scritorrelo;
+package com.scritorrelo.opus;
 
 import lombok.Getter;
 

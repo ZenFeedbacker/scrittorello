@@ -4,13 +4,14 @@ import com.google.common.primitives.Bytes;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketExtension;
 import com.neovisionaries.ws.client.WebSocketFactory;
+import com.scritorrelo.opus.OpusDataPacket;
+import com.scritorrelo.opus.OpusPacketCommentHeader;
+import com.scritorrelo.opus.OpusPacketIDHeader;
 import org.apache.commons.io.FileUtils;
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.ogg.OggPage;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.json.Json;
@@ -36,14 +37,11 @@ public class EchoClient {
     static final String auth_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJXa002ZW1WdVptVmxaRG94LjNYWXdFaDZoeUlNMk9xR2lBcDB0RjFQWXZIblVJZVBCdWhrNWFpYnZrOGs9IiwiZXhwIjoxNjI2NDQ0NjQ2LCJhenAiOiJkZXYifQ==.Jk8AoJEixXNGbv8k1bHz9m/d6OoiyGc76znd6D5sCuBQYWBghSBcB5EC4TddD+oDOYUIkx6NRRxBGUCPIC/5+msbXs4QHPsw7MVpTZDuloZPPk5KY6VzTxrvyTVnzFolMInMPf8R/VMt11vD8G+ZICC+IDLiuCDB4obIcmsikVvdLIew5Hjm09segEThAOOlzzHhq2cHKsgVgeS9QqtTil7ddC+a4AXT+8oFavpHLwre+NS0xftk33HTVcyKyqprG2jsNZFvcEZeqbPj7A6Igx8oKKwjX8bqjeB2iYjayHcAgs/HHp/kg7RnnIm1iOLriHQe+zMHqmG9ODB+4qGlnA==";
 
 
-    /**
-     * The entry point of this command line application.
-     */
     public static void main(String[] args) throws Exception {
 
         //getDataWithVorbis();
         openFileManually();
-        splitFileAsArray();
+        com.scritorrelo.OggFile file = new com.scritorrelo.OggFile("src/main/resources/speech.opus");
         //openFileWithVorbis();
         System.exit(0);
 
@@ -76,33 +74,6 @@ public class EchoClient {
         }
 
         ws.disconnect();
-    }
-
-    private static void splitFileAsArray() throws IOException {
-        byte[] file = FileUtils.readFileToByteArray(new File("src/main/resources/speech.opus"));
-
-        int index = 0;
-        int subindex;
-        List<Integer> indexes = new ArrayList<>();
-
-        while (true) {
-            subindex = Bytes.indexOf(Arrays.copyOfRange(file, index, file.length), "OggS".getBytes(StandardCharsets.US_ASCII));
-            if (subindex == -1) {
-                break;
-            }
-            indexes.add(index + subindex);
-            index += subindex + 3;
-        }
-
-        indexes.add(file.length);
-
-        List<byte[]> packets = new ArrayList<>();
-
-        for(int i = 0; i<indexes.size()-1; i++){
-            packets.add(Arrays.copyOfRange(file,indexes.get(0),indexes.get(i+1)));
-        }
-
-        System.out.println(indexes);
     }
 
     private static void openFileManually() throws IOException {
@@ -147,7 +118,7 @@ public class EchoClient {
             OpusDataPacket oggPacket = new OpusDataPacket(data);
 
             count += 1;
-            System.out.println("Packet: " + count );
+            System.out.println("Packet: " + count);
             System.out.println(oggPacket);
 
 
@@ -171,8 +142,6 @@ public class EchoClient {
     /**
      * Wrap the standard input with BufferedReader.
      */
-    @NotNull
-    @Contract(" -> new")
     private static BufferedReader getInput() {
         return new BufferedReader(new InputStreamReader(System.in));
     }

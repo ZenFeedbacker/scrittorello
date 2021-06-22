@@ -1,5 +1,7 @@
 package com.scritorrelo;
 
+import com.scritorrelo.opus.OpusPacketIDHeader;
+
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.util.ArrayList;
@@ -12,7 +14,6 @@ public class OggPage {
 
     byte[] data;
     final ByteArrayInputStream stream;
-
 
     String signature;
     int version;
