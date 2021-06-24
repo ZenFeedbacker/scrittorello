@@ -3,6 +3,7 @@ package com.scritorrelo;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketExtension;
 import com.neovisionaries.ws.client.WebSocketFactory;
+import com.scritorrelo.ogg.OggFile;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.json.Json;
@@ -23,8 +24,7 @@ public class EchoClient {
 
     public static void main(String[] args) throws Exception {
 
-        com.scritorrelo.OggFile file = new com.scritorrelo.OggFile("src/main/resources/speech.opus");
-        System.exit(0);
+        //OggFile file = new OggFile("src/main/resources/speech.opus");
 
         // Connect to the echo server.
         WebSocket ws = connect();
@@ -67,7 +67,6 @@ public class EchoClient {
                 .addExtension(WebSocketExtension.PERMESSAGE_DEFLATE)
                 .connect();
     }
-
 
     /**
      * Wrap the standard input with BufferedReader.

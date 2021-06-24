@@ -39,14 +39,18 @@ public class OpusPacketCommentHeader extends OpusPacket {
     public String toString() {
 
 
-        StringBuilder str = new StringBuilder("Length: " + data.length + "\n" +
-                "Signature: " + signature + "\n" +
-                "Vendor String Length: " + vendorStrLen + "\n" +
-                "Vendor String: " + vendorStr + "\n" +
-                "User Comment List Length: " + userCommentListLen + "\n");
+        StringBuilder str = new StringBuilder(
+                "-------Opus Comment Header-------\n" +
+                        "Length: " + length + "\n" +
+                        "Signature: " + signature + "\n" +
+                        "Vendor String Length: " + vendorStrLen + "\n" +
+                        "Vendor String: " + vendorStr + "\n" +
+                        "User Comment List Length: " + userCommentListLen + "\n");
 
         for (int i = 0; i < userCommentListLen; i++) {
-            str.append("Comment #").append(i).append(" Length: ").append(userCommentLens.get(i)).append("\n").append("Comment #").append(i).append(": ").append(userComments.get(i)).append("\n");
+            str.append("Comment #").append(i).
+                    append(" Length: ").append(userCommentLens.get(i)).append("\n").
+                    append("Comment #").append(i).append(": ").append(userComments.get(i)).append("\n");
         }
 
         return str.toString();

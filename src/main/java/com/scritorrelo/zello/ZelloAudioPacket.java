@@ -1,4 +1,4 @@
-package com.scritorrelo;
+package com.scritorrelo.zello;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,13 +9,13 @@ import java.util.Arrays;
 import static java.util.Objects.isNull;
 
 @NoArgsConstructor
-public class AudioPacket {
+public class ZelloAudioPacket {
 
     int streamID;
     @Getter
     byte[][] data;
 
-    void addFrame(AudioFrame frame) {
+    public void addFrame(ZelloAudioFrame frame) {
 
         if (isNull(data)) {
             streamID = frame.getStream_id();

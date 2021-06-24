@@ -1,4 +1,4 @@
-package com.scritorrelo;
+package com.scritorrelo.zello;
 
 import lombok.Getter;
 import org.apache.commons.codec.binary.Hex;
@@ -7,7 +7,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 
 @Getter
-public class AudioFrame {
+public class ZelloAudioFrame {
 
     final byte[] type;
     final int stream_id;
@@ -15,7 +15,7 @@ public class AudioFrame {
     final byte[] data;
 
 
-    public AudioFrame(byte[] binary) {
+    public ZelloAudioFrame(byte[] binary) {
         type = Arrays.copyOfRange(binary, 0, 1);
         stream_id = new BigInteger(Arrays.copyOfRange(binary, 1, 5)).intValue();
         packet_id = new BigInteger(Arrays.copyOfRange(binary, 5, 9)).intValue();

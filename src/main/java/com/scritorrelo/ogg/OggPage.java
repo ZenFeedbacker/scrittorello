@@ -1,5 +1,6 @@
-package com.scritorrelo;
+package com.scritorrelo.ogg;
 
+import com.scritorrelo.Utils;
 import com.scritorrelo.opus.OpusPacketIDHeader;
 
 import java.io.ByteArrayInputStream;
@@ -68,6 +69,8 @@ public class OggPage {
     public String toString() {
 
         StringBuilder str = new StringBuilder();
+
+        str.append("-------OggPage-------\n");
 
         if (!isNull(data)) {
             str.append("Length: ").append(data.length).append("\n");

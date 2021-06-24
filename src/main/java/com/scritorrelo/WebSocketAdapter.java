@@ -1,21 +1,20 @@
 package com.scritorrelo;
 
 import com.neovisionaries.ws.client.WebSocket;
+import com.scritorrelo.zello.ZelloAudioFrame;
+import com.scritorrelo.zello.ZelloAudioPacket;
 
 public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdapter {
 
-    final AudioPacket packet = new AudioPacket();
+    final ZelloAudioPacket packet = new ZelloAudioPacket();
 
     public void onTextMessage(WebSocket websocket, String message) {
         System.out.println(message);
-        // JsonObject jsonObject = new JsonParser().parse(message).getAsJsonObject();
-        // System.out.println(Integer.toHexString(Integer.parseInt(jsonObject.get("stream_id").toString())));
     }
 
-    public void onBinaryMessage(WebSocket websocket, byte[] binary) {
-        AudioFrame audioFrame = new AudioFrame(binary);
+    public void onBinaryMessage(WebSocket websocket, byte[] binary)  {
+        ZelloAudioFrame audioFrame = new ZelloAudioFrame(binary);
         packet.addFrame(audioFrame);
         System.out.println(audioFrame);
-        System.out.println(packet);
     }
 }

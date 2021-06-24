@@ -38,7 +38,8 @@ public class OpusPacketIDHeader extends OpusPacket {
     @Override
     public String toString() {
 
-        String str = "Length: " + data.length + "\n" +
+        String str = "-------Opus ID Header-------\n" +
+                "Length: " + length + "\n" +
                 "Signature: " + signature + "\n" +
                 "Version: " + version + "\n" +
                 "Channel Count: " + channelCount + "\n" +

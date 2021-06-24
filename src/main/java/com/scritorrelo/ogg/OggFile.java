@@ -1,4 +1,4 @@
-package com.scritorrelo;
+package com.scritorrelo.ogg;
 
 import com.google.common.primitives.Bytes;
 import org.apache.commons.io.FileUtils;
