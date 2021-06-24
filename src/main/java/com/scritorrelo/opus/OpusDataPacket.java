@@ -4,8 +4,6 @@ import com.scritorrelo.Utils;
 import org.apache.commons.codec.binary.Hex;
 
 import java.io.EOFException;
-import java.util.Arrays;
-import java.util.BitSet;
 
 public class OpusDataPacket extends OpusPacket {
 

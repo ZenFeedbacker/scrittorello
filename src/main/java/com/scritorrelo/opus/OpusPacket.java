@@ -5,7 +5,7 @@ import java.io.ByteArrayInputStream;
 public abstract class OpusPacket {
 
     final ByteArrayInputStream stream;
-    int length;
+    final int length;
 
     public OpusPacket(byte[] data) {
 

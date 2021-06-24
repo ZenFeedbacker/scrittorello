@@ -26,7 +26,7 @@ public class OggPage {
     int page_sequence_number;
     int CRC_checksum; //should be long?
     int number_page_segments;
-    List<Integer> segment_table;
+    final List<Integer> segment_table;
 
 
     public OggPage(byte[] data) throws EOFException {

@@ -3,7 +3,6 @@ package com.scritorrelo;
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.math.BigInteger;
-import java.util.BitSet;
 
 public class Utils {
 
@@ -67,16 +66,5 @@ public class Utils {
         }
 
         return new String(data);
-    }
-
-    public static String bitSetToString(BitSet bitSet) {
-
-        StringBuilder s = new StringBuilder();
-
-        for (int i = 0; i < bitSet.length(); i++) {
-            s.append(bitSet.get(i) ? 1 : 0);
-        }
-
-        return s.toString();
     }
 }

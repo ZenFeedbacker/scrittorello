@@ -3,7 +3,6 @@ package com.scritorrelo;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketExtension;
 import com.neovisionaries.ws.client.WebSocketFactory;
-import com.scritorrelo.ogg.OggFile;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.json.Json;

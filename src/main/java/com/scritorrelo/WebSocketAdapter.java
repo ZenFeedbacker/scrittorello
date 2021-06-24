@@ -4,7 +4,6 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.scritorrelo.opus.OpusDataPacket;
 import com.scritorrelo.zello.ZelloAudioFrame;
 import com.scritorrelo.zello.ZelloAudioPacket;
-import org.apache.commons.codec.binary.Hex;
 
 import java.io.EOFException;
 
