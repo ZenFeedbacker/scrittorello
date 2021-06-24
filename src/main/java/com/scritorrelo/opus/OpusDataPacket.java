@@ -1,6 +1,7 @@
 package com.scritorrelo.opus;
 
 import com.scritorrelo.Utils;
+import lombok.Getter;
 import org.apache.commons.codec.binary.Hex;
 
 import java.io.EOFException;
@@ -10,6 +11,7 @@ public class OpusDataPacket extends OpusPacket {
     int config;
     boolean stereo;
     int code;
+    @Getter
     byte[] data;
 
     public OpusDataPacket(byte[] data) throws EOFException {

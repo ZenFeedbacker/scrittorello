@@ -46,7 +46,6 @@ public class OggPage {
         version = Utils.readByteStreamToInt(stream);
 
         BitSet bits = BitSet.valueOf(new byte[]{Utils.readByteStream(stream)});
-        //System.out.println(Utils.bitSetToString(bits));
         continuation = bits.get(1);
         BoS = bits.get(2);
         EoS = bits.get(4);

@@ -14,7 +14,6 @@ public class ZelloAudioFrame {
     final int packet_id;
     final byte[] data;
 
-
     public ZelloAudioFrame(byte[] binary) {
         type = Arrays.copyOfRange(binary, 0, 1);
         stream_id = new BigInteger(Arrays.copyOfRange(binary, 1, 5)).intValue();
