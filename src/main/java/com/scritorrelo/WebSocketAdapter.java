@@ -25,15 +25,18 @@ public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdap
 
             Command command = Command.valueOf(cmnd);
 
-            if (command.equals(Command.on_stream_start)) {
-                ZelloAudioStream stream = new ZelloAudioStream(obj, timestamp);
+            switch (command){
+                case on_stream_start:
+                    ZelloAudioStream stream = new ZelloAudioStream(obj, timestamp);
+                    streams.put(obj.getInt("stream_id"), stream);
+                    System.out.println(stream);
+                    break;
+                case on_stream_stop:
+                    System.out.println(streams.get(obj.getInt("stream_id")));
+                    break;
+                default:
+                    break;
 
-                streams.put(obj.getInt("stream_id"), stream);
-                System.out.println(stream);
-            }
-            if (command.equals(Command.on_stream_stop)) {
-
-                System.out.println(streams.get(obj.getInt("stream_id")));
             }
         }
     }

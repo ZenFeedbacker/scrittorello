@@ -7,5 +7,16 @@ public enum Command {
     on_stream_start,
     on_stream_stop,
     start_stream,
-    stop_stream;
+    stop_stream,
+    send_image,
+    send_text_message,
+    send_location,
+    on_error,
+    on_image,
+    on_text_message,
+    on_location
+
+
+
+
 }

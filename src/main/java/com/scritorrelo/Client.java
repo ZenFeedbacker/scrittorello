@@ -10,7 +10,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 @SpringBootApplication
-public class EchoClient {
+public class Client {
     private static final String SERVER = "wss://zello.io/ws";
 
     /**
