@@ -1,8 +1,10 @@
 package com.scritorrelo.opus;
 
 import com.scritorrelo.Utils;
+import org.apache.commons.codec.binary.Hex;
 
 import java.io.EOFException;
+import java.util.Arrays;
 import java.util.BitSet;
 
 public class OpusDataPacket extends OpusPacket {
@@ -13,18 +15,17 @@ public class OpusDataPacket extends OpusPacket {
     byte[] data;
 
     public OpusDataPacket(byte[] data) throws EOFException {
+
         super(data);
 
+        byte toc = Utils.readByteStream(stream);
+        String tocStr = String.format("%8s", Integer.toBinaryString(toc & 0xFF)).replace(' ', '0');
 
-        BitSet tocBi = BitSet.valueOf(new byte[]{Utils.readByteStream(stream)});
-
-
-        String tocStr = Utils.bitSetToString(tocBi);
         config = Integer.parseInt(tocStr.substring(0, 5), 2);
-        stereo = tocBi.get(5);
+        stereo = tocStr.charAt(5) == '1';
         code = Integer.parseInt(tocStr.substring(6, 8), 2);
 
-        data = Utils.readByteStream(stream, stream.available());
+        this.data = Utils.readByteStream(stream, stream.available());
     }
 
 
@@ -34,6 +35,7 @@ public class OpusDataPacket extends OpusPacket {
         return "Length: " + length + "\n" +
                 "Config: " + config + "\n" +
                 "Stereo: " + stereo + "\n" +
-                "Code: " + code + "\n";
+                "Code: " + code + "\n" +
+                "Data: " + new String(Hex.encodeHex(data)) + "\n";
     }
 }
