@@ -2,6 +2,10 @@ package com.scritorrelo.ogg;
 
 import com.scritorrelo.Utils;
 import com.scritorrelo.opus.IDHeaderPacket;
+import com.scritorrelo.opus.Packet;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
@@ -11,7 +15,11 @@ import java.util.List;
 
 import static java.util.Objects.isNull;
 
+@Builder
+@AllArgsConstructor
 public class Page {
+
+    final static String OGG_PAGE_HEADER = "OggS";
 
     byte[] data;
     final ByteArrayInputStream stream;
@@ -27,41 +35,60 @@ public class Page {
     int CRC_checksum; //should be long?
     int number_page_segments;
     final List<Integer> segment_table;
+    @Getter
+    Packet packet;
 
 
-    public Page(byte[] data) throws EOFException {
+    public Page(byte[] data) {
 
         this(new ByteArrayInputStream(data));
 
         this.data = data;
     }
 
-    public Page(ByteArrayInputStream stream) throws EOFException {
+    public Page(ByteArrayInputStream stream) {
 
         this.stream = stream;
 
         segment_table = new ArrayList<>();
 
-        signature = Utils.readByteStreamToString(stream, 4);
-        version = Utils.readByteStreamToInt(stream);
+        try {
 
-        BitSet bits = BitSet.valueOf(new byte[]{Utils.readByteStream(stream)});
-        continuation = bits.get(1);
-        BoS = bits.get(2);
-        EoS = bits.get(4);
-        granule_position = Utils.readByteStreamToInt(stream, 8);
+            signature = Utils.readByteStreamToString(stream, 4);
+            version = Utils.readByteStreamToInt(stream);
 
-        bitstream_serial_number = Utils.readByteStreamToInt(stream, 4);
-        page_sequence_number = Utils.readByteStreamToInt(stream, 4);
-        CRC_checksum = Utils.readByteStreamToInt(stream, 4);
-        number_page_segments = Utils.readByteStreamToIntBigEndian(stream);
+            BitSet bits = BitSet.valueOf(new byte[]{Utils.readByteStream(stream)});
+            continuation = bits.get(1);
+            BoS = bits.get(2);
+            EoS = bits.get(4);
+            granule_position = Utils.readByteStreamToInt(stream, 8);
 
-        for (int i = 0; i < number_page_segments; i++) {
-            segment_table.add(Utils.readByteStreamToIntBigEndian(stream));
+            bitstream_serial_number = Utils.readByteStreamToInt(stream, 4);
+            page_sequence_number = Utils.readByteStreamToInt(stream, 4);
+            CRC_checksum = Utils.readByteStreamToInt(stream, 4);
+            number_page_segments = Utils.readByteStreamToIntBigEndian(stream);
+
+            for (int i = 0; i < number_page_segments; i++) {
+                segment_table.add(Utils.readByteToIntBigEndian(stream));
+            }
+
+            System.out.println(this);
+            Packet packet;
+            for(int segment: segment_table){
+                if(segment != 0) {
+                    packet = Packet.PacketFactory(Utils.readByteStream(stream, segment));
+                    System.out.println(packet);
+                }
+
+            }
+
+
+        } catch (EOFException ignored) {
+
         }
 
-        IDHeaderPacket header = new IDHeaderPacket(Utils.readByteStream(stream, segment_table.get(0)));
-        System.out.println(header);
+        // IDHeaderPacket header = new IDHeaderPacket(Utils.readByteStream(stream, segment_table.get(0)));
+        // System.out.println(header);
     }
 
     @Override

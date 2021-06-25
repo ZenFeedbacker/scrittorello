@@ -1,11 +1,13 @@
 package com.scritorrelo.zello;
 
+import com.scritorrelo.opus.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static java.util.Objects.isNull;
 
@@ -20,7 +22,7 @@ public class AudioStream {
     String fromUser;
     String forUser;
     LocalDateTime timestamp;
-    List<AudioFrame> packets;
+    List<AudioFrame> audioFrames;
 
     public AudioStream(JSONObject json, LocalDateTime timestamp) throws JSONException {
 
@@ -35,11 +37,11 @@ public class AudioStream {
         if (json.has("for")) {
             forUser = json.getString("for");
         }
-        packets = new ArrayList<>();
+        audioFrames = new ArrayList<>();
     }
 
-    public void addFrame(AudioFrame frame){
-        packets.add(frame);
+    public void addFrame(AudioFrame frame) {
+        audioFrames.add(frame);
     }
 
     public String toString() {
@@ -54,12 +56,52 @@ public class AudioStream {
         stringBuilder.append("From: ").append(fromUser).append("\n");
         stringBuilder.append("Stream ID: ").append(streamID).append("\n");
         stringBuilder.append("Packet Duration: ").append(packetDuration).append("\n");
-        stringBuilder.append("Nums of Packets: ").append(packets.size()).append("\n");
+        stringBuilder.append("Nums of Packets: ").append(audioFrames.size()).append("\n");
 
         if (!isNull(forUser)) {
             stringBuilder.append("For:").append(forUser).append("\n");
         }
 
         return stringBuilder.toString();
+    }
+
+    public Stream getOpusStream() {
+        Stream opusStream = new Stream();
+
+        opusStream.addPacket(createIDHeader());
+        opusStream.addPacket(createCommentHeader());
+
+        audioFrames.forEach(packet -> opusStream.addPacket(new DataPacket(packet.getData())));
+
+        return opusStream;
+    }
+
+    public int randomStreamSerialNumber(){
+
+        return  ThreadLocalRandom.current().nextInt();
+    }
+
+    public IDHeaderPacket createIDHeader() {
+
+        return IDHeaderPacket.
+                builder().
+                signature(IDHeaderPacket.OPUS_ID_HEADER).
+                version(1)
+                .channelCount(1).
+                outputGain(0).
+                channelMappingFamily(0).
+                sampleRate(48000).
+                preskip(0).
+                build();
+    }
+
+    private CommentHeaderPacket createCommentHeader() {
+
+        return CommentHeaderPacket.
+                builder().
+                signature(CommentHeaderPacket.OPUS_COMMENT_HEADER).
+                vendorStr("").
+                vendorStrLen(0).
+                build();
     }
 }

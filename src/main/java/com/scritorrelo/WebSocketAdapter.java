@@ -7,7 +7,6 @@ import com.scritorrelo.zello.AudioStream;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.EOFException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
@@ -41,7 +40,7 @@ public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdap
         }
     }
 
-    public void onBinaryMessage(WebSocket websocket, byte[] binary) throws EOFException {
+    public void onBinaryMessage(WebSocket websocket, byte[] binary) {
         AudioFrame audioFrame = new AudioFrame(binary);
 
         streams.get(audioFrame.getStream_id()).addFrame(audioFrame);

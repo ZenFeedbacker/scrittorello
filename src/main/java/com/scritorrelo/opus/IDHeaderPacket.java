@@ -1,10 +1,17 @@
 package com.scritorrelo.opus;
 
 import com.scritorrelo.Utils;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import org.apache.commons.codec.binary.Hex;
 
 import java.io.EOFException;
 
+@Builder
+@AllArgsConstructor
 public class IDHeaderPacket extends Packet {
+
+    public final static String OPUS_ID_HEADER = "OpusHead";
 
     String signature;
     int version;
@@ -33,6 +40,12 @@ public class IDHeaderPacket extends Packet {
             coupleStreamCount = Utils.readByteStreamToInt(stream);
             channelMapping = Utils.readByteStreamToString(stream, 8 * channelCount);
         }
+    }
+
+    @Override
+    public byte[] toByteArray(){
+
+        return new byte[0];
     }
 
     @Override

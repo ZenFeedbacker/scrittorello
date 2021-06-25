@@ -1,12 +1,19 @@
 package com.scritorrelo.opus;
 
 import com.scritorrelo.Utils;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 import java.io.EOFException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
+@AllArgsConstructor
 public class CommentHeaderPacket extends Packet {
+
+    public final static String OPUS_COMMENT_HEADER = "OpusTags";
+
 
     String signature;
     int vendorStrLen;
@@ -33,6 +40,12 @@ public class CommentHeaderPacket extends Packet {
             userCommentLens.add(len);
             userComments.add(Utils.readByteStreamToString(stream, len));
         }
+    }
+
+    @Override
+    public byte[] toByteArray(){
+
+        return new byte[0];
     }
 
     @Override

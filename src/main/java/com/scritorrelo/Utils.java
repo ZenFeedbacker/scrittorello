@@ -3,6 +3,7 @@ package com.scritorrelo;
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.math.BigInteger;
+import java.util.Arrays;
 
 public class Utils {
 
@@ -19,6 +20,11 @@ public class Utils {
         }
 
         return data;
+    }
+
+    public static byte[] readRemainingByteStream(ByteArrayInputStream stream) throws EOFException {
+
+        return readByteStream(stream, stream.available());
     }
 
     public static byte readByteStream(ByteArrayInputStream stream) throws EOFException {
@@ -50,7 +56,13 @@ public class Utils {
     public static int readByteStreamToIntBigEndian(ByteArrayInputStream stream) throws EOFException {
 
 
-        return new BigInteger(readByteStream(stream, 1)).intValue();
+        return new BigInteger(readByteStream(stream, 1) ).intValue();
+    }
+
+    public static int readByteToIntBigEndian(ByteArrayInputStream stream) throws EOFException {
+
+
+        return readByteStream(stream) & 0xFF;
     }
 
     public static String readByteStreamToString(ByteArrayInputStream stream, int len) throws EOFException {
@@ -66,5 +78,10 @@ public class Utils {
         }
 
         return new String(data);
+    }
+
+    public static String readByteArrayToString(byte[] stream, int len) {
+
+        return new String(Arrays.copyOf(stream, len));
     }
 }

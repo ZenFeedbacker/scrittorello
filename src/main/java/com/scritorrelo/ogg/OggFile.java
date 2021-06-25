@@ -9,20 +9,23 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OggFile {
 
     byte[] file;
 
     public OggFile(String filename) throws IOException {
+
         file = FileUtils.readFileToByteArray(new File(filename));
 
         int index = 0;
         int subindex;
+
         List<Integer> indexes = new ArrayList<>();
 
         while (true) {
-            subindex = Bytes.indexOf(Arrays.copyOfRange(file, index, file.length), "OggS".getBytes(StandardCharsets.US_ASCII));
+            subindex = Bytes.indexOf(Arrays.copyOfRange(file, index, file.length), Page.OGG_PAGE_HEADER.getBytes(StandardCharsets.US_ASCII));
             if (subindex == -1) {
                 break;
             }
@@ -30,15 +33,17 @@ public class OggFile {
             index += subindex + 3;
         }
 
+
         indexes.add(file.length);
 
         List<byte[]> packets = new ArrayList<>();
 
         for (int i = 0; i < indexes.size() - 1; i++) {
-            packets.add(Arrays.copyOfRange(file, indexes.get(0), indexes.get(i + 1)));
+            packets.add(Arrays.copyOfRange(file, indexes.get(i), indexes.get(i + 1)));
         }
 
-        Page first = new Page(packets.get(0));
-        System.out.println(first);
+        List<Page> pages = packets.stream().map(Page::new).collect(Collectors.toList());
+
+        //pages.forEach(System.out::println);
     }
 }

@@ -3,6 +3,7 @@ package com.scritorrelo;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketExtension;
 import com.neovisionaries.ws.client.WebSocketFactory;
+import com.scritorrelo.ogg.OggFile;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.json.Json;
@@ -24,6 +25,8 @@ public class Client {
 
 
     public static void main(String[] args) throws Exception {
+
+        OggFile file = new OggFile("src/main/resources/speech.opus");
 
         // Connect to the echo server.
         WebSocket ws = connect();
