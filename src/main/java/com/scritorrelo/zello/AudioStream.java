@@ -9,7 +9,7 @@ import java.util.List;
 
 import static java.util.Objects.isNull;
 
-public class ZelloAudioStream {
+public class AudioStream {
 
     String type;
     String codec;
@@ -20,9 +20,9 @@ public class ZelloAudioStream {
     String fromUser;
     String forUser;
     LocalDateTime timestamp;
-    List<ZelloAudioFrame> packets;
+    List<AudioFrame> packets;
 
-    public ZelloAudioStream(JSONObject json, LocalDateTime timestamp) throws JSONException {
+    public AudioStream(JSONObject json, LocalDateTime timestamp) throws JSONException {
 
         type = json.getString("type");
         codec = json.getString("codec");
@@ -38,7 +38,7 @@ public class ZelloAudioStream {
         packets = new ArrayList<>();
     }
 
-    public void addFrame(ZelloAudioFrame frame){
+    public void addFrame(AudioFrame frame){
         packets.add(frame);
     }
 

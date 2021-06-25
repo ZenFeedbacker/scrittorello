@@ -2,8 +2,8 @@ package com.scritorrelo;
 
 import com.neovisionaries.ws.client.WebSocket;
 import com.scritorrelo.zello.Command;
-import com.scritorrelo.zello.ZelloAudioFrame;
-import com.scritorrelo.zello.ZelloAudioStream;
+import com.scritorrelo.zello.AudioFrame;
+import com.scritorrelo.zello.AudioStream;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdapter {
 
-    HashMap<Integer, ZelloAudioStream> streams = new HashMap<>();
+    HashMap<Integer, AudioStream> streams = new HashMap<>();
 
     public void onTextMessage(WebSocket websocket, String message) throws JSONException {
         LocalDateTime timestamp = LocalDateTime.now();
@@ -27,7 +27,7 @@ public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdap
 
             switch (command){
                 case on_stream_start:
-                    ZelloAudioStream stream = new ZelloAudioStream(obj, timestamp);
+                    AudioStream stream = new AudioStream(obj, timestamp);
                     streams.put(obj.getInt("stream_id"), stream);
                     System.out.println(stream);
                     break;
@@ -42,7 +42,7 @@ public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdap
     }
 
     public void onBinaryMessage(WebSocket websocket, byte[] binary) throws EOFException {
-        ZelloAudioFrame audioFrame = new ZelloAudioFrame(binary);
+        AudioFrame audioFrame = new AudioFrame(binary);
 
         streams.get(audioFrame.getStream_id()).addFrame(audioFrame);
     }

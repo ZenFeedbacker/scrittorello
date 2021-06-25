@@ -38,7 +38,7 @@ public class OggFile {
             packets.add(Arrays.copyOfRange(file, indexes.get(0), indexes.get(i + 1)));
         }
 
-        OggPage first = new OggPage(packets.get(0));
+        Page first = new Page(packets.get(0));
         System.out.println(first);
     }
 }

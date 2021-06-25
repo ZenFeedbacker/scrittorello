@@ -1,4 +1,4 @@
 package com.scritorrelo.zello;
 
-public class ZelloLocation {
+public class Location {
 }

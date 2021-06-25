@@ -1,4 +1,4 @@
 package com.scritorrelo.zello;
 
-public class ZelloImage {
+public class Image {
 }

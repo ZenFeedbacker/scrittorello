@@ -4,7 +4,7 @@ import com.scritorrelo.Utils;
 
 import java.io.EOFException;
 
-public class OpusPacketIDHeader extends OpusPacket {
+public class IDHeaderPacket extends Packet {
 
     String signature;
     int version;
@@ -17,7 +17,7 @@ public class OpusPacketIDHeader extends OpusPacket {
     int coupleStreamCount;
     String channelMapping;
 
-    public OpusPacketIDHeader(byte[] data) throws EOFException {
+    public IDHeaderPacket(byte[] data) throws EOFException {
 
         super(data);
 

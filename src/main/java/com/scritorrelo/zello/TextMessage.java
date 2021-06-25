@@ -1,4 +1,4 @@
 package com.scritorrelo.zello;
 
-public class ZelloTextMessage {
+public class TextMessage {
 }

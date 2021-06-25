@@ -6,7 +6,7 @@ import java.io.EOFException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OpusPacketCommentHeader extends OpusPacket {
+public class CommentHeaderPacket extends Packet {
 
     String signature;
     int vendorStrLen;
@@ -16,7 +16,7 @@ public class OpusPacketCommentHeader extends OpusPacket {
     List<String> userComments;
 
 
-    public OpusPacketCommentHeader(byte[] data) throws EOFException {
+    public CommentHeaderPacket(byte[] data) throws EOFException {
 
         super(data);
 

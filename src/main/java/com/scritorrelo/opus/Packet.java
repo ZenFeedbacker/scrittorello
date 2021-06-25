@@ -2,12 +2,12 @@ package com.scritorrelo.opus;
 
 import java.io.ByteArrayInputStream;
 
-public abstract class OpusPacket {
+public abstract class Packet {
 
     final ByteArrayInputStream stream;
     final int length;
 
-    public OpusPacket(byte[] data) {
+    public Packet(byte[] data) {
 
         this.length = data.length;
         this.stream = new ByteArrayInputStream(data);

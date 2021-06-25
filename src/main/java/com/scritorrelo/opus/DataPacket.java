@@ -6,7 +6,7 @@ import org.apache.commons.codec.binary.Hex;
 
 import java.io.EOFException;
 
-public class OpusDataPacket extends OpusPacket {
+public class DataPacket extends Packet {
 
     int config;
     boolean stereo;
@@ -14,7 +14,7 @@ public class OpusDataPacket extends OpusPacket {
     @Getter
     byte[] data;
 
-    public OpusDataPacket(byte[] data) throws EOFException {
+    public DataPacket(byte[] data) throws EOFException {
 
         super(data);
 

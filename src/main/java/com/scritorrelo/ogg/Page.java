@@ -1,7 +1,7 @@
 package com.scritorrelo.ogg;
 
 import com.scritorrelo.Utils;
-import com.scritorrelo.opus.OpusPacketIDHeader;
+import com.scritorrelo.opus.IDHeaderPacket;
 
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
@@ -11,7 +11,7 @@ import java.util.List;
 
 import static java.util.Objects.isNull;
 
-public class OggPage {
+public class Page {
 
     byte[] data;
     final ByteArrayInputStream stream;
@@ -29,14 +29,14 @@ public class OggPage {
     final List<Integer> segment_table;
 
 
-    public OggPage(byte[] data) throws EOFException {
+    public Page(byte[] data) throws EOFException {
 
         this(new ByteArrayInputStream(data));
 
         this.data = data;
     }
 
-    public OggPage(ByteArrayInputStream stream) throws EOFException {
+    public Page(ByteArrayInputStream stream) throws EOFException {
 
         this.stream = stream;
 
@@ -60,7 +60,7 @@ public class OggPage {
             segment_table.add(Utils.readByteStreamToIntBigEndian(stream));
         }
 
-        OpusPacketIDHeader header = new OpusPacketIDHeader(Utils.readByteStream(stream, segment_table.get(0)));
+        IDHeaderPacket header = new IDHeaderPacket(Utils.readByteStream(stream, segment_table.get(0)));
         System.out.println(header);
     }
 

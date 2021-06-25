@@ -1,6 +1,6 @@
 package com.scritorrelo.zello;
 
-import com.scritorrelo.opus.OpusDataPacket;
+import com.scritorrelo.opus.DataPacket;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.codec.binary.Hex;
@@ -12,20 +12,20 @@ import java.util.List;
 import static java.util.Objects.isNull;
 
 @NoArgsConstructor
-public class ZelloAudioPacket {
+public class AudioPacket {
 
     int streamID;
     @Getter
-    List<OpusDataPacket> packets;
+    List<DataPacket> packets;
 
-    public void addFrame(ZelloAudioFrame frame) throws EOFException {
+    public void addFrame(AudioFrame frame) throws EOFException {
 
         if (isNull(packets)) {
             streamID = frame.getStream_id();
             packets = new ArrayList<>();
-            packets.add(new OpusDataPacket(frame.getData()));
+            packets.add(new DataPacket(frame.getData()));
         } else if (streamID == frame.getStream_id()) {
-            packets.add(new OpusDataPacket(frame.getData()));
+            packets.add(new DataPacket(frame.getData()));
         }
     }
 
@@ -36,7 +36,7 @@ public class ZelloAudioPacket {
 
         string.append("Stream ID: ").append(this.streamID).append("\n");
 
-        for (OpusDataPacket packet : this.packets) {
+        for (DataPacket packet : this.packets) {
             string.append(Hex.encodeHex(packet.getData())).append("\n");
         }
         return string.toString();
