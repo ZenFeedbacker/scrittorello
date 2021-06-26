@@ -1,11 +1,9 @@
 package com.scritorrelo.ogg;
 
 import com.scritorrelo.Utils;
-import com.scritorrelo.opus.IDHeaderPacket;
 import com.scritorrelo.opus.Packet;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
 
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
@@ -35,8 +33,7 @@ public class Page {
     int CRC_checksum; //should be long?
     int number_page_segments;
     final List<Integer> segment_table;
-    @Getter
-    Packet packet;
+    List<Packet> packets;
 
 
     public Page(byte[] data) {
@@ -51,16 +48,17 @@ public class Page {
         this.stream = stream;
 
         segment_table = new ArrayList<>();
+        packets = new ArrayList<>();
 
         try {
 
             signature = Utils.readByteStreamToString(stream, 4);
             version = Utils.readByteStreamToInt(stream);
 
-            BitSet bits = BitSet.valueOf(new byte[]{Utils.readByteStream(stream)});
-            continuation = bits.get(1);
-            BoS = bits.get(2);
-            EoS = bits.get(4);
+            BitSet bits = BitSet.valueOf(new byte[]{ Utils.readByteStream(stream)});
+            continuation = bits.get(0);
+            BoS = bits.get(1);
+            EoS = bits.get(2);
             granule_position = Utils.readByteStreamToInt(stream, 8);
 
             bitstream_serial_number = Utils.readByteStreamToInt(stream, 4);
@@ -73,11 +71,11 @@ public class Page {
             }
 
             System.out.println(this);
-            Packet packet;
-            for(int segment: segment_table){
-                if(segment != 0) {
-                    packet = Packet.PacketFactory(Utils.readByteStream(stream, segment));
-                    System.out.println(packet);
+            for (int segment : segment_table) {
+                if (segment != 0) {
+                    Packet packet = Packet.PacketFactory(Utils.readByteStream(stream, segment));
+                    packets.add(packet);
+                    //System.out.println(packet);
                 }
 
             }
@@ -86,9 +84,6 @@ public class Page {
         } catch (EOFException ignored) {
 
         }
-
-        // IDHeaderPacket header = new IDHeaderPacket(Utils.readByteStream(stream, segment_table.get(0)));
-        // System.out.println(header);
     }
 
     @Override
