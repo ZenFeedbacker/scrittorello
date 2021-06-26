@@ -4,10 +4,11 @@ import com.scritorrelo.Utils;
 import com.scritorrelo.opus.Packet;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Setter;
+import org.apache.commons.lang3.ObjectUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -28,16 +29,18 @@ public class Page {
     byte[] data;
     final ByteArrayInputStream stream;
 
-    String signature;
-    int version;
-    boolean continuation;
-    boolean EoS;
-    boolean BoS;
-    int granulePosition;
+    String signature = OGG_PAGE_HEADER;
+    int version = 0;
+    boolean continuation = false;
+    @Setter
+    boolean EoS = false;
+    @Setter
+    boolean BoS = false;
+    int granulePosition = 0;
     int bitstreamSerialNumber;
-    int pageSequenceNumber;
+    int pageSequenceNumber = 0;
     long CRCChecksum;
-    int numberPageSegments;
+    int numberPageSegments = 0;
     final List<Integer> segmentTable;
     List<Packet> packets;
 
@@ -85,23 +88,30 @@ public class Page {
         }
     }
 
-    private byte[] getHeader(){
+    public void addPacket(Packet packet) {
+
+        packets.add(packet);
+    }
+
+    private byte[] getHeader() {
         byte[] header = new byte[MIN_HEADER_SIZE + numberPageSegments];
 
-        Utils.copyArraytoArray("OggS".getBytes(StandardCharsets.US_ASCII),header,0);
+        Utils.copyArraytoArray("OggS".getBytes(StandardCharsets.US_ASCII), header, 0);
 
         header[4] = 0; // Version
 
         BitSet flags = new BitSet();
         flags.set(1, continuation);
         flags.set(2, BoS);
-        flags.set(4,EoS);
+        flags.set(4, EoS);
 
-        header[5] = flags.toByteArray()[0];
+        byte[] flagsByte = flags.toByteArray();
 
-        Utils.copyIntToArray(granulePosition, 8, header,6);
-        Utils.copyIntToArray(bitstreamSerialNumber, 4, header,14);
-        Utils.copyIntToArray(pageSequenceNumber, 4, header,18);
+        header[5] = flagsByte.length == 0 ? 0 : flagsByte[0];
+
+        Utils.copyIntToArray(granulePosition, 8, header, 6);
+        Utils.copyIntToArray(bitstreamSerialNumber, 4, header, 14);
+        Utils.copyIntToArray(pageSequenceNumber, 4, header, 18);
 
         // Checksum @ 22 left blank for now
 
@@ -117,13 +127,38 @@ public class Page {
         Checksum checksum = new CRC32();
 
         byte[] header = getHeader();
-        checksum.update(header,0,header.length);
+        checksum.update(header, 0, header.length);
 
-        if(data != null && data.length > 0) {
-            checksum.update(data, header.length, data.length);
+        for(Packet packet : packets){
+
         }
+//        if (data != null && data.length > 0) {
+//            checksum.update(data, header.length, data.length);
+//        }
 
         return checksum.getValue();
+    }
+
+
+    public int getHeaderSize() {
+
+        return MIN_HEADER_SIZE + numberPageSegments;
+    }
+
+    public int getPageSize() {
+
+        return getHeaderSize() + segmentTable.stream().mapToInt(Integer::intValue).sum();
+    }
+
+    public byte[] toByteArray() {
+
+        byte[] page = new byte[getPageSize()];
+
+        Utils.copyArraytoArray(getHeader(), page, 0);
+        if (!isNull(data) && data.length > 0) {
+            Utils.copyArraytoArray(data, page, getHeaderSize());
+        }
+        return page;
     }
 
     @Override

@@ -1,12 +1,11 @@
 package com.scritorrelo;
 
-import com.google.common.primitives.Longs;
-
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Utils {
 
@@ -95,5 +94,10 @@ public class Utils {
     public static void copyIntToArray(int from, int len, byte [] to, int pos){
         byte[] fromArray = ByteBuffer.allocate(len).putInt(from).array();
         System.arraycopy(fromArray, 0, to,  pos, fromArray.length);
+    }
+
+    public static int randomStreamSerialNumber(){
+
+        return  ThreadLocalRandom.current().nextInt();
     }
 }

@@ -1,6 +1,7 @@
 package com.scritorrelo.ogg;
 
 import com.google.common.primitives.Bytes;
+import com.scritorrelo.Utils;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -46,4 +47,22 @@ public class OggFile {
 
         //pages.forEach(System.out::println);
     }
+
+    public OggFile(Stream oggStream) {
+
+        file = new byte[oggStream.pages.stream().mapToInt(Page::getPageSize).sum()];
+
+        int idx = 0;
+
+        for (Page page : oggStream.pages) {
+            Utils.copyArraytoArray(page.toByteArray(), file, idx);
+            idx += page.getPageSize();
+        }
+    }
+
+    public void writeToFile(String filename) throws IOException {
+        FileUtils.writeByteArrayToFile(new File(filename), file);
+
+    }
+
 }

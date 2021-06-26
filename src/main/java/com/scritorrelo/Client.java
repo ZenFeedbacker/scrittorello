@@ -4,18 +4,11 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketExtension;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.scritorrelo.ogg.OggFile;
-import org.gagravarr.ogg.OggPacket;
-import org.gagravarr.ogg.OggPacketReader;
-import org.gagravarr.ogg.OggPage;
-import org.gagravarr.ogg.tools.OggInfoTool;
-import org.gagravarr.opus.OpusFile;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.json.Json;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStreamReader;
-import java.lang.reflect.Method;
 
 @SpringBootApplication
 public class Client {
@@ -34,7 +27,7 @@ public class Client {
 
     public static void main(String[] args) throws Exception {
 
-        OggFile file = new OggFile(sampleFile);
+        //OggFile file = new OggFile(sampleFile);
 
         // Connect to the echo server.
         WebSocket ws = connect();

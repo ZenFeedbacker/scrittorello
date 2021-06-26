@@ -1,12 +1,15 @@
 package com.scritorrelo;
 
 import com.neovisionaries.ws.client.WebSocket;
+import com.scritorrelo.ogg.OggFile;
+import com.scritorrelo.ogg.Stream;
 import com.scritorrelo.zello.Command;
 import com.scritorrelo.zello.AudioFrame;
 import com.scritorrelo.zello.AudioStream;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
@@ -14,7 +17,7 @@ public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdap
 
     HashMap<Integer, AudioStream> streams = new HashMap<>();
 
-    public void onTextMessage(WebSocket websocket, String message) throws JSONException {
+    public void onTextMessage(WebSocket websocket, String message) throws JSONException, IOException {
         LocalDateTime timestamp = LocalDateTime.now();
         JSONObject obj = new JSONObject(message);
         System.out.println(message);
@@ -31,7 +34,12 @@ public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdap
                     System.out.println(stream);
                     break;
                 case on_stream_stop:
-                    System.out.println(streams.get(obj.getInt("stream_id")));
+                    AudioStream audioStream = streams.get(obj.getInt("stream_id"));
+                    System.out.println(audioStream);
+                    Stream oggStream = new Stream(audioStream.getOpusStream());
+                    OggFile oggFile = new OggFile(oggStream);
+                    oggFile.writeToFile("src/main/resources/out.opus");
+                    System.out.println("Wrote file");
                     break;
                 default:
                     break;

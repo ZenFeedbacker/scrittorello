@@ -7,7 +7,6 @@ import org.json.JSONObject;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static java.util.Objects.isNull;
 
@@ -68,17 +67,12 @@ public class AudioStream {
     public Stream getOpusStream() {
         Stream opusStream = new Stream();
 
-        opusStream.addPacket(createIDHeader());
-        opusStream.addPacket(createCommentHeader());
+        opusStream.setIdHeaderPacket(createIDHeader());
+        opusStream.addCommentPacket(createCommentHeader());
 
-        audioFrames.forEach(packet -> opusStream.addPacket(new DataPacket(packet.getData())));
+        audioFrames.forEach(packet -> opusStream.addDataPacket(new DataPacket(packet.getData())));
 
         return opusStream;
-    }
-
-    public int randomStreamSerialNumber(){
-
-        return  ThreadLocalRandom.current().nextInt();
     }
 
     public IDHeaderPacket createIDHeader() {
@@ -102,6 +96,8 @@ public class AudioStream {
                 signature(CommentHeaderPacket.OPUS_COMMENT_HEADER).
                 vendorStr("").
                 vendorStrLen(0).
+                userCommentLens(new ArrayList<>()).
+                userCommentListLen(0).
                 build();
     }
 }
