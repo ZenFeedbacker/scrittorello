@@ -1,8 +1,11 @@
 package com.scritorrelo;
 
+import com.google.common.primitives.Longs;
+
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 public class Utils {
@@ -83,5 +86,14 @@ public class Utils {
     public static String readByteArrayToString(byte[] stream, int len) {
 
         return new String(Arrays.copyOf(stream, len));
+    }
+
+    public static void copyArraytoArray(byte[] from, byte [] to, int pos){
+        System.arraycopy(from, 0, to,  pos, from.length);
+    }
+
+    public static void copyIntToArray(int from, int len, byte [] to, int pos){
+        byte[] fromArray = ByteBuffer.allocate(len).putInt(from).array();
+        System.arraycopy(fromArray, 0, to,  pos, fromArray.length);
     }
 }
