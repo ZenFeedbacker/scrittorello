@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.codec.binary.Hex;
 
-import java.io.EOFException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +17,7 @@ public class AudioPacket {
     @Getter
     List<DataPacket> packets;
 
-    public void addFrame(AudioFrame frame) throws EOFException {
+    public void addFrame(AudioFrame frame) {
 
         if (isNull(packets)) {
             streamID = frame.getStream_id();

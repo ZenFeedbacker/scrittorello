@@ -4,13 +4,12 @@ import com.scritorrelo.Utils;
 import com.scritorrelo.opus.Packet;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class Stream {
 
-    List<Page> pages;
+    final List<Page> pages;
 
     public Stream(com.scritorrelo.opus.Stream opusStream) {
 
@@ -50,8 +49,9 @@ public class Stream {
                             packets(Collections.singletonList(packet)).
                             build();
 
+            oggPage.generateChecksum();
+
             pages.add(oggPage);
         }
-
     }
 }

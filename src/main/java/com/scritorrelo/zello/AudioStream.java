@@ -1,9 +1,12 @@
 package com.scritorrelo.zello;
 
+import com.scritorrelo.Client;
 import com.scritorrelo.opus.*;
+import org.gagravarr.opus.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,11 +85,11 @@ public class AudioStream {
                 signature(IDHeaderPacket.OPUS_ID_HEADER).
                 version(1)
                 .channelCount(1).
-                outputGain(0).
-                channelMappingFamily(0).
-                sampleRate(48000).
-                preskip(0).
-                build();
+                        outputGain((short) 0).
+                        channelMappingFamily(0).
+                        sampleRate(48000).
+                        preskip((short) 0).
+                        build();
     }
 
     private CommentHeaderPacket createCommentHeader() {
@@ -99,5 +102,23 @@ public class AudioStream {
                 userCommentLens(new ArrayList<>()).
                 userCommentListLen(0).
                 build();
+    }
+
+    public void toFile() throws IOException {
+
+        OutputStream out = new FileOutputStream(Client.outputFile);
+
+        OpusFile opus = new OpusFile(out);
+        opus.getInfo().setSampleRate(48000);
+        opus.getInfo().setNumChannels(2);
+        opus.getInfo().setOutputGain(0);
+        opus.getInfo().setPreSkip(0);
+        opus.getTags().addComment("title", "Test Dummy Audio");
+
+        for (AudioFrame af : audioFrames) {
+            opus.writeAudioData(new OpusAudioData(af.data));
+        }
+
+        opus.close();
     }
 }

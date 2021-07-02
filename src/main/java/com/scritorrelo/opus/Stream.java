@@ -11,8 +11,8 @@ public class Stream {
 
     @Setter
     IDHeaderPacket idHeaderPacket;
-    List<CommentHeaderPacket> commentHeaderPackets;
-    List<Packet> dataPackets;
+    final List<CommentHeaderPacket> commentHeaderPackets;
+    final List<Packet> dataPackets;
 
 
     public Stream() {

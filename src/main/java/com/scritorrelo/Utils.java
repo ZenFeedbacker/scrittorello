@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -87,12 +88,15 @@ public class Utils {
         return new String(Arrays.copyOf(stream, len));
     }
 
-    public static void copyArraytoArray(byte[] from, byte [] to, int pos){
+    public static void copyArrayToArray(byte[] from, byte [] to, int pos){
         System.arraycopy(from, 0, to,  pos, from.length);
     }
 
     public static void copyIntToArray(int from, int len, byte [] to, int pos){
-        byte[] fromArray = ByteBuffer.allocate(len).putInt(from).array();
+        ByteBuffer byteBuffer = ByteBuffer.allocate(len);
+        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        byteBuffer.putInt(from);
+        byte[] fromArray = byteBuffer.array();
         System.arraycopy(fromArray, 0, to,  pos, fromArray.length);
     }
 

@@ -15,9 +15,10 @@ import java.util.HashMap;
 
 public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdapter {
 
-    HashMap<Integer, AudioStream> streams = new HashMap<>();
+    final HashMap<Integer, AudioStream> streams = new HashMap<>();
 
     public void onTextMessage(WebSocket websocket, String message) throws JSONException, IOException {
+
         LocalDateTime timestamp = LocalDateTime.now();
         JSONObject obj = new JSONObject(message);
         System.out.println(message);
@@ -31,26 +32,27 @@ public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdap
                 case on_stream_start:
                     AudioStream stream = new AudioStream(obj, timestamp);
                     streams.put(obj.getInt("stream_id"), stream);
-                    System.out.println(stream);
+                    //System.out.println(stream);
                     break;
                 case on_stream_stop:
                     AudioStream audioStream = streams.get(obj.getInt("stream_id"));
-                    System.out.println(audioStream);
+                  //  audioStream.toFile();
+//                    System.out.println(audioStream);
                     Stream oggStream = new Stream(audioStream.getOpusStream());
                     OggFile oggFile = new OggFile(oggStream);
-                    oggFile.writeToFile("src/main/resources/out.opus");
-                    System.out.println("Wrote file");
+                    oggFile.writeToFile(Client.outputFile);
+                    System.out.println("Wrote file " + Client.outputFile);
+                    Client.ws.disconnect();
                     break;
                 default:
                     break;
-
             }
         }
     }
 
     public void onBinaryMessage(WebSocket websocket, byte[] binary) {
-        AudioFrame audioFrame = new AudioFrame(binary);
 
+        AudioFrame audioFrame = new AudioFrame(binary);
         streams.get(audioFrame.getStream_id()).addFrame(audioFrame);
     }
 }

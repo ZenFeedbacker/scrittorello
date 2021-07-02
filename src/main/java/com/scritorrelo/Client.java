@@ -4,38 +4,42 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketExtension;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.scritorrelo.ogg.OggFile;
+import org.gagravarr.ogg.tools.OggInfoTool;
+import org.gagravarr.opus.tools.OpusInfoTool;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.json.Json;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 @SpringBootApplication
 public class Client {
+
     private static final String SERVER = "wss://zello.io/ws";
 
-    /**
-     * The timeout value in milliseconds for socket connection.
-     */
     private static final int TIMEOUT = 5000;
 
     private static final WebSocketAdapter adapter = new WebSocketAdapter();
 
     private static final String auth_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJXa002ZW1WdVptVmxaRG94LjNYWXdFaDZoeUlNMk9xR2lBcDB0RjFQWXZIblVJZVBCdWhrNWFpYnZrOGs9IiwiZXhwIjoxNjI2NDQ0NjQ2LCJhenAiOiJkZXYifQ==.Jk8AoJEixXNGbv8k1bHz9m/d6OoiyGc76znd6D5sCuBQYWBghSBcB5EC4TddD+oDOYUIkx6NRRxBGUCPIC/5+msbXs4QHPsw7MVpTZDuloZPPk5KY6VzTxrvyTVnzFolMInMPf8R/VMt11vD8G+ZICC+IDLiuCDB4obIcmsikVvdLIew5Hjm09segEThAOOlzzHhq2cHKsgVgeS9QqtTil7ddC+a4AXT+8oFavpHLwre+NS0xftk33HTVcyKyqprG2jsNZFvcEZeqbPj7A6Igx8oKKwjX8bqjeB2iYjayHcAgs/HHp/kg7RnnIm1iOLriHQe+zMHqmG9ODB+4qGlnA==";
 
-    private static final String sampleFile = "src/main/resources/speech.opus";
+    public static final String sampleFile = "src/main/resources/speech.opus";
+    public static final String outputFile = "src/main/resources/out.opus";
+
+    public static WebSocket ws;
 
     public static void main(String[] args) throws Exception {
 
-        //OggFile file = new OggFile(sampleFile);
 
-        // Connect to the echo server.
-        WebSocket ws = connect();
+        //parseFile(sampleFile);
 
-        // The standard input via BufferedReader.
-        BufferedReader in = getInput();
+        Files.deleteIfExists(Paths.get(outputFile));
 
-        // A text read from the standard input.
+        ws = connect();
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+
         String text;
 
         String json = Json.createObjectBuilder()
@@ -57,11 +61,22 @@ public class Client {
         }
 
         ws.disconnect();
+
+        parseFile(outputFile);
     }
 
-    /**
-     * Connect to the server.
-     */
+    private static void parseFile(String filename) throws IOException {
+
+        OggFile file = new OggFile(filename);
+
+        OpusInfoTool info = new OpusInfoTool();
+        //info.process(new File(filename), true);
+        OggInfoTool oggInfo = new OggInfoTool(new File(filename));
+        oggInfo.printStreamInfo();
+
+        System.exit(0);
+    }
+
     private static WebSocket connect() throws Exception {
         return new WebSocketFactory()
                 .setConnectionTimeout(TIMEOUT)
@@ -69,12 +84,5 @@ public class Client {
                 .addListener(adapter)
                 .addExtension(WebSocketExtension.PERMESSAGE_DEFLATE)
                 .connect();
-    }
-
-    /**
-     * Wrap the standard input with BufferedReader.
-     */
-    private static BufferedReader getInput() {
-        return new BufferedReader(new InputStreamReader(System.in));
     }
 }

@@ -3,9 +3,11 @@ package com.scritorrelo.opus;
 import com.scritorrelo.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import org.apache.commons.codec.binary.Hex;
 
 import java.io.EOFException;
+import java.nio.ByteBuffer;
+
+import java.lang.*;
 
 @Builder
 @AllArgsConstructor
@@ -16,9 +18,9 @@ public class IDHeaderPacket extends Packet {
     String signature;
     int version;
     int channelCount;
-    int preskip;
+    short preskip;
     int sampleRate;
-    int outputGain;
+    short outputGain;
     int channelMappingFamily;
     int streamCount;
     int coupleStreamCount;
@@ -28,12 +30,13 @@ public class IDHeaderPacket extends Packet {
 
         super(data);
 
+
         signature = Utils.readByteStreamToString(stream, 8);
         version = Utils.readByteStream(stream);
         channelCount = Utils.readByteStream(stream);
-        preskip = Utils.readByteStreamToInt(stream, 2);
+        preskip = (short) Utils.readByteStreamToInt(stream, 2);
         sampleRate = Utils.readByteStreamToInt(stream, 4);
-        outputGain = Utils.readByteStreamToInt(stream, 2);
+        outputGain =(short) Utils.readByteStreamToInt(stream, 2);
         channelMappingFamily = Utils.readByteStreamToInt(stream);
         if (channelMappingFamily != 0) {
             streamCount = Utils.readByteStreamToInt(stream);
@@ -43,9 +46,20 @@ public class IDHeaderPacket extends Packet {
     }
 
     @Override
-    public byte[] toByteArray(){
+    public byte[] toByteArray() {
 
-        return new byte[0];
+        ByteBuffer bb = ByteBuffer.allocate(19);
+
+        bb.put(signature.getBytes());
+        bb.put((byte) version);
+        bb.put((byte) channelCount);
+        bb.putShort(preskip);
+        bb.putInt(sampleRate);
+        bb.putShort(outputGain);
+        bb.put((byte)channelMappingFamily);
+
+        return bb.array();
+
     }
 
     @Override

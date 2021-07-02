@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 import java.io.EOFException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +46,14 @@ public class CommentHeaderPacket extends Packet {
     @Override
     public byte[] toByteArray(){
 
-        return new byte[0];
+        ByteBuffer bb = ByteBuffer.allocate(20);
+
+        bb.put(signature.getBytes());
+        bb.putInt(vendorStrLen);
+        bb.put(vendorStr.getBytes());
+        bb.putInt(userCommentListLen);
+
+        return bb.array();
     }
 
     @Override

@@ -5,7 +5,6 @@ import com.scritorrelo.opus.Packet;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Setter;
-import org.apache.commons.lang3.ObjectUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
@@ -26,33 +25,37 @@ public class Page {
 
     private final static int MIN_HEADER_SIZE = 27;
 
-    byte[] data;
+    private final static int POLYNOMIAL = 0x04c11db7;
+
+    //byte[] data;
     final ByteArrayInputStream stream;
 
+    @Builder.Default
     String signature = OGG_PAGE_HEADER;
+    @Builder.Default
     int version = 0;
+    @Builder.Default
     boolean continuation = false;
     @Setter
+    @Builder.Default
     boolean EoS = false;
     @Setter
+    @Builder.Default
     boolean BoS = false;
+    @Builder.Default
     int granulePosition = 0;
     int bitstreamSerialNumber;
+    @Builder.Default
     int pageSequenceNumber = 0;
-    long CRCChecksum;
+    int CRCChecksum;
+    @Builder.Default
     int numberPageSegments = 0;
     final List<Integer> segmentTable;
     List<Packet> packets;
 
     public Page(byte[] data) {
 
-        this(new ByteArrayInputStream(data));
-        this.data = data;
-    }
-
-    public Page(ByteArrayInputStream stream) {
-
-        this.stream = stream;
+        this.stream = new ByteArrayInputStream(data);
 
         segmentTable = new ArrayList<>();
         packets = new ArrayList<>();
@@ -76,34 +79,31 @@ public class Page {
                 segmentTable.add(Utils.readByteToIntBigEndian(stream));
             }
 
-            System.out.println(this);
+            //this.data = Utils.readRemainingByteStream(stream);
+
             for (int segment : segmentTable) {
                 if (segment != 0) {
                     Packet packet = Packet.PacketFactory(Utils.readByteStream(stream, segment));
                     packets.add(packet);
-                    //System.out.println(packet);
                 }
             }
+
         } catch (EOFException ignored) {
         }
     }
 
-    public void addPacket(Packet packet) {
-
-        packets.add(packet);
-    }
-
     private byte[] getHeader() {
+
         byte[] header = new byte[MIN_HEADER_SIZE + numberPageSegments];
 
-        Utils.copyArraytoArray("OggS".getBytes(StandardCharsets.US_ASCII), header, 0);
+        Utils.copyArrayToArray("OggS".getBytes(StandardCharsets.US_ASCII), header, 0);
 
-        header[4] = 0; // Version
+        header[4] = (byte) version;
 
         BitSet flags = new BitSet();
-        flags.set(1, continuation);
-        flags.set(2, BoS);
-        flags.set(4, EoS);
+        flags.set(0, continuation);
+        flags.set(1, BoS);
+        flags.set(2, EoS);
 
         byte[] flagsByte = flags.toByteArray();
 
@@ -117,26 +117,35 @@ public class Page {
 
         header[26] = (byte) numberPageSegments;
 
-        // System.arraycopy(segmentTable, 0, header, MIN_HEADER_SIZE, numberPageSegments);
+        int index = 27;
+        for(int segmentSize : segmentTable){
+            header[index] = (byte) segmentSize;
+            index += 1;
+        }
 
         return header;
     }
 
-    public long generateChecksum() {
+    public void generateChecksum() {
 
         Checksum checksum = new CRC32();
+   //     checksum.update(POLYNOMIAL);
 
         byte[] header = getHeader();
-        checksum.update(header, 0, header.length);
+        checksum.update(header, 0,  header.length);
 
         for(Packet packet : packets){
-
+            byte[] packetArray = packet.toByteArray();
+            checksum.update(packetArray, 0, packetArray.length);
         }
-//        if (data != null && data.length > 0) {
-//            checksum.update(data, header.length, data.length);
-//        }
 
-        return checksum.getValue();
+        //checksum.update(data, 0, data.length);
+
+        try {
+            this.CRCChecksum = Math.toIntExact(checksum.getValue());
+        } catch (ArithmeticException e){
+            this.CRCChecksum = 0;
+        }
     }
 
 
@@ -154,10 +163,22 @@ public class Page {
 
         byte[] page = new byte[getPageSize()];
 
-        Utils.copyArraytoArray(getHeader(), page, 0);
-        if (!isNull(data) && data.length > 0) {
-            Utils.copyArraytoArray(data, page, getHeaderSize());
+        int index = 0;
+
+        Utils.copyArrayToArray(getHeader(), page, index);
+        Utils.copyIntToArray(this.CRCChecksum, 4, page, 22);
+
+
+        index += getHeaderSize();
+
+        for(Packet packet : packets){
+            Utils.copyArrayToArray(packet.toByteArray(), page, index);
+            index += page.length;
         }
+
+        //Utils.copyArrayToArray(data, page, getHeaderSize());
+
+
         return page;
     }
 
@@ -168,13 +189,13 @@ public class Page {
 
         str.append("-------OggPage-------\n");
 
-        if (!isNull(data)) {
-            str.append("Length: ").append(data.length).append("\n");
-        }
+//        if (!isNull(data)) {
+//            str.append("Length: ").append(data.length).append("\n");
+//        }
 
-        str.append("Signature: ").append(signature).append("\n").
+            str.append("Signature: ").append(signature).append("\n").
                 append("Version: ").append(version).append("\n").
-                append("Is Continuation: ").append(continuation).append("\n").
+                append("Continuation: ").append(continuation).append("\n").
                 append("Beginning of Stream: ").append(BoS).append("\n").
                 append("End of Stream: ").append(EoS).append("\n").
                 append("Granule Position: ").append(granulePosition).append("\n").
@@ -186,6 +207,8 @@ public class Page {
         for (int i = 0; i < numberPageSegments; i++) {
             str.append("Lacing Value #").append(i).append(": ").append(segmentTable.get(i)).append("\n");
         }
+
+        packets.forEach(str::append);
 
         return str.toString();
     }
