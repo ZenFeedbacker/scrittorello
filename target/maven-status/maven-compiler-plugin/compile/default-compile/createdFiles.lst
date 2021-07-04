@@ -6,7 +6,6 @@ com\scritorrelo\ogg\OggFile.class
 com\scritorrelo\WebSocketAdapter.class
 com\scritorrelo\zello\AudioStream.class
 com\scritorrelo\opus\Packet.class
-com\scritorrelo\zello\TextMessage.class
 com\scritorrelo\opus\IDHeaderPacket.class
 com\scritorrelo\ogg\Page$PageBuilder.class
 com\scritorrelo\opus\CommentHeaderPacket.class

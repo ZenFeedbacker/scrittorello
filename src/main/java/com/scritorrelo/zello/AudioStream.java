@@ -23,17 +23,12 @@ public class AudioStream extends Message {
 
     public AudioStream(JSONObject json, LocalDateTime timestamp) throws JSONException {
 
+        super(json, timestamp);
+
         type = json.getString("type");
         codec = json.getString("codec");
         codecHeader = json.getString("codec_header");
-        id = json.getInt("stream_id");
-        channel = json.getString("channel");
-        fromUser = json.getString("from");
         packetDuration = json.getInt("packet_duration");
-        this.timestamp = timestamp;
-        if (json.has("for")) {
-            forUser = json.getString("for");
-        }
         audioFrames = new ArrayList<>();
     }
 
