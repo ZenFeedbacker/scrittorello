@@ -13,17 +13,12 @@ import java.util.List;
 
 import static java.util.Objects.isNull;
 
-public class AudioStream {
+public class AudioStream extends Message {
 
     String type;
     String codec;
     String codecHeader;
     int packetDuration;
-    int streamID;
-    String channel;
-    String fromUser;
-    String forUser;
-    LocalDateTime timestamp;
     List<AudioFrame> audioFrames;
 
     public AudioStream(JSONObject json, LocalDateTime timestamp) throws JSONException {
@@ -31,7 +26,7 @@ public class AudioStream {
         type = json.getString("type");
         codec = json.getString("codec");
         codecHeader = json.getString("codec_header");
-        streamID = json.getInt("stream_id");
+        id = json.getInt("stream_id");
         channel = json.getString("channel");
         fromUser = json.getString("from");
         packetDuration = json.getInt("packet_duration");
@@ -56,7 +51,7 @@ public class AudioStream {
         stringBuilder.append("Packet Duration: ").append(packetDuration).append("\n");
         stringBuilder.append("Channel: ").append(channel).append("\n");
         stringBuilder.append("From: ").append(fromUser).append("\n");
-        stringBuilder.append("Stream ID: ").append(streamID).append("\n");
+        stringBuilder.append("Stream ID: ").append(id).append("\n");
         stringBuilder.append("Packet Duration: ").append(packetDuration).append("\n");
         stringBuilder.append("Nums of Packets: ").append(audioFrames.size()).append("\n");
 
