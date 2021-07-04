@@ -1,4 +1,8 @@
 package com.scritorrelo.zello;
 
-public class Image {
+public class Image extends Message{
+    String type;
+    int height;
+    int width;
+    String source;
 }

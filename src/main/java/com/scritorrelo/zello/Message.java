@@ -2,9 +2,8 @@ package com.scritorrelo.zello;
 
 import java.time.LocalDateTime;
 
-public class Message {
+public abstract class Message {
 
-    Command command;
     String channel;
     String fromUser;
     String forUser;
