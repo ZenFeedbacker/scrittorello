@@ -63,7 +63,6 @@ public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdap
                     System.out.println(channel);
                 case on_error:
                     Error error = new Error(obj, timestamp);
-                case logon:
                 default:
                     break;
             }

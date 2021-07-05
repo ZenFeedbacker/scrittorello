@@ -31,6 +31,4 @@ public enum ErrorCode {
 
         return Arrays.stream(ErrorCode.values()).filter(e -> e.code.equals(code)).findFirst().orElse(null);
     }
-
-
 }

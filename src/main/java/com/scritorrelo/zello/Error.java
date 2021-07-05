@@ -12,6 +12,6 @@ public class Error {
 
     public Error(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         this.timestamp = timestamp;
-        code = ErrorCode.valueOf(obj.getString("error"));
+        code = ErrorCode.valueOfCode(obj.getString("error"));
     }
 }
