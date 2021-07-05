@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 @ToString(callSuper = true)
 public class Location extends Message {
+
     float longitude;
     float latitude;
     String formattedAddress;

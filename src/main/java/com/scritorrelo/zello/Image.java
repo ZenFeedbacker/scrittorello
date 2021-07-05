@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 @ToString(callSuper = true)
 public class Image extends Message{
+
     String type;
     int height;
     int width;

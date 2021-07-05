@@ -4,6 +4,7 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.scritorrelo.ogg.OggFile;
 import com.scritorrelo.ogg.Stream;
 import com.scritorrelo.zello.*;
+import com.scritorrelo.zello.Error;
 import org.apache.commons.codec.binary.Hex;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,6 +61,9 @@ public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdap
                 case on_channel_status:
                     Channel channel = new Channel(obj, timestamp);
                     System.out.println(channel);
+                case on_error:
+                    Error error = new Error(obj, timestamp);
+                case logon:
                 default:
                     break;
             }

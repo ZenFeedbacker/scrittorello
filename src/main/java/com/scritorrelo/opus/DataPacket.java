@@ -38,7 +38,6 @@ public class DataPacket extends Packet {
     @Override
     public byte[] toByteArray() {
 
-
         return isNotEmpty(packet) ? packet : new byte[0];
     }
 
