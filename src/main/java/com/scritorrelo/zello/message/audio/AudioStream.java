@@ -1,7 +1,9 @@
-package com.scritorrelo.zello;
+package com.scritorrelo.zello.message.audio;
 
 import com.scritorrelo.Client;
 import com.scritorrelo.opus.*;
+import com.scritorrelo.zello.message.Message;
+import com.scritorrelo.zello.message.audio.AudioFrame;
 import org.gagravarr.opus.*;
 import org.json.JSONException;
 import org.json.JSONObject;

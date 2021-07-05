@@ -1,4 +1,4 @@
-package com.scritorrelo.zello;
+package com.scritorrelo.zello.message.image;
 
 import lombok.Getter;
 import lombok.ToString;

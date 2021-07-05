@@ -1,4 +1,4 @@
-package com.scritorrelo.zello;
+package com.scritorrelo.zello.message;
 
 import lombok.ToString;
 import org.json.JSONException;
@@ -9,11 +9,11 @@ import java.time.LocalDateTime;
 @ToString
 public abstract class Message {
 
-    String channel;
-    String fromUser;
-    String forUser;
-    int id;
-    LocalDateTime timestamp;
+    protected String channel;
+    protected String fromUser;
+    protected String forUser;
+    protected int id;
+    protected LocalDateTime timestamp;
 
     public Message(JSONObject obj, LocalDateTime timestamp) throws JSONException {
 

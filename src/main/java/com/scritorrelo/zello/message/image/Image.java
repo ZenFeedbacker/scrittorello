@@ -1,5 +1,6 @@
-package com.scritorrelo.zello;
+package com.scritorrelo.zello.message.image;
 
+import com.scritorrelo.zello.message.Message;
 import lombok.ToString;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7,7 +8,7 @@ import org.json.JSONObject;
 import java.time.LocalDateTime;
 
 @ToString(callSuper = true)
-public class Image extends Message{
+public class Image extends Message {
 
     String type;
     int height;

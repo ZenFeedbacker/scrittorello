@@ -1,4 +1,4 @@
-package com.scritorrelo.zello;
+package com.scritorrelo.zello.message.audio;
 
 import lombok.Getter;
 import org.apache.commons.codec.binary.Hex;
@@ -12,7 +12,7 @@ public class AudioFrame {
     final byte[] type;
     final int stream_id;
     final int packet_id;
-    final byte[] data;
+    public final byte[] data;
 
     public AudioFrame(byte[] binary) {
         type = Arrays.copyOfRange(binary, 0, 1);

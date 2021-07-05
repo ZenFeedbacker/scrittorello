@@ -4,14 +4,18 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.scritorrelo.ogg.OggFile;
 import com.scritorrelo.ogg.Stream;
 import com.scritorrelo.zello.*;
-import com.scritorrelo.zello.Error;
-import org.apache.commons.codec.binary.Hex;
+import com.scritorrelo.zello.message.error.Error;
+import com.scritorrelo.zello.message.audio.AudioStream;
+import com.scritorrelo.zello.message.audio.AudioFrame;
+import com.scritorrelo.zello.message.image.Image;
+import com.scritorrelo.zello.message.Location;
+import com.scritorrelo.zello.message.Text;
+import com.scritorrelo.zello.message.image.ImagePacket;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdapter {

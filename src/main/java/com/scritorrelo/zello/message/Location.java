@@ -1,5 +1,6 @@
-package com.scritorrelo.zello;
+package com.scritorrelo.zello.message;
 
+import com.scritorrelo.zello.message.Message;
 import lombok.ToString;
 import org.json.JSONException;
 import org.json.JSONObject;

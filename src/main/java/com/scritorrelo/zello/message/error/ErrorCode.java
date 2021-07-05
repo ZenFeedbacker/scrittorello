@@ -1,4 +1,4 @@
-package com.scritorrelo.zello;
+package com.scritorrelo.zello.message.error;
 
 import java.util.Arrays;
 

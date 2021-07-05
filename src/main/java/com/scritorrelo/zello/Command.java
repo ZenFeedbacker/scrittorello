@@ -8,5 +8,5 @@ public enum Command {
     on_error,
     on_image,
     on_text_message,
-    on_location;
+    on_location
 }

@@ -1,4 +1,4 @@
-package com.scritorrelo.zello;
+package com.scritorrelo.zello.message.audio;
 
 import com.scritorrelo.opus.DataPacket;
 import lombok.Getter;
