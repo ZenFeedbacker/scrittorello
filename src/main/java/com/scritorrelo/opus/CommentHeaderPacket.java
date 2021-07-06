@@ -15,14 +15,12 @@ public class CommentHeaderPacket extends Packet {
 
     public final static String OPUS_COMMENT_HEADER = "OpusTags";
 
-
     String signature;
     int vendorStrLen;
     String vendorStr;
     int userCommentListLen;
     List<Integer> userCommentLens;
     List<String> userComments;
-
 
     public CommentHeaderPacket(byte[] data) throws EOFException {
 
@@ -58,7 +56,6 @@ public class CommentHeaderPacket extends Packet {
 
     @Override
     public String toString() {
-
 
         StringBuilder str = new StringBuilder(
                 "-------Opus Comment Header-------\n" +

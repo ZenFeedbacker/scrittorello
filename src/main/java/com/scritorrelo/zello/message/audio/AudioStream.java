@@ -3,12 +3,14 @@ package com.scritorrelo.zello.message.audio;
 import com.scritorrelo.Client;
 import com.scritorrelo.opus.*;
 import com.scritorrelo.zello.message.Message;
-import com.scritorrelo.zello.message.audio.AudioFrame;
 import org.gagravarr.opus.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,11 @@ public class AudioStream extends Message {
         codecHeader = json.getString("codec_header");
         packetDuration = json.getInt("packet_duration");
         audioFrames = new ArrayList<>();
+    }
+
+    @Override
+    public PreparedStatement getPreparedStatement(Connection conn) throws SQLException {
+        return null;
     }
 
     public void addFrame(AudioFrame frame) {
@@ -75,13 +82,13 @@ public class AudioStream extends Message {
         return IDHeaderPacket.
                 builder().
                 signature(IDHeaderPacket.OPUS_ID_HEADER).
-                version(1)
-                .channelCount(1).
-                        outputGain((short) 0).
-                        channelMappingFamily(0).
-                        sampleRate(48000).
-                        preskip((short) 0).
-                        build();
+                version(1).
+                channelCount(1).
+                outputGain((short) 0).
+                channelMappingFamily(0).
+                sampleRate(48000).
+                preskip((short) 0).
+                build();
     }
 
     private CommentHeaderPacket createCommentHeader() {

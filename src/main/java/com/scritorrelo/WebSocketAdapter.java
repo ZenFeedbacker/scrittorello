@@ -29,6 +29,11 @@ public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdap
         System.out.println(message);
 
 
+        if(obj.has("refresh_token")){
+            Client.refresh_token = obj.getString("refresh_token");
+            return;
+        }
+
         if (obj.has("command")) {
             String cmnd = obj.getString("command");
 
@@ -52,7 +57,8 @@ public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdap
                     break;
                 case on_text_message:
                     Text text = new Text(obj, timestamp);
-                    System.out.println(text);
+                    Database.addMessage(text);
+                    //System.out.println(text);
                     break;
                 case on_image:
                     Image image = new Image(obj, timestamp);

@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
-import static java.util.Objects.isNull;
-
 @Builder
 @AllArgsConstructor
 public class Page {
@@ -129,7 +127,7 @@ public class Page {
     public void generateChecksum() {
 
         Checksum checksum = new CRC32();
-   //     checksum.update(POLYNOMIAL);
+   //   checksum.update(POLYNOMIAL);
 
         byte[] header = getHeader();
         checksum.update(header, 0,  header.length);
@@ -177,7 +175,6 @@ public class Page {
         }
 
         //Utils.copyArrayToArray(data, page, getHeaderSize());
-
 
         return page;
     }
