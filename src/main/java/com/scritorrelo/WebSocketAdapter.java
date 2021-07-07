@@ -28,9 +28,8 @@ public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdap
         JSONObject obj = new JSONObject(message);
         System.out.println(message);
 
-
-        if(obj.has("refresh_token")){
-            Client.refresh_token = obj.getString("refresh_token");
+        if (obj.has("refresh_token")) {
+            refreshTokenHandler(obj, timestamp);
             return;
         }
 
@@ -41,60 +40,102 @@ public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdap
 
             switch (command) {
                 case on_stream_start:
-                    AudioStream stream = new AudioStream(obj, timestamp);
-                    streams.put(obj.getInt("stream_id"), stream);
-                    //System.out.println(stream);
+                    streamStartHandler(obj, timestamp);
                     break;
                 case on_stream_stop:
-                    AudioStream audioStream = streams.get(obj.getInt("stream_id"));
-                    //  audioStream.toFile();
-//                    System.out.println(audioStream);
-                    Stream oggStream = new Stream(audioStream.getOpusStream());
-                    OggFile oggFile = new OggFile(oggStream);
-                    oggFile.writeToFile(Client.outputFile);
-                    System.out.println("Wrote file " + Client.outputFile);
-                    Client.ws.disconnect();
+                    streamStopHandler(obj, timestamp);
                     break;
                 case on_text_message:
-                    Text text = new Text(obj, timestamp);
-                    Database.addMessage(text);
-                    //System.out.println(text);
+                    textMessageHandler(obj, timestamp);
                     break;
                 case on_image:
-                    Image image = new Image(obj, timestamp);
-                    //System.out.println(image);
+                    imageMessageHandler(obj, timestamp);
                     break;
                 case on_location:
-                    Location location = new Location(obj, timestamp);
-                    System.out.println(location);
+                    locationMessageHandler(obj, timestamp);
                     break;
                 case on_channel_status:
-                    Channel channel = new Channel(obj, timestamp);
-                    System.out.println(channel);
+                    channelStatusHandler(obj, timestamp);
+                    break;
                 case on_error:
-                    Error error = new Error(obj, timestamp);
+                    errorHandler(obj, timestamp);
+                    break;
                 default:
                     break;
             }
         }
     }
 
+    private void refreshTokenHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+        Client.refresh_token = obj.getString("refresh_token");
+    }
+
     public void onBinaryMessage(WebSocket websocket, byte[] binary) {
 
         switch (binary[0]) {
             case ((byte) 1):
-                System.out.println("Received audio binary");
-                AudioFrame audioFrame = new AudioFrame(binary);
-                streams.get(audioFrame.getStream_id()).addFrame(audioFrame);
+                audioBinaryHandler(binary);
                 break;
             case ((byte) 2):
-                System.out.println("Received image binary");
-                ImagePacket image = new ImagePacket(binary);
-                System.out.println(image.isThumbnail() ? "Thumbnail" : "Full Image");
+                imageBinaryHandler(binary);
                 break;
             default:
                 System.out.println("Received unknown binary, type " + binary[0]);
                 break;
         }
+    }
+
+    private void imageBinaryHandler(byte[] binary) {
+        System.out.println("Received image binary");
+        ImagePacket image = new ImagePacket(binary);
+        System.out.println(image.isThumbnail() ? "Thumbnail" : "Full Image");
+    }
+
+    private void audioBinaryHandler(byte[] binary) {
+        System.out.println("Received audio binary");
+        AudioFrame audioFrame = new AudioFrame(binary);
+        streams.get(audioFrame.getStream_id()).addFrame(audioFrame);
+    }
+
+    public void channelStatusHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+
+        Channel channel = new Channel(obj, timestamp);
+        System.out.println(channel);
+    }
+
+    public void errorHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+        Error error = new Error(obj, timestamp);
+    }
+
+    public void locationMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+        Location location = new Location(obj, timestamp);
+        System.out.println(location);
+    }
+    public void textMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+        Text text = new Text(obj, timestamp);
+        Database.addMessage(text);
+        //System.out.println(text);
+    }
+
+    public void imageMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+        Image image = new Image(obj, timestamp);
+        //System.out.println(image);
+    }
+
+    public void streamStartHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+        AudioStream stream = new AudioStream(obj, timestamp);
+        streams.put(obj.getInt("stream_id"), stream);
+        //System.out.println(stream);
+    }
+
+    public void streamStopHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException, IOException {
+        AudioStream audioStream = streams.get(obj.getInt("stream_id"));
+        //  audioStream.toFile();
+//                    System.out.println(audioStream);
+        Stream oggStream = new Stream(audioStream.getOpusStream());
+        OggFile oggFile = new OggFile(oggStream);
+        oggFile.writeToFile(Client.outputFile);
+        System.out.println("Wrote file " + Client.outputFile);
+        Client.ws.disconnect();
     }
 }

@@ -16,11 +16,11 @@ import java.nio.file.Paths;
 @SpringBootApplication
 public class Client {
 
-    private static final String SERVER = "wss://zello.io/ws";
+    public static final String SERVER = "wss://zello.io/ws";
 
-    private static final int TIMEOUT = 5000;
+    public static final int TIMEOUT = 5000;
 
-    private static final WebSocketAdapter adapter = new WebSocketAdapter();
+    public static final WebSocketAdapter adapter = new WebSocketAdapter();
 
     private static final String auth_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJXa002ZW1WdVptVmxaRG94LjNYWXdFaDZoeUlNMk9xR2lBcDB0RjFQWXZIblVJZVBCdWhrNWFpYnZrOGs9IiwiZXhwIjoxNjI2NDQ0NjQ2LCJhenAiOiJkZXYifQ==.Jk8AoJEixXNGbv8k1bHz9m/d6OoiyGc76znd6D5sCuBQYWBghSBcB5EC4TddD+oDOYUIkx6NRRxBGUCPIC/5+msbXs4QHPsw7MVpTZDuloZPPk5KY6VzTxrvyTVnzFolMInMPf8R/VMt11vD8G+ZICC+IDLiuCDB4obIcmsikVvdLIew5Hjm09segEThAOOlzzHhq2cHKsgVgeS9QqtTil7ddC+a4AXT+8oFavpHLwre+NS0xftk33HTVcyKyqprG2jsNZFvcEZeqbPj7A6Igx8oKKwjX8bqjeB2iYjayHcAgs/HHp/kg7RnnIm1iOLriHQe+zMHqmG9ODB+4qGlnA==";
 
@@ -42,14 +42,7 @@ public class Client {
 
         String text;
 
-        String json = Json.createObjectBuilder()
-                .add("command", "logon")
-                .add("seq", 1)
-                .add("auth_token", auth_token)
-                .add("channel", "Test1653")
-                .add("listen_only", "true")
-                .build()
-                .toString();
+        String json;
 
         json = createLogonString("Test1653", 1);
 
@@ -62,8 +55,9 @@ public class Client {
 
         while ((text = in.readLine()) != null) {
             if (text.equals("exit")) {
-                break;
-            }
+                json = createLogonString("Test143298h", 2);
+
+                ws.sendText(json);            }
         }
 
         ws.disconnect();
@@ -73,11 +67,12 @@ public class Client {
 
     private static String createLogonString(String channelName, int seq){
 
-
+        //String token = refresh_token == null ? auth_token : refresh_token;
+        String token = auth_token;
         return  Json.createObjectBuilder()
                 .add("command", "logon")
                 .add("seq", seq)
-                .add("auth_token", auth_token)
+                .add("auth_token", token)
                 .add("channel", channelName)
                 .add("listen_only", "true")
                 .build()

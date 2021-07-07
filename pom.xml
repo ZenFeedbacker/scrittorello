@@ -125,6 +125,13 @@
             <artifactId>h2</artifactId>
             <version>1.4.200</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-websocket -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <version>5.3.8</version>
+        </dependency>
+
 
         <!--        <dependency>-->
 <!--            <groupId>net.tomp2p</groupId>-->
