@@ -2,7 +2,6 @@ package com.scritorrelo;
 
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
-import com.neovisionaries.ws.client.WebSocketFrame;
 import com.scritorrelo.ogg.OggFile;
 import com.scritorrelo.ogg.Stream;
 import com.scritorrelo.zello.Channel;
@@ -17,11 +16,15 @@ import com.scritorrelo.zello.message.image.ImagePacket;
 import lombok.Setter;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
+@Component
+@Scope("prototype")
 public class ZelloWebSocketAdapter extends WebSocketAdapter {
 
     @Setter

@@ -1,10 +1,15 @@
 package com.scritorrelo;
 
+import com.neovisionaries.ws.client.WebSocketException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,9 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Component
 public class WebSocketManager {
-
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketManager.class);
 
@@ -26,49 +30,49 @@ public class WebSocketManager {
     public static final String AUTH_TOKEN = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJXa002ZW1WdVptVmxaRG94LjNYWXdFaDZoeUlNMk9xR2lBcDB0RjFQWXZIblVJZVBCdWhrNWFpYnZrOGs9IiwiZXhwIjoxNjI2NDQ0NjQ2LCJhenAiOiJkZXYifQ==.Jk8AoJEixXNGbv8k1bHz9m/d6OoiyGc76znd6D5sCuBQYWBghSBcB5EC4TddD+oDOYUIkx6NRRxBGUCPIC/5+msbXs4QHPsw7MVpTZDuloZPPk5KY6VzTxrvyTVnzFolMInMPf8R/VMt11vD8G+ZICC+IDLiuCDB4obIcmsikVvdLIew5Hjm09segEThAOOlzzHhq2cHKsgVgeS9QqtTil7ddC+a4AXT+8oFavpHLwre+NS0xftk33HTVcyKyqprG2jsNZFvcEZeqbPj7A6Igx8oKKwjX8bqjeB2iYjayHcAgs/HHp/kg7RnnIm1iOLriHQe+zMHqmG9ODB+4qGlnA==";
     private static final String DEFAULT_SOURCE_FILE = "ChannelsList.txt";
 
-    private static WebSocketManager manager;
     private static Map<String, ZelloWebSocket> socketMap;
+
+    public static ReentrantLock socketLock;
 
     @Setter
     private String sourceFile = DEFAULT_SOURCE_FILE;
 
-    public static WebSocketManager getInstance() {
-
-        if (manager == null) {
-            manager = new WebSocketManager();
-        }
-        return manager;
-    }
-
     public void init() throws Exception {
         socketMap = new HashMap<>();
 
-        File file = getFileFromResource("ChannelsList.txt");
+        File file = getFileFromResource(sourceFile);
 
         FileReader fr = new FileReader(file); //reads the file
         BufferedReader br = new BufferedReader(fr);
 
         String channel;
 
-        ReentrantLock socketLock = new ReentrantLock();
+        socketLock = new ReentrantLock();
 
         while ((channel = br.readLine()) != null) {
-            logger.info(channel);
-
-            ZelloWebSocket ws = new ZelloWebSocket(channel);
-
-            socketLock.lock();
-
-            try {
-                ws.connect(socketLock);
-            } finally {
-                socketLock.unlock();
-            }
-
-            ws.login();
-
-            socketMap.put(channel, ws);
+            initSocket(channel);
         }
+    }
+
+    private void initSocket(String channelName) throws WebSocketException {
+        logger.info(channelName);
+
+        ZelloWebSocket ws = Client.ctx.getBean(ZelloWebSocket.class);
+
+        ws.setChannelName(channelName);
+
+        socketLock.lock();
+
+        try {
+            System.out.println(ws.getState());
+            ws.connect(socketLock);
+        } finally {
+            socketLock.unlock();
+        }
+
+        ws.login();
+
+        socketMap.put(channelName, ws);
     }
 
     private static File getFileFromResource(String fileName) throws URISyntaxException {

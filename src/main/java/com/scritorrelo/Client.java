@@ -2,7 +2,10 @@ package com.scritorrelo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -15,9 +18,16 @@ public class Client {
     public static final String sampleFile = "src/main/resources/speech.opus";
     public static final String outputFile = "src/main/resources/out.opus";
 
+    public static ApplicationContext ctx;
+
+    @Autowired
+    public static WebSocketManager manager;
+
     public static void main(String[] args) throws Exception {
 
-        WebSocketManager manager = WebSocketManager.getInstance();
+        ctx = new AnnotationConfigApplicationContext(Client.class);
+        manager = ctx.getBean(WebSocketManager.class);
+
         manager.init();
 
         System.out.println("connect");

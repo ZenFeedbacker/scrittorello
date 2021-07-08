@@ -1,19 +1,24 @@
 package com.scritorrelo;
 
-import com.neovisionaries.ws.client.WebSocket;
-import com.neovisionaries.ws.client.WebSocketException;
-import com.neovisionaries.ws.client.WebSocketExtension;
-import com.neovisionaries.ws.client.WebSocketFactory;
+import com.neovisionaries.ws.client.*;
 import com.scritorrelo.zello.Channel;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.json.Json;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.scritorrelo.WebSocketManager.*;
 
 @Setter
+@Component
+@Scope("prototype")
 public class ZelloWebSocket {
 
     private String refreshToken;
@@ -22,36 +27,37 @@ public class ZelloWebSocket {
 
     private String channelName;
 
+    @Autowired
     private ZelloWebSocketAdapter adapter;
 
     private Channel channel;
 
-    public ZelloWebSocket(String channelName) throws WebSocketException, IOException {
-
-        this();
-        this.channelName = channelName;
-    }
-
-    public ZelloWebSocket() throws IOException {
-
-        adapter = new ZelloWebSocketAdapter();
-
+    @PostConstruct
+    public void init() throws IOException {
         socket = new WebSocketFactory()
                 .setConnectionTimeout(TIMEOUT)
                 .createSocket(SERVER)
                 .addListener(adapter)
                 .addExtension(WebSocketExtension.PERMESSAGE_DEFLATE);
 
-        adapter.setWs(this);
+        this.adapter.setWs(this);
     }
 
     public void connect(ReentrantLock lock) throws WebSocketException {
         lock.lock();
         try {
+            TimeUnit.SECONDS.sleep(3);
+
             socket.connect();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             lock.unlock();
         }
+    }
+
+    public WebSocketState getState(){
+        return socket.getState();
     }
 
     public void disconnect(){
