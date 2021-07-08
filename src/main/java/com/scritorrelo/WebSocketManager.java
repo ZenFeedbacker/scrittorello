@@ -1,15 +1,11 @@
 package com.scritorrelo;
 
-import com.neovisionaries.ws.client.WebSocket;
-import com.neovisionaries.ws.client.WebSocketExtension;
-import com.neovisionaries.ws.client.WebSocketFactory;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.json.Json;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -17,6 +13,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class WebSocketManager {
@@ -35,9 +32,9 @@ public class WebSocketManager {
     @Setter
     private String sourceFile = DEFAULT_SOURCE_FILE;
 
-    public static WebSocketManager getInstance(){
+    public static WebSocketManager getInstance() {
 
-        if(manager == null) {
+        if (manager == null) {
             manager = new WebSocketManager();
         }
         return manager;
@@ -48,20 +45,27 @@ public class WebSocketManager {
 
         File file = getFileFromResource("ChannelsList.txt");
 
-        FileReader fr=new FileReader(file); //reads the file
+        FileReader fr = new FileReader(file); //reads the file
         BufferedReader br = new BufferedReader(fr);
 
         String channel;
 
-        while((channel=br.readLine())!=null){
+        ReentrantLock socketLock = new ReentrantLock();
+
+        while ((channel = br.readLine()) != null) {
             logger.info(channel);
 
             ZelloWebSocket ws = new ZelloWebSocket(channel);
-            ws.connect();
+
+            socketLock.lock();
+
+            try {
+                ws.connect(socketLock);
+            } finally {
+                socketLock.unlock();
+            }
+
             ws.login();
-
-
-            Thread.sleep(3000);
 
             socketMap.put(channel, ws);
         }
@@ -74,16 +78,12 @@ public class WebSocketManager {
         if (resource == null) {
             throw new IllegalArgumentException("file not found! " + fileName);
         } else {
-
-            // failed if files have whitespaces or special characters
-            //return new File(resource.getFile());
-
             return new File(resource.toURI());
         }
 
     }
 
-    public void closeAll(){
+    public void closeAll() {
         socketMap.values().forEach(ZelloWebSocket::disconnect);
     }
 }

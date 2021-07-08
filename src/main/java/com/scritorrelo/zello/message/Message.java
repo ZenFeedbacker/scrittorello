@@ -17,12 +17,12 @@ import static java.util.UUID.randomUUID;
 @Getter
 public abstract class Message {
 
-    protected UUID uuid;
+    protected final UUID uuid;
     protected int id;
     protected String channel;
     protected String fromUser;
     protected String forUser;
-    protected LocalDateTime timestamp;
+    protected final LocalDateTime timestamp;
 
     public Message(JSONObject obj, LocalDateTime timestamp) throws JSONException {
 

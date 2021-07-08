@@ -4,10 +4,12 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketExtension;
 import com.neovisionaries.ws.client.WebSocketFactory;
+import com.scritorrelo.zello.Channel;
 import lombok.Setter;
 
 import javax.json.Json;
 import java.io.IOException;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static com.scritorrelo.WebSocketManager.*;
 
@@ -18,17 +20,19 @@ public class ZelloWebSocket {
 
     private WebSocket socket;
 
-    private String channel;
+    private String channelName;
 
     private ZelloWebSocketAdapter adapter;
 
-    public ZelloWebSocket(String channel) throws WebSocketException, IOException {
-        this();
-        this.channel = channel;
+    private Channel channel;
 
+    public ZelloWebSocket(String channelName) throws WebSocketException, IOException {
+
+        this();
+        this.channelName = channelName;
     }
 
-    public ZelloWebSocket() throws IOException, WebSocketException {
+    public ZelloWebSocket() throws IOException {
 
         adapter = new ZelloWebSocketAdapter();
 
@@ -41,8 +45,13 @@ public class ZelloWebSocket {
         adapter.setWs(this);
     }
 
-    public void connect() throws WebSocketException {
-        socket.connect();
+    public void connect(ReentrantLock lock) throws WebSocketException {
+        lock.lock();
+        try {
+            socket.connect();
+        } finally {
+            lock.unlock();
+        }
     }
 
     public void disconnect(){
@@ -55,7 +64,7 @@ public class ZelloWebSocket {
                 .add("command", "logon")
                 .add("seq", 0)
                 .add("auth_token", getToken())
-                .add("channel", channel)
+                .add("channel", channelName)
                 .add("listen_only", "true")
                 .build()
                 .toString();

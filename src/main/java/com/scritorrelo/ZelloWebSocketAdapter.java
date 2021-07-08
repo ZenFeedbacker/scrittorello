@@ -93,9 +93,6 @@ public class ZelloWebSocketAdapter extends WebSocketAdapter {
         }
     }
 
-    public void onBinaryFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
-        System.out.println("binary frame");
-    }
     private void imageBinaryHandler(byte[] binary) {
         System.out.println("Received image binary");
         ImagePacket image = new ImagePacket(binary);
@@ -111,6 +108,7 @@ public class ZelloWebSocketAdapter extends WebSocketAdapter {
     public void channelStatusHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
 
         Channel channel = new Channel(obj, timestamp);
+        ws.setChannel(channel);
         System.out.println(channel);
     }
 
