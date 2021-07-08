@@ -2,7 +2,7 @@ package com.scritorrelo.zello.message.error;
 
 import java.util.Arrays;
 
-public enum ErrorCode {
+enum ErrorCode {
 
     UNKNOWN_COMMAND("unknown command", "Server didn't recognize the command received from the client."),
     INTERNAL_SERVER_ERROR("internal server error", "An internal error occured within the server. If the error persists please contact us at support@zello.com"),

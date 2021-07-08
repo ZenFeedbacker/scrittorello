@@ -20,11 +20,11 @@ import static java.util.Objects.isNull;
 
 public class AudioStream extends Message {
 
-    String type;
-    String codec;
-    String codecHeader;
-    int packetDuration;
-    List<AudioFrame> audioFrames;
+    private String type;
+    private String codec;
+    private String codecHeader;
+    private int packetDuration;
+    private List<AudioFrame> audioFrames;
 
     public AudioStream(JSONObject json, LocalDateTime timestamp) throws JSONException {
 
@@ -129,7 +129,7 @@ public class AudioStream extends Message {
         opus.getTags().addComment("title", "Test Dummy Audio");
 
         for (AudioFrame af : audioFrames) {
-            opus.writeAudioData(new OpusAudioData(af.data));
+            opus.writeAudioData(new OpusAudioData(af.getData()));
         }
 
         opus.close();

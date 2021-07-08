@@ -9,10 +9,10 @@ import java.util.Arrays;
 @Getter
 public class AudioFrame {
 
-    final byte[] type;
-    final int stream_id;
-    final int packet_id;
-    public final byte[] data;
+    private final byte[] type;
+    private final int stream_id;
+    private final int packet_id;
+    private final byte[] data;
 
     public AudioFrame(byte[] binary) {
         type = Arrays.copyOfRange(binary, 0, 1);

@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 @ToString(callSuper = true)
 public class Location extends Message {
 
-    double longitude;
-    double latitude;
-    double accuracy;
-    String formattedAddress;
+    private double longitude;
+    private double latitude;
+    private double accuracy;
+    private String formattedAddress;
 
     public Location(JSONObject obj, LocalDateTime timestamp) throws JSONException {
 

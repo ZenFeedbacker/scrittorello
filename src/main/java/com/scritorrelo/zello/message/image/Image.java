@@ -14,10 +14,10 @@ import java.time.LocalDateTime;
 @ToString(callSuper = true)
 public class Image extends Message {
 
-    String type;
-    String source;
-    int height;
-    int width;
+    private String type;
+    private String source;
+    private  int height;
+    private int width;
 
     public Image(JSONObject obj, LocalDateTime timestamp) throws JSONException {
 

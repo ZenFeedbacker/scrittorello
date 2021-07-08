@@ -11,11 +11,11 @@ import java.util.Arrays;
 @ToString
 public class ImagePacket {
 
-    final byte packetType;
-    final int id;
+    private final byte packetType;
+    private final int id;
     @Getter
-    final boolean isThumbnail;
-    final byte[] data;
+    private final boolean isThumbnail;
+    private final byte[] data;
 
     public ImagePacket(byte[] binary) {
 

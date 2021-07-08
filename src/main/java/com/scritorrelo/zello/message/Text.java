@@ -13,7 +13,7 @@ import static java.util.Objects.isNull;
 
 public class Text extends Message {
 
-    String text;
+    private String text;
 
     public Text(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         super(obj, timestamp);

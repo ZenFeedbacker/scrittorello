@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Component
-public class WebSocketManager {
+class WebSocketManager {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketManager.class);
 
@@ -37,7 +37,7 @@ public class WebSocketManager {
     @Setter
     private String sourceFile = DEFAULT_SOURCE_FILE;
 
-    public void init() throws Exception {
+    void init() throws Exception {
         socketMap = new HashMap<>();
 
         File file = getFileFromResource(sourceFile);
@@ -87,7 +87,7 @@ public class WebSocketManager {
 
     }
 
-    public void closeAll() {
+    void closeAll() {
         socketMap.values().forEach(ZelloWebSocket::disconnect);
     }
 }

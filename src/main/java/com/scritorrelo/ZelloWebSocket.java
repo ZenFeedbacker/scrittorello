@@ -19,7 +19,7 @@ import static com.scritorrelo.WebSocketManager.*;
 @Setter
 @Component
 @Scope("prototype")
-public class ZelloWebSocket {
+class ZelloWebSocket {
 
     private String refreshToken;
 
@@ -33,7 +33,7 @@ public class ZelloWebSocket {
     private Channel channel;
 
     @PostConstruct
-    public void init() throws IOException {
+    void init() throws IOException {
         socket = new WebSocketFactory()
                 .setConnectionTimeout(TIMEOUT)
                 .createSocket(SERVER)
@@ -43,7 +43,7 @@ public class ZelloWebSocket {
         this.adapter.setWs(this);
     }
 
-    public void connect(ReentrantLock lock) throws WebSocketException {
+    void connect(ReentrantLock lock) throws WebSocketException {
         lock.lock();
         try {
             TimeUnit.SECONDS.sleep(3);
@@ -56,15 +56,15 @@ public class ZelloWebSocket {
         }
     }
 
-    public WebSocketState getState(){
+    WebSocketState getState(){
         return socket.getState();
     }
 
-    public void disconnect(){
+    void disconnect(){
         socket.disconnect();
     }
 
-    public void login() {
+    void login() {
 
         String loginMessage = Json.createObjectBuilder()
                 .add("command", "logon")

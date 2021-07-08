@@ -11,11 +11,11 @@ import java.util.List;
 import static java.util.Objects.isNull;
 
 @NoArgsConstructor
-public class AudioPacket {
+class AudioPacket {
 
-    int streamID;
+    private int streamID;
     @Getter
-    List<DataPacket> packets;
+    private List<DataPacket> packets;
 
     public void addFrame(AudioFrame frame) {
 
