@@ -1,6 +1,7 @@
 package com.scritorrelo;
 
 import com.neovisionaries.ws.client.WebSocket;
+import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.scritorrelo.ogg.OggFile;
 import com.scritorrelo.ogg.Stream;
 import com.scritorrelo.zello.*;
@@ -11,6 +12,7 @@ import com.scritorrelo.zello.message.image.Image;
 import com.scritorrelo.zello.message.Location;
 import com.scritorrelo.zello.message.Text;
 import com.scritorrelo.zello.message.image.ImagePacket;
+import lombok.Setter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,7 +20,10 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
-public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdapter {
+public class ZelloWebSocketAdapter extends WebSocketAdapter {
+
+    @Setter
+    public WebSocket ws;
 
     final HashMap<Integer, AudioStream> streams = new HashMap<>();
 
@@ -26,7 +31,7 @@ public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdap
 
         LocalDateTime timestamp = LocalDateTime.now();
         JSONObject obj = new JSONObject(message);
-        System.out.println(message);
+        System.out.println(ws.toString() + ": " + message);
 
         if (obj.has("refresh_token")) {
             refreshTokenHandler(obj, timestamp);
@@ -105,15 +110,17 @@ public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdap
 
     public void errorHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         Error error = new Error(obj, timestamp);
+        System.out.println(error);
     }
 
     public void locationMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         Location location = new Location(obj, timestamp);
         System.out.println(location);
     }
+
     public void textMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         Text text = new Text(obj, timestamp);
-        Database.addMessage(text);
+        //Database.addMessage(text);
         //System.out.println(text);
     }
 
@@ -131,11 +138,11 @@ public class WebSocketAdapter extends com.neovisionaries.ws.client.WebSocketAdap
     public void streamStopHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException, IOException {
         AudioStream audioStream = streams.get(obj.getInt("stream_id"));
         //  audioStream.toFile();
-//                    System.out.println(audioStream);
+        //  System.out.println(audioStream);
         Stream oggStream = new Stream(audioStream.getOpusStream());
         OggFile oggFile = new OggFile(oggStream);
         oggFile.writeToFile(Client.outputFile);
         System.out.println("Wrote file " + Client.outputFile);
-        Client.ws.disconnect();
+        //Client.ws.disconnect();
     }
 }
