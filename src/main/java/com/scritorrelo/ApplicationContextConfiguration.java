@@ -11,7 +11,8 @@ import org.springframework.context.annotation.Scope;
 
 import java.io.IOException;
 
-import static com.scritorrelo.Client.*;
+import static com.scritorrelo.WebSocketManager.SERVER;
+import static com.scritorrelo.WebSocketManager.TIMEOUT;
 
 @Configuration
 @ComponentScan({"com.scritorrelo"})

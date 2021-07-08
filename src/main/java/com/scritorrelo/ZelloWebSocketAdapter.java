@@ -2,15 +2,17 @@ package com.scritorrelo;
 
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
+import com.neovisionaries.ws.client.WebSocketFrame;
 import com.scritorrelo.ogg.OggFile;
 import com.scritorrelo.ogg.Stream;
-import com.scritorrelo.zello.*;
-import com.scritorrelo.zello.message.error.Error;
-import com.scritorrelo.zello.message.audio.AudioStream;
-import com.scritorrelo.zello.message.audio.AudioFrame;
-import com.scritorrelo.zello.message.image.Image;
+import com.scritorrelo.zello.Channel;
+import com.scritorrelo.zello.Command;
 import com.scritorrelo.zello.message.Location;
 import com.scritorrelo.zello.message.Text;
+import com.scritorrelo.zello.message.audio.AudioFrame;
+import com.scritorrelo.zello.message.audio.AudioStream;
+import com.scritorrelo.zello.message.error.Error;
+import com.scritorrelo.zello.message.image.Image;
 import com.scritorrelo.zello.message.image.ImagePacket;
 import lombok.Setter;
 import org.json.JSONException;
@@ -23,7 +25,7 @@ import java.util.HashMap;
 public class ZelloWebSocketAdapter extends WebSocketAdapter {
 
     @Setter
-    public WebSocket ws;
+    public ZelloWebSocket ws;
 
     final HashMap<Integer, AudioStream> streams = new HashMap<>();
 
@@ -72,7 +74,8 @@ public class ZelloWebSocketAdapter extends WebSocketAdapter {
     }
 
     private void refreshTokenHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
-        Client.refresh_token = obj.getString("refresh_token");
+
+        ws.setRefreshToken(obj.getString("refresh_token"));
     }
 
     public void onBinaryMessage(WebSocket websocket, byte[] binary) {
@@ -90,6 +93,9 @@ public class ZelloWebSocketAdapter extends WebSocketAdapter {
         }
     }
 
+    public void onBinaryFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
+        System.out.println("binary frame");
+    }
     private void imageBinaryHandler(byte[] binary) {
         System.out.println("Received image binary");
         ImagePacket image = new ImagePacket(binary);
