@@ -32,7 +32,8 @@ public class Text extends Message {
         st.setString(6, forUser);
         st.setString(7, text);
 
-        return st;    }
+        return st;
+    }
 
     @Override
     public String toString() {

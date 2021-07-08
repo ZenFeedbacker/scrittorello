@@ -11,6 +11,7 @@ import java.io.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,20 @@ public class AudioStream extends Message {
 
     @Override
     public PreparedStatement getPreparedStatement(Connection conn) throws SQLException {
-        return null;
+        PreparedStatement st = conn.prepareStatement("insert into AUDIOS (uid, id, ts, channel, fromUser, forUser, type, codec, codecHeader, packetDuration) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+
+        st.setObject(1, uuid);
+        st.setInt(2, id);
+        st.setTimestamp(3, Timestamp.valueOf(timestamp));
+        st.setString(4, channel);
+        st.setString(5, fromUser);
+        st.setString(6, forUser);
+        st.setString(7, type);
+        st.setString(8, codec);
+        st.setString(9, codecHeader);
+        st.setInt(10, packetDuration);
+
+        return st;
     }
 
     public void addFrame(AudioFrame frame) {

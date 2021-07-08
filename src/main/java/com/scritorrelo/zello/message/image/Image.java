@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @ToString(callSuper = true)
@@ -30,6 +31,19 @@ public class Image extends Message {
 
     @Override
     public PreparedStatement getPreparedStatement(Connection conn) throws SQLException {
-        return null;
+        PreparedStatement st = conn.prepareStatement("insert into IMAGES (uid, id, ts, channel, fromUser, forUser, type, source, height, width) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+
+        st.setObject(1, uuid);
+        st.setInt(2, id);
+        st.setTimestamp(3, Timestamp.valueOf(timestamp));
+        st.setString(4, channel);
+        st.setString(5, fromUser);
+        st.setString(6, forUser);
+        st.setString(7, type);
+        st.setString(8, source);
+        st.setInt(9, height);
+        st.setInt(10, width);
+
+        return st;
     }
 }
