@@ -1,6 +1,9 @@
 package com.scritorrelo;
 
 import com.scritorrelo.zello.message.Message;
+import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
+import org.jooq.impl.DSL;
 
 import java.sql.*;
 
@@ -8,7 +11,12 @@ public class Database {
 
     public static void addMessage(Message message) {
 
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:~/mydatabase;AUTO_SERVER=TRUE;INIT=runscript from './create.sql'")) {
+        try (Connection conn = getConnection()) {
+
+            DSLContext create = DSL.using(conn, SQLDialect.H2);
+
+           // Result<Record> result = create.select().from(USERS).fetch(); // (3)
+
 
             PreparedStatement st = message.getPreparedStatement(conn);
             System.out.println(st.execute());
@@ -29,5 +37,9 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private static Connection getConnection() throws SQLException {
+        return  DriverManager.getConnection("jdbc:h2:file:./data/db");
     }
 }

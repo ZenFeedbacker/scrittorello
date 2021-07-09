@@ -12,9 +12,11 @@
     <artifactId>scritorrelo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Scritorrelo</name>
-    <description>Demo project for Spring Boot</description>
+    <description/>
     <properties>
         <java.version>11</java.version>
+        <jooq.version>3.14.11</jooq.version>
+        <vorbis.version>0.8</vorbis.version>
     </properties>
     <dependencies>
         <dependency>
@@ -107,12 +109,12 @@
         <dependency>
             <groupId>org.gagravarr</groupId>
             <artifactId>vorbis-java-core</artifactId>
-            <version>0.8</version>
+            <version>${vorbis.version}</version>
         </dependency>
         <dependency>
             <groupId>org.gagravarr</groupId>
             <artifactId>vorbis-java-tools</artifactId>
-            <version>0.8</version>
+            <version>${vorbis.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -138,6 +140,30 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jooq</artifactId>
+            <version>2.5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq</artifactId>
+            <version>${jooq.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-meta</artifactId>
+            <version>${jooq.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-codegen</artifactId>
+            <version>${jooq.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -151,6 +177,44 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                    <groupId>org.jooq</groupId>
+                    <artifactId>jooq-codegen-maven</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.h2database</groupId>
+                        <artifactId>h2</artifactId>
+                        <version>1.4.200</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <jdbc>
+                        <driver>org.h2.Driver</driver>
+                        <url>jdbc:h2:file:./data/db</url>
+                        <user>sa</user>
+                        <password>password</password>
+                    </jdbc>
+                    <generator>
+                        <database>
+                            <name>org.jooq.meta.h2.H2Database</name>
+                            <includes>.*</includes>
+                            <excludes/>
+<!--                            <inputSchema>library</inputSchema>-->
+                        </database>
+                        <target>
+                            <packageName>com.scritorrelo.database</packageName>
+                            <directory>src/main/java</directory>
+                        </target>
+                    </generator>
                 </configuration>
             </plugin>
         </plugins>
