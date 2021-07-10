@@ -1,32 +1,40 @@
 package com.scritorrelo.zello.message;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static java.util.UUID.randomUUID;
-
+@MappedSuperclass
 @ToString
 @Getter
+@Setter
+@NoArgsConstructor
 public abstract class Message {
 
-    protected final UUID uuid;
+    @Id
+    @GeneratedValue
+    protected UUID uuid;
     protected int id;
     protected String channel;
     protected String fromUser;
     protected String forUser;
-    protected final LocalDateTime timestamp;
+    protected LocalDateTime timestamp;
 
     public Message(JSONObject obj, LocalDateTime timestamp) throws JSONException {
 
-        uuid = randomUUID();
+        //uuid = randomUUID();
 
         this.timestamp = timestamp;
 
@@ -34,11 +42,7 @@ public abstract class Message {
         fromUser = obj.getString("from");
         forUser = obj.optString("for");
 
-        try {
-            id = obj.getInt("message_id");
-        } catch (JSONException e1) {
-            id = obj.optInt("stream_id");
-        }
+        id = obj.optInt("message_id") != 0 ? obj.optInt("message_id") : obj.optInt("stream_id");
     }
 
     abstract public PreparedStatement getPreparedStatement(Connection conn) throws SQLException;

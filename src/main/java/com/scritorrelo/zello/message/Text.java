@@ -1,8 +1,12 @@
 package com.scritorrelo.zello.message;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.persistence.Entity;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -11,6 +15,10 @@ import java.time.LocalDateTime;
 
 import static java.util.Objects.isNull;
 
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Text extends Message {
 
     private String text;

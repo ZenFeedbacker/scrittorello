@@ -4,6 +4,7 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.scritorrelo.ogg.OggFile;
 import com.scritorrelo.ogg.Stream;
+import com.scritorrelo.repository.TextRepository;
 import com.scritorrelo.zello.Channel;
 import com.scritorrelo.zello.Command;
 import com.scritorrelo.zello.message.Location;
@@ -16,6 +17,7 @@ import com.scritorrelo.zello.message.image.ImagePacket;
 import lombok.Setter;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +28,9 @@ import java.util.HashMap;
 @Component
 @Scope("prototype")
 public class ZelloWebSocketAdapter extends WebSocketAdapter {
+
+    @Autowired
+    TextRepository textRepository;
 
     @Setter
     public ZelloWebSocket ws;
@@ -127,6 +132,16 @@ public class ZelloWebSocketAdapter extends WebSocketAdapter {
 
     public void textMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         Text text = new Text(obj, timestamp);
+        System.out.println(textRepository.save(text));
+
+        try {
+            for (Text t : textRepository.findAll()) {
+                System.out.println(t.getText());
+            }
+        } catch (Exception e){
+            System.out.println(e);
+        }
+        System.out.println("fsffs");
         //Database.addMessage(text);
         //System.out.println(text);
     }
