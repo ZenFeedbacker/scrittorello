@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import com.scritorrelo.zello.message.Text;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -19,5 +18,5 @@ public interface TextRepository extends CrudRepository<Text, UUID> {
 
     @NotNull Text save(@NotNull Text text);
 
-    List<Text> findAll();
+    @NotNull List<Text> findAll();
 }

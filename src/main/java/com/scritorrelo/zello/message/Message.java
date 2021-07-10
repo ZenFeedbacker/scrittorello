@@ -10,16 +10,12 @@ import org.json.JSONObject;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @MappedSuperclass
 @ToString
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 public abstract class Message {
 
@@ -34,8 +30,6 @@ public abstract class Message {
 
     public Message(JSONObject obj, LocalDateTime timestamp) throws JSONException {
 
-        //uuid = randomUUID();
-
         this.timestamp = timestamp;
 
         channel = obj.getString("channel");
@@ -44,6 +38,4 @@ public abstract class Message {
 
         id = obj.optInt("message_id") != 0 ? obj.optInt("message_id") : obj.optInt("stream_id");
     }
-
-    abstract public PreparedStatement getPreparedStatement(Connection conn) throws SQLException;
 }

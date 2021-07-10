@@ -2,7 +2,6 @@ package com.scritorrelo;
 
 import com.neovisionaries.ws.client.*;
 import com.scritorrelo.zello.Channel;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;

@@ -136,25 +136,20 @@ public class ZelloWebSocketAdapter extends WebSocketAdapter {
 
         try {
             for (Text t : textRepository.findAll()) {
-                System.out.println(t.getText());
+                System.out.println(t);
             }
         } catch (Exception e){
             System.out.println(e);
         }
-        System.out.println("fsffs");
-        //Database.addMessage(text);
-        //System.out.println(text);
     }
 
     public void imageMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         Image image = new Image(obj, timestamp);
-        //System.out.println(image);
     }
 
     public void streamStartHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         AudioStream stream = new AudioStream(obj, timestamp);
         streams.put(obj.getInt("stream_id"), stream);
-        //System.out.println(stream);
     }
 
     public void streamStopHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException, IOException {

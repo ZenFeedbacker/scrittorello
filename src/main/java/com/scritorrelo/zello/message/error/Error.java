@@ -13,7 +13,7 @@ import static java.util.UUID.randomUUID;
 public class Error {
 
     private final UUID uuid;
-    private ErrorCode code;
+    private final ErrorCode code;
     private final LocalDateTime timestamp;
 
     public Error(JSONObject obj, LocalDateTime timestamp) throws JSONException {

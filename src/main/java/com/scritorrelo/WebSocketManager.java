@@ -1,15 +1,10 @@
 package com.scritorrelo;
 
 import com.neovisionaries.ws.client.WebSocketException;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.File;
