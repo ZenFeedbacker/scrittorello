@@ -19,8 +19,8 @@ enum ErrorCode {
     FAILED_TO_SEND_DATA("failed to send data", "An error occured while trying to send stream data packet."),
     INVALID_AUDIO_PACKET("invalid audio packet", "Malformed audio packet is received.");
 
-    public final String code;
-    public final String description;
+    private final String code;
+    private final String description;
 
     ErrorCode(String code, String description) {
         this.code = code;

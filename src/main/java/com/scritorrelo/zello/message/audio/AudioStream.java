@@ -55,7 +55,7 @@ public class AudioStream extends Message {
         return opusStream;
     }
 
-    public IDHeaderPacket createIDHeader() {
+    private IDHeaderPacket createIDHeader() {
 
         return IDHeaderPacket.
                 builder().
