@@ -14,23 +14,30 @@ import com.scritorrelo.zello.message.audio.AudioStream;
 import com.scritorrelo.zello.message.error.Error;
 import com.scritorrelo.zello.message.image.Image;
 import com.scritorrelo.zello.message.image.ImagePacket;
+import lombok.Data;
 import lombok.Setter;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
-@Component
+@Controller
 @Scope("prototype")
 public class ZelloWebSocketAdapter extends WebSocketAdapter {
 
     @Autowired
     TextRepository textRepository;
+
+    @Autowired
+    EntityManager em;
 
     @Setter
     public ZelloWebSocket ws;
@@ -130,10 +137,14 @@ public class ZelloWebSocketAdapter extends WebSocketAdapter {
         System.out.println(location);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void textMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         Text text = new Text(obj, timestamp);
+        DatabaseManager.main();
         System.out.println(textRepository.save(text));
 
+        em.getTransaction().commit();
+        em.flush();
         try {
             for (Text t : textRepository.findAll()) {
                 System.out.println(t);
@@ -145,6 +156,7 @@ public class ZelloWebSocketAdapter extends WebSocketAdapter {
 
     public void imageMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         Image image = new Image(obj, timestamp);
+        System.out.println(image);
     }
 
     public void streamStartHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {

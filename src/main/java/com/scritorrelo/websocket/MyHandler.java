@@ -18,5 +18,4 @@ public class MyHandler extends TextWebSocketHandler {
         System.out.println("binary message");
 
     }
-
 }
