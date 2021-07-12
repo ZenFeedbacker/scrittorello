@@ -3,32 +3,26 @@ package com.scritorrelo.zello.message.audio;
 import com.scritorrelo.Client;
 import com.scritorrelo.opus.*;
 import com.scritorrelo.zello.message.Message;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import org.gagravarr.opus.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.persistence.Entity;
 import java.io.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-//@Entity
-@Getter
-@Setter
-@NoArgsConstructor
 @ToString(callSuper = true)
 public class AudioStream extends Message {
 
-    private String type;
-    private String codec;
-    private String codecHeader;
-    private int packetDuration;
-    private List<AudioFrame> audioFrames;
+    private final String type;
+    private final String codec;
+    private final String codecHeader;
+    private final int packetDuration;
+    private final List<AudioFrame> audioFrames;
 
     public AudioStream(JSONObject json, LocalDateTime timestamp) throws JSONException {
 
@@ -39,6 +33,11 @@ public class AudioStream extends Message {
         codecHeader = json.getString("codec_header");
         packetDuration = json.getInt("packet_duration");
         audioFrames = new ArrayList<>();
+    }
+
+    @Override
+    public PreparedStatement getSqlStatement(Connection conn) {
+        return null;
     }
 
     public void addFrame(AudioFrame frame) {

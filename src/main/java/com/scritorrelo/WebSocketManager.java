@@ -68,6 +68,7 @@ class WebSocketManager {
         ws.login();
 
         socketMap.put(channelName, ws);
+
     }
 
     private static File getFileFromResource(String fileName) throws URISyntaxException {

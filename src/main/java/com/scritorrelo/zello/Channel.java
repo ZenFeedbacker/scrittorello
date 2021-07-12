@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @ToString
 public class Channel {
 
-    String name;
+    final String name;
     boolean status;
     int usersOnline;
     boolean imagesSupported;
