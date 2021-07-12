@@ -1,5 +1,6 @@
 package com.scritorrelo;
 
+import com.scritorrelo.zello.message.Text;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ResourceUtils;
@@ -13,27 +14,42 @@ import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.UUID;
 
-
 public class DatabaseManager {
 
-    @Value("classpath:schema.sql")
-    private static Resource schema;
+    private static final String CREATE_SCHEMA_FILE = "create_schema.sql";
+    private static final String DROP_TABLES_FILE = "drops_tables.sql";
 
     public static void init() throws IOException, SQLException {
-        File schemafile = ResourceUtils.getFile("classpath:schema.sql");
-        String content = new String(Files.readAllBytes(schemafile.toPath()));
+        dropTables();
+        String schema = parseResourceFile(CREATE_SCHEMA_FILE);
         try (Connection conn = getConnection()) {
 
             Statement stmt = conn.createStatement();
-            stmt.execute(content);
+            stmt.execute(schema);
             System.out.println("Table Created......");
         }
     }
 
-    public static void saveMessage() {
+    private static void dropTables() throws IOException, SQLException {
+        String schema = parseResourceFile(DROP_TABLES_FILE);
+        try (Connection conn = getConnection()) {
+
+            Statement stmt = conn.createStatement();
+            stmt.execute(schema);
+            System.out.println("Tables dropped......");
+        }
+    }
+
+    private static String parseResourceFile(String path) throws IOException {
+        File file = ResourceUtils.getFile("classpath:" + path);
+        return new String(Files.readAllBytes(file.toPath()));
+    }
+
+    public static void saveMessage(Text text) {
         System.out.println("receive text");
         try (Connection conn = getConnection()) {
 
+            text.getSqlStatement(conn);
             boolean isValid = conn.isValid(0);
             System.out.println("Do we have a valid db connection? = " + isValid);
 
@@ -61,4 +77,5 @@ public class DatabaseManager {
     private static Connection getConnection() throws SQLException {
         return DriverManager.getConnection("jdbc:h2:file:./data/db", "sa", "password");
     }
+
 }

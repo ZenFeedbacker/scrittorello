@@ -502,3 +502,597 @@ insert into text (uuid, channel,for_User, from_User, id, timestamp, text, test, 
 2021-07-12 13:13:09 jdbc[13]: exception
 org.h2.jdbc.JdbcSQLDataException: Data conversion error converting "TIMESTAMP '2021-07-12 10:13:09.944' (TEXT: ""ID"" INTEGER NOT NULL)"; SQL statement:
 insert into text (uuid, channel,for_User, from_User, id, timestamp, text, test) values (?,?,?,?, ?,?,?,?) [22018-200]
+2021-07-12 18:12:16 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "CREATE TABLE IF NOT EXISTS TEXT (
+     UID UUID PRIMARY KEY UNIQUE[*] NOT NULL,
+     ID INT,
+     TS TIMESTAMP,
+     CHANNEL VARCHAR(255),
+     FROM_USER VARCHAR(255),
+     FOR_USER VARCHAR(255),
+     TEXT VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS AUDIO (
+    _UUID UUID PRIMARY KEY UNIQUE NOT NULL,
+    ID INT,
+    TS TIMESTAMP,
+    CHANNEL VARCHAR(255),
+    FROM_USER VARCHAR(255),
+    FOR_USER VARCHAR(255),
+    TYPE VARCHAR(255),
+    CODEC VARCHAR(255),
+    CODEC_HEADER VARCHAR(255),
+    PACKET_DURATION INT
+);
+
+CREATE TABLE IF NOT EXISTS LOCATION (
+    _UUID UUID PRIMARY KEY UNIQUE NOT NULL,
+    ID INT,
+    TS TIMESTAMP,
+    CHANNEL VARCHAR(255),
+    FROM_USER VARCHAR(255),
+    FOR_USER VARCHAR(255),
+    FORMATTED_ADDRESS VARCHAR(255),
+    LONGITUDE DOUBLE,
+    LATITUDE DOUBLE,
+    ACCURACY DOUBLE
+);
+
+CREATE TABLE IF NOT EXISTS IMAGE (
+    _UUID UUID PRIMARY KEY UNIQUE NOT NULL,
+    ID INT,
+    TS TIMESTAMP,
+    CHANNEL VARCHAR(255),
+    FROM_USER VARCHAR(255),
+    FOR_USER VARCHAR(255),
+    TYPE VARCHAR(255),
+    SOURCE VARCHAR(255),
+    HEIGHT INT,
+    WIDTH INT
+);
+"; expected "HASH, AUTO_INCREMENT, NOT, NULL, COMMENT, CHECK, REFERENCES, ,, )"; SQL statement:
+CREATE TABLE IF NOT EXISTS TEXT (
+     UID UUID PRIMARY KEY UNIQUE NOT NULL,
+     ID INT,
+     TS TIMESTAMP,
+     CHANNEL VARCHAR(255),
+     FROM_USER VARCHAR(255),
+     FOR_USER VARCHAR(255),
+     TEXT VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS AUDIO (
+    _UUID UUID PRIMARY KEY UNIQUE NOT NULL,
+    ID INT,
+    TS TIMESTAMP,
+    CHANNEL VARCHAR(255),
+    FROM_USER VARCHAR(255),
+    FOR_USER VARCHAR(255),
+    TYPE VARCHAR(255),
+    CODEC VARCHAR(255),
+    CODEC_HEADER VARCHAR(255),
+    PACKET_DURATION INT
+);
+
+CREATE TABLE IF NOT EXISTS LOCATION (
+    _UUID UUID PRIMARY KEY UNIQUE NOT NULL,
+    ID INT,
+    TS TIMESTAMP,
+    CHANNEL VARCHAR(255),
+    FROM_USER VARCHAR(255),
+    FOR_USER VARCHAR(255),
+    FORMATTED_ADDRESS VARCHAR(255),
+    LONGITUDE DOUBLE,
+    LATITUDE DOUBLE,
+    ACCURACY DOUBLE
+);
+
+CREATE TABLE IF NOT EXISTS IMAGE (
+    _UUID UUID PRIMARY KEY UNIQUE NOT NULL,
+    ID INT,
+    TS TIMESTAMP,
+    CHANNEL VARCHAR(255),
+    FROM_USER VARCHAR(255),
+    FOR_USER VARCHAR(255),
+    TYPE VARCHAR(255),
+    SOURCE VARCHAR(255),
+    HEIGHT INT,
+    WIDTH INT
+);
+ [42001-200]
+2021-07-12 18:13:51 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "CREATE TABLE IF NOT EXISTS TEXT (
+    _UUID UUID PRIMARY KEY UNIQUE[*] NOT NULL,
+     ID INT,
+     TS TIMESTAMP,
+     CHANNEL VARCHAR(255),
+     FROM_USER VARCHAR(255),
+     FOR_USER VARCHAR(255),
+     TEXT VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS AUDIO (
+    _UUID UUID PRIMARY KEY UNIQUE NOT NULL,
+    ID INT,
+    TS TIMESTAMP,
+    CHANNEL VARCHAR(255),
+    FROM_USER VARCHAR(255),
+    FOR_USER VARCHAR(255),
+    TYPE VARCHAR(255),
+    CODEC VARCHAR(255),
+    CODEC_HEADER VARCHAR(255),
+    PACKET_DURATION INT
+);
+
+CREATE TABLE IF NOT EXISTS LOCATION (
+    _UUID UUID PRIMARY KEY UNIQUE NOT NULL,
+    ID INT,
+    TS TIMESTAMP,
+    CHANNEL VARCHAR(255),
+    FROM_USER VARCHAR(255),
+    FOR_USER VARCHAR(255),
+    FORMATTED_ADDRESS VARCHAR(255),
+    LONGITUDE DOUBLE,
+    LATITUDE DOUBLE,
+    ACCURACY DOUBLE
+);
+
+CREATE TABLE IF NOT EXISTS IMAGE (
+    _UUID UUID PRIMARY KEY UNIQUE NOT NULL,
+    ID INT,
+    TS TIMESTAMP,
+    CHANNEL VARCHAR(255),
+    FROM_USER VARCHAR(255),
+    FOR_USER VARCHAR(255),
+    TYPE VARCHAR(255),
+    SOURCE VARCHAR(255),
+    HEIGHT INT,
+    WIDTH INT
+);
+"; expected "HASH, AUTO_INCREMENT, NOT, NULL, COMMENT, CHECK, REFERENCES, ,, )"; SQL statement:
+CREATE TABLE IF NOT EXISTS TEXT (
+    _UUID UUID PRIMARY KEY UNIQUE NOT NULL,
+     ID INT,
+     TS TIMESTAMP,
+     CHANNEL VARCHAR(255),
+     FROM_USER VARCHAR(255),
+     FOR_USER VARCHAR(255),
+     TEXT VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS AUDIO (
+    _UUID UUID PRIMARY KEY UNIQUE NOT NULL,
+    ID INT,
+    TS TIMESTAMP,
+    CHANNEL VARCHAR(255),
+    FROM_USER VARCHAR(255),
+    FOR_USER VARCHAR(255),
+    TYPE VARCHAR(255),
+    CODEC VARCHAR(255),
+    CODEC_HEADER VARCHAR(255),
+    PACKET_DURATION INT
+);
+
+CREATE TABLE IF NOT EXISTS LOCATION (
+    _UUID UUID PRIMARY KEY UNIQUE NOT NULL,
+    ID INT,
+    TS TIMESTAMP,
+    CHANNEL VARCHAR(255),
+    FROM_USER VARCHAR(255),
+    FOR_USER VARCHAR(255),
+    FORMATTED_ADDRESS VARCHAR(255),
+    LONGITUDE DOUBLE,
+    LATITUDE DOUBLE,
+    ACCURACY DOUBLE
+);
+
+CREATE TABLE IF NOT EXISTS IMAGE (
+    _UUID UUID PRIMARY KEY UNIQUE NOT NULL,
+    ID INT,
+    TS TIMESTAMP,
+    CHANNEL VARCHAR(255),
+    FROM_USER VARCHAR(255),
+    FOR_USER VARCHAR(255),
+    TYPE VARCHAR(255),
+    SOURCE VARCHAR(255),
+    HEIGHT INT,
+    WIDTH INT
+);
+ [42001-200]
+2021-07-12 18:35:26 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "UUID" not found; SQL statement:
+insert into text (uuid, channel,for_User, from_User, id, timestamp, text) values (?,?,?,?, ?,?,?,) [42122-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:453)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.get(DbException.java:181)
+	at org.h2.table.Table.getColumn(Table.java:703)
+	at org.h2.command.Parser.parseColumn(Parser.java:1450)
+	at org.h2.command.Parser.parseColumnList(Parser.java:1435)
+	at org.h2.command.Parser.parseInsertGivenTable(Parser.java:1804)
+	at org.h2.command.Parser.parseInsert(Parser.java:1749)
+	at org.h2.command.Parser.parsePrepared(Parser.java:954)
+	at org.h2.command.Parser.parse(Parser.java:843)
+	at org.h2.command.Parser.parse(Parser.java:815)
+	at org.h2.command.Parser.prepareCommand(Parser.java:738)
+	at org.h2.engine.Session.prepareLocal(Session.java:657)
+	at org.h2.engine.Session.prepareCommand(Session.java:595)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1235)
+	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:76)
+	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:352)
+	at com.scritorrelo.zello.message.Text.getSqlStatement(Text.java:48)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:41)
+	at com.scritorrelo.ZelloWebSocketAdapter.textMessageHandler(ZelloWebSocketAdapter.java:130)
+	at com.scritorrelo.ZelloWebSocketAdapter.onTextMessage(ZelloWebSocketAdapter.java:59)
+	at com.neovisionaries.ws.client.ListenerManager.callOnTextMessage(ListenerManager.java:353)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:266)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:244)
+	at com.neovisionaries.ws.client.ReadingThread.handleTextFrame(ReadingThread.java:969)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:752)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+2021-07-12 18:38:13 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "UUID" not found; SQL statement:
+insert into text (uuid, channel,for_User, from_User, id, timestamp, text) values (?,?,?,?, ?,?,?,) [42122-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:453)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.get(DbException.java:181)
+	at org.h2.table.Table.getColumn(Table.java:703)
+	at org.h2.command.Parser.parseColumn(Parser.java:1450)
+	at org.h2.command.Parser.parseColumnList(Parser.java:1435)
+	at org.h2.command.Parser.parseInsertGivenTable(Parser.java:1804)
+	at org.h2.command.Parser.parseInsert(Parser.java:1749)
+	at org.h2.command.Parser.parsePrepared(Parser.java:954)
+	at org.h2.command.Parser.parse(Parser.java:843)
+	at org.h2.command.Parser.parse(Parser.java:815)
+	at org.h2.command.Parser.prepareCommand(Parser.java:738)
+	at org.h2.engine.Session.prepareLocal(Session.java:657)
+	at org.h2.engine.Session.prepareCommand(Session.java:595)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1235)
+	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:76)
+	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:352)
+	at com.scritorrelo.zello.message.Text.getSqlStatement(Text.java:45)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:41)
+	at com.scritorrelo.ZelloWebSocketAdapter.textMessageHandler(ZelloWebSocketAdapter.java:130)
+	at com.scritorrelo.ZelloWebSocketAdapter.onTextMessage(ZelloWebSocketAdapter.java:59)
+	at com.neovisionaries.ws.client.ListenerManager.callOnTextMessage(ListenerManager.java:353)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:266)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:244)
+	at com.neovisionaries.ws.client.ReadingThread.handleTextFrame(ReadingThread.java:969)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:752)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+2021-07-12 18:47:19 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "UUID" not found; SQL statement:
+insert into text (uuid, channel,for_User, from_User, id, timestamp, text) values (?,?,?,?, ?,?,?) [42122-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:453)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.get(DbException.java:181)
+	at org.h2.table.Table.getColumn(Table.java:703)
+	at org.h2.command.Parser.parseColumn(Parser.java:1450)
+	at org.h2.command.Parser.parseColumnList(Parser.java:1435)
+	at org.h2.command.Parser.parseInsertGivenTable(Parser.java:1804)
+	at org.h2.command.Parser.parseInsert(Parser.java:1749)
+	at org.h2.command.Parser.parsePrepared(Parser.java:954)
+	at org.h2.command.Parser.parse(Parser.java:843)
+	at org.h2.command.Parser.parse(Parser.java:815)
+	at org.h2.command.Parser.prepareCommand(Parser.java:738)
+	at org.h2.engine.Session.prepareLocal(Session.java:657)
+	at org.h2.engine.Session.prepareCommand(Session.java:595)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1235)
+	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:76)
+	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:352)
+	at com.scritorrelo.zello.message.Text.getSqlStatement(Text.java:47)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:41)
+	at com.scritorrelo.ZelloWebSocketAdapter.textMessageHandler(ZelloWebSocketAdapter.java:130)
+	at com.scritorrelo.ZelloWebSocketAdapter.onTextMessage(ZelloWebSocketAdapter.java:59)
+	at com.neovisionaries.ws.client.ListenerManager.callOnTextMessage(ListenerManager.java:353)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:266)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:244)
+	at com.neovisionaries.ws.client.ReadingThread.handleTextFrame(ReadingThread.java:969)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:752)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+2021-07-12 18:48:37 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "UUID" not found; SQL statement:
+insert into text (uuid, channel,for_User, from_User, id, timestamp, text) values (?,?,?,?, ?,?,?) [42122-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:453)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.get(DbException.java:181)
+	at org.h2.table.Table.getColumn(Table.java:703)
+	at org.h2.command.Parser.parseColumn(Parser.java:1450)
+	at org.h2.command.Parser.parseColumnList(Parser.java:1435)
+	at org.h2.command.Parser.parseInsertGivenTable(Parser.java:1804)
+	at org.h2.command.Parser.parseInsert(Parser.java:1749)
+	at org.h2.command.Parser.parsePrepared(Parser.java:954)
+	at org.h2.command.Parser.parse(Parser.java:843)
+	at org.h2.command.Parser.parse(Parser.java:815)
+	at org.h2.command.Parser.prepareCommand(Parser.java:738)
+	at org.h2.engine.Session.prepareLocal(Session.java:657)
+	at org.h2.engine.Session.prepareCommand(Session.java:595)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1235)
+	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:76)
+	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:352)
+	at com.scritorrelo.zello.message.Text.getSqlStatement(Text.java:47)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:41)
+	at com.scritorrelo.ZelloWebSocketAdapter.textMessageHandler(ZelloWebSocketAdapter.java:130)
+	at com.scritorrelo.ZelloWebSocketAdapter.onTextMessage(ZelloWebSocketAdapter.java:59)
+	at com.neovisionaries.ws.client.ListenerManager.callOnTextMessage(ListenerManager.java:353)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:266)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:244)
+	at com.neovisionaries.ws.client.ReadingThread.handleTextFrame(ReadingThread.java:969)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:752)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+2021-07-12 18:49:35 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "UUID" not found; SQL statement:
+insert into text (uuid, channel,for_User, from_User, id, timestamp, text) values (?,?,?,?, ?,?,?) [42122-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:453)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.get(DbException.java:181)
+	at org.h2.table.Table.getColumn(Table.java:703)
+	at org.h2.command.Parser.parseColumn(Parser.java:1450)
+	at org.h2.command.Parser.parseColumnList(Parser.java:1435)
+	at org.h2.command.Parser.parseInsertGivenTable(Parser.java:1804)
+	at org.h2.command.Parser.parseInsert(Parser.java:1749)
+	at org.h2.command.Parser.parsePrepared(Parser.java:954)
+	at org.h2.command.Parser.parse(Parser.java:843)
+	at org.h2.command.Parser.parse(Parser.java:815)
+	at org.h2.command.Parser.prepareCommand(Parser.java:738)
+	at org.h2.engine.Session.prepareLocal(Session.java:657)
+	at org.h2.engine.Session.prepareCommand(Session.java:595)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1235)
+	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:76)
+	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:352)
+	at com.scritorrelo.zello.message.Text.getSqlStatement(Text.java:47)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:41)
+	at com.scritorrelo.ZelloWebSocketAdapter.textMessageHandler(ZelloWebSocketAdapter.java:130)
+	at com.scritorrelo.ZelloWebSocketAdapter.onTextMessage(ZelloWebSocketAdapter.java:59)
+	at com.neovisionaries.ws.client.ListenerManager.callOnTextMessage(ListenerManager.java:353)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:266)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:244)
+	at com.neovisionaries.ws.client.ReadingThread.handleTextFrame(ReadingThread.java:969)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:752)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+2021-07-12 19:15:20 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "UUID" not found; SQL statement:
+insert into Text (uuid, id, channel, fromUser, forUser, timestamp, text) values (?,?,?,?,?,?,?) [42122-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:453)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.get(DbException.java:181)
+	at org.h2.table.Table.getColumn(Table.java:703)
+	at org.h2.command.Parser.parseColumn(Parser.java:1450)
+	at org.h2.command.Parser.parseColumnList(Parser.java:1435)
+	at org.h2.command.Parser.parseInsertGivenTable(Parser.java:1804)
+	at org.h2.command.Parser.parseInsert(Parser.java:1749)
+	at org.h2.command.Parser.parsePrepared(Parser.java:954)
+	at org.h2.command.Parser.parse(Parser.java:843)
+	at org.h2.command.Parser.parse(Parser.java:815)
+	at org.h2.command.Parser.prepareCommand(Parser.java:738)
+	at org.h2.engine.Session.prepareLocal(Session.java:657)
+	at org.h2.engine.Session.prepareCommand(Session.java:595)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1235)
+	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:76)
+	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:352)
+	at com.scritorrelo.zello.message.Text.getSqlStatement(Text.java:48)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:41)
+	at com.scritorrelo.ZelloWebSocketAdapter.textMessageHandler(ZelloWebSocketAdapter.java:130)
+	at com.scritorrelo.ZelloWebSocketAdapter.onTextMessage(ZelloWebSocketAdapter.java:59)
+	at com.neovisionaries.ws.client.ListenerManager.callOnTextMessage(ListenerManager.java:353)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:266)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:244)
+	at com.neovisionaries.ws.client.ReadingThread.handleTextFrame(ReadingThread.java:969)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:752)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+2021-07-12 19:19:37 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "FROMUSER" not found; SQL statement:
+insert into Text (uuid, id, channel, fromUser, forUser, timestamp, text) values (?,?,?,?,?,?,?) [42122-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:453)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.get(DbException.java:181)
+	at org.h2.table.Table.getColumn(Table.java:703)
+	at org.h2.command.Parser.parseColumn(Parser.java:1450)
+	at org.h2.command.Parser.parseColumnList(Parser.java:1435)
+	at org.h2.command.Parser.parseInsertGivenTable(Parser.java:1804)
+	at org.h2.command.Parser.parseInsert(Parser.java:1749)
+	at org.h2.command.Parser.parsePrepared(Parser.java:954)
+	at org.h2.command.Parser.parse(Parser.java:843)
+	at org.h2.command.Parser.parse(Parser.java:815)
+	at org.h2.command.Parser.prepareCommand(Parser.java:738)
+	at org.h2.engine.Session.prepareLocal(Session.java:657)
+	at org.h2.engine.Session.prepareCommand(Session.java:595)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1235)
+	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:76)
+	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:352)
+	at com.scritorrelo.zello.message.Text.getSqlStatement(Text.java:48)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:52)
+	at com.scritorrelo.ZelloWebSocketAdapter.textMessageHandler(ZelloWebSocketAdapter.java:130)
+	at com.scritorrelo.ZelloWebSocketAdapter.onTextMessage(ZelloWebSocketAdapter.java:59)
+	at com.neovisionaries.ws.client.ListenerManager.callOnTextMessage(ListenerManager.java:353)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:266)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:244)
+	at com.neovisionaries.ws.client.ReadingThread.handleTextFrame(ReadingThread.java:969)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:752)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+2021-07-12 19:21:17 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "TIMESTAMP" not found; SQL statement:
+insert into Text (uuid, id, channel, fromUser, forUser, timestamp, text) values (?,?,?,?,?,?,?) [42122-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:453)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.get(DbException.java:181)
+	at org.h2.table.Table.getColumn(Table.java:703)
+	at org.h2.command.Parser.parseColumn(Parser.java:1450)
+	at org.h2.command.Parser.parseColumnList(Parser.java:1435)
+	at org.h2.command.Parser.parseInsertGivenTable(Parser.java:1804)
+	at org.h2.command.Parser.parseInsert(Parser.java:1749)
+	at org.h2.command.Parser.parsePrepared(Parser.java:954)
+	at org.h2.command.Parser.parse(Parser.java:843)
+	at org.h2.command.Parser.parse(Parser.java:815)
+	at org.h2.command.Parser.prepareCommand(Parser.java:738)
+	at org.h2.engine.Session.prepareLocal(Session.java:657)
+	at org.h2.engine.Session.prepareCommand(Session.java:595)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1235)
+	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:76)
+	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:352)
+	at com.scritorrelo.zello.message.Text.getSqlStatement(Text.java:48)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:52)
+	at com.scritorrelo.ZelloWebSocketAdapter.textMessageHandler(ZelloWebSocketAdapter.java:130)
+	at com.scritorrelo.ZelloWebSocketAdapter.onTextMessage(ZelloWebSocketAdapter.java:59)
+	at com.neovisionaries.ws.client.ListenerManager.callOnTextMessage(ListenerManager.java:353)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:266)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:244)
+	at com.neovisionaries.ws.client.ReadingThread.handleTextFrame(ReadingThread.java:969)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:752)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+2021-07-12 19:21:54 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Invalid value "0" for parameter "parameterIndex" [90008-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:590)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.getInvalidValueException(DbException.java:280)
+	at org.h2.jdbc.JdbcPreparedStatement.setParameter(JdbcPreparedStatement.java:1503)
+	at org.h2.jdbc.JdbcPreparedStatement.setBytes(JdbcPreparedStatement.java:944)
+	at com.scritorrelo.zello.message.Text.getSqlStatement(Text.java:63)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:52)
+	at com.scritorrelo.ZelloWebSocketAdapter.textMessageHandler(ZelloWebSocketAdapter.java:130)
+	at com.scritorrelo.ZelloWebSocketAdapter.onTextMessage(ZelloWebSocketAdapter.java:59)
+	at com.neovisionaries.ws.client.ListenerManager.callOnTextMessage(ListenerManager.java:353)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:266)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:244)
+	at com.neovisionaries.ws.client.ReadingThread.handleTextFrame(ReadingThread.java:969)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:752)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+2021-07-12 19:23:18 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Invalid value "8" for parameter "parameterIndex" [90008-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:590)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.getInvalidValueException(DbException.java:280)
+	at org.h2.jdbc.JdbcPreparedStatement.setParameter(JdbcPreparedStatement.java:1503)
+	at org.h2.jdbc.JdbcPreparedStatement.setString(JdbcPreparedStatement.java:413)
+	at com.scritorrelo.zello.message.Text.getSqlStatement(Text.java:57)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:52)
+	at com.scritorrelo.ZelloWebSocketAdapter.textMessageHandler(ZelloWebSocketAdapter.java:130)
+	at com.scritorrelo.ZelloWebSocketAdapter.onTextMessage(ZelloWebSocketAdapter.java:59)
+	at com.neovisionaries.ws.client.ListenerManager.callOnTextMessage(ListenerManager.java:353)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:266)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:244)
+	at com.neovisionaries.ws.client.ReadingThread.handleTextFrame(ReadingThread.java:969)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:752)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+2021-07-12 19:24:25 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Invalid value "8" for parameter "parameterIndex" [90008-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:590)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.getInvalidValueException(DbException.java:280)
+	at org.h2.jdbc.JdbcPreparedStatement.setParameter(JdbcPreparedStatement.java:1503)
+	at org.h2.jdbc.JdbcPreparedStatement.setString(JdbcPreparedStatement.java:413)
+	at com.scritorrelo.zello.message.Text.getSqlStatement(Text.java:57)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:52)
+	at com.scritorrelo.ZelloWebSocketAdapter.textMessageHandler(ZelloWebSocketAdapter.java:130)
+	at com.scritorrelo.ZelloWebSocketAdapter.onTextMessage(ZelloWebSocketAdapter.java:59)
+	at com.neovisionaries.ws.client.ListenerManager.callOnTextMessage(ListenerManager.java:353)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:266)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:244)
+	at com.neovisionaries.ws.client.ReadingThread.handleTextFrame(ReadingThread.java:969)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:752)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+2021-07-12 19:25:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Invalid value "8" for parameter "parameterIndex" [90008-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:590)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.getInvalidValueException(DbException.java:280)
+	at org.h2.jdbc.JdbcPreparedStatement.setParameter(JdbcPreparedStatement.java:1503)
+	at org.h2.jdbc.JdbcPreparedStatement.setString(JdbcPreparedStatement.java:413)
+	at com.scritorrelo.zello.message.Text.getSqlStatement(Text.java:57)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:52)
+	at com.scritorrelo.ZelloWebSocketAdapter.textMessageHandler(ZelloWebSocketAdapter.java:130)
+	at com.scritorrelo.ZelloWebSocketAdapter.onTextMessage(ZelloWebSocketAdapter.java:59)
+	at com.neovisionaries.ws.client.ListenerManager.callOnTextMessage(ListenerManager.java:353)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:266)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:244)
+	at com.neovisionaries.ws.client.ReadingThread.handleTextFrame(ReadingThread.java:969)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:752)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+2021-07-12 19:27:40 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Invalid value "8" for parameter "parameterIndex" [90008-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:590)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.getInvalidValueException(DbException.java:280)
+	at org.h2.jdbc.JdbcPreparedStatement.setParameter(JdbcPreparedStatement.java:1503)
+	at org.h2.jdbc.JdbcPreparedStatement.setString(JdbcPreparedStatement.java:413)
+	at com.scritorrelo.zello.message.Text.getSqlStatement(Text.java:57)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:52)
+	at com.scritorrelo.ZelloWebSocketAdapter.textMessageHandler(ZelloWebSocketAdapter.java:130)
+	at com.scritorrelo.ZelloWebSocketAdapter.onTextMessage(ZelloWebSocketAdapter.java:59)
+	at com.neovisionaries.ws.client.ListenerManager.callOnTextMessage(ListenerManager.java:353)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:266)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:244)
+	at com.neovisionaries.ws.client.ReadingThread.handleTextFrame(ReadingThread.java:969)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:752)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+2021-07-12 19:28:50 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "FOR_USER" not found; SQL statement:
+insert into text (uuid, channel,for_User, from_User, id, timestamp, text, test) values (?,?,?,?, ?,?,?,?) [42122-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:453)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.get(DbException.java:181)
+	at org.h2.table.Table.getColumn(Table.java:703)
+	at org.h2.command.Parser.parseColumn(Parser.java:1450)
+	at org.h2.command.Parser.parseColumnList(Parser.java:1435)
+	at org.h2.command.Parser.parseInsertGivenTable(Parser.java:1804)
+	at org.h2.command.Parser.parseInsert(Parser.java:1749)
+	at org.h2.command.Parser.parsePrepared(Parser.java:954)
+	at org.h2.command.Parser.parse(Parser.java:843)
+	at org.h2.command.Parser.parse(Parser.java:815)
+	at org.h2.command.Parser.prepareCommand(Parser.java:738)
+	at org.h2.engine.Session.prepareLocal(Session.java:657)
+	at org.h2.engine.Session.prepareCommand(Session.java:595)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1235)
+	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:76)
+	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:352)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:60)
+	at com.scritorrelo.ZelloWebSocketAdapter.textMessageHandler(ZelloWebSocketAdapter.java:130)
+	at com.scritorrelo.ZelloWebSocketAdapter.onTextMessage(ZelloWebSocketAdapter.java:59)
+	at com.neovisionaries.ws.client.ListenerManager.callOnTextMessage(ListenerManager.java:353)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:266)
+	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:244)
+	at com.neovisionaries.ws.client.ReadingThread.handleTextFrame(ReadingThread.java:969)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:752)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)

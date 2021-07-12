@@ -127,7 +127,7 @@ public class ZelloWebSocketAdapter extends WebSocketAdapter {
 
     public void textMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         Text text = new Text(obj, timestamp);
-        DatabaseManager.saveMessage();
+        DatabaseManager.saveMessage( text);
     }
 
     public void imageMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {

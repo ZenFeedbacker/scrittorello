@@ -3,10 +3,16 @@ package com.scritorrelo.zello.message;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 public abstract class Message {
@@ -31,5 +37,26 @@ public abstract class Message {
         id = obj.optInt("message_id") != 0 ? obj.optInt("message_id") : obj.optInt("stream_id");
     }
 
-    public abstract PreparedStatement getSqlStatement(Connection conn) throws SQLException;
+    public abstract PreparedStatement getSqlStatement(Connection conn) throws SQLException, IllegalAccessException;
+
+    protected byte[] uuidToByteArray(){
+
+        byte[] uuidBytes = new byte[16];
+        ByteBuffer.wrap(uuidBytes)
+                .order(ByteOrder.BIG_ENDIAN)
+                .putLong(uuid.getMostSignificantBits())
+                .putLong(uuid.getLeastSignificantBits());
+
+        return  uuidBytes;
+    }
+
+    protected List<Field> getFieldList(){
+        Class<?> clazz = this.getClass().getSuperclass();
+        List<Field> fields = new ArrayList<>(Arrays.asList(clazz.getDeclaredFields()));
+
+        clazz = this.getClass();
+        fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+
+        return  fields;
+    }
 }
