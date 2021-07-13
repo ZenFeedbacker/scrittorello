@@ -116,6 +116,7 @@ public class ZelloWebSocketAdapter extends WebSocketAdapter {
             }
 
             if (image.isComplete()){
+                image.saveFiles();
                 DatabaseManager.saveMessage(image);
                 images.remove(image.getId());
             }

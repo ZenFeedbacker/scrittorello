@@ -1,6 +1,5 @@
 package com.scritorrelo.zello.message.audio;
 
-import com.healthmarketscience.sqlbuilder.InsertQuery;
 import com.scritorrelo.Client;
 import com.scritorrelo.opus.*;
 import com.scritorrelo.zello.message.Message;
@@ -10,6 +9,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -36,20 +38,24 @@ public class Audio extends Message {
     }
 
     @Override
-    public String getSqlStatement() {
-        return new InsertQuery(schema.AUDIO_TABLE)
-                .addColumn(schema.UUID_AUDIO, uuid)
-                .addColumn(schema.ID_AUDIO, 1)
-                .addColumn(schema.CHANNEL_AUDIO, channel)
-                .addColumn(schema.FOR_USER_AUDIO, forUser)
-                .addColumn(schema.FROM_USER_AUDIO, fromUser)
-                .addColumn(schema.TIMESTAMP_AUDIO, Timestamp.valueOf(timestamp))
-                .addColumn(schema.TYPE_AUDIO, type)
-                .addColumn(schema.CODEC_AUDIO, codec)
-                .addColumn(schema.CODEC_HEADER_AUDIO, codecHeader)
-                .addColumn(schema.PACKET_DURATION_AUDIO, packetDuration)
-                .validate()
-                .toString();
+    public PreparedStatement getSqlStatement(Connection conn) throws SQLException {
+
+        String sqlStatement = "INSERT INTO AUDIO (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TYPE,CODEC,CODEC_HEADER,PACKET_DURATION) VALUES (?,?,?,?,?,?,?,?,?,?)";
+
+        PreparedStatement statement = conn.prepareStatement(sqlStatement);
+
+        statement.setObject(1, uuid);
+        statement.setInt(2, id);
+        statement.setString(3, channel);
+        statement.setString(4, fromUser);
+        statement.setString(5, forUser);
+        statement.setTimestamp(6, Timestamp.valueOf(timestamp));
+        statement.setString(7, type);
+        statement.setString(8, codec);
+        statement.setString(9, codecHeader);
+        statement.setInt(10, packetDuration);
+
+        return conn.prepareStatement(sqlStatement);
     }
 
     public void addFrame(AudioFrame frame) {

@@ -1325,3 +1325,276 @@ insert into text (uuid, channel,for_User, from_User, id, timestamp, text, test) 
 2021-07-13 11:29:49 jdbc[3]: exception
 org.h2.jdbc.JdbcSQLDataException: Data conversion error converting "'[B@1db34d32' (TEXT: ""UUID"" UUID NOT NULL)"; SQL statement:
 INSERT INTO text (uuid,id,channel,for_user,from_user,timestamp,text) VALUES ('[B@1db34d32',1,'Test9376','','zenfeed','2021-07-13 11:29:49.461','γγγγ') [22018-200]
+2021-07-13 15:27:10 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "TIMESTAMP" not found; SQL statement:
+INSERT INTO IMAGE (uuid,id,channel,for_user,from_user,timestamp,type,source,height,width) VALUES ('42c4cbdc-6759-4884-aabc-82dacd326a54',4867,'Test9376','','zenfeed','2021-07-13 15:27:09.866','jpeg','library',0,0) [42122-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:453)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.get(DbException.java:181)
+	at org.h2.table.Table.getColumn(Table.java:703)
+	at org.h2.command.Parser.parseColumn(Parser.java:1450)
+	at org.h2.command.Parser.parseColumnList(Parser.java:1435)
+	at org.h2.command.Parser.parseInsertGivenTable(Parser.java:1804)
+	at org.h2.command.Parser.parseInsert(Parser.java:1749)
+	at org.h2.command.Parser.parsePrepared(Parser.java:954)
+	at org.h2.command.Parser.parse(Parser.java:843)
+	at org.h2.command.Parser.parse(Parser.java:815)
+	at org.h2.command.Parser.prepareCommand(Parser.java:738)
+	at org.h2.engine.Session.prepareLocal(Session.java:657)
+	at org.h2.engine.Session.prepareCommand(Session.java:595)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1235)
+	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:76)
+	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:352)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:50)
+	at com.scritorrelo.ZelloWebSocketAdapter.imageBinaryHandler(ZelloWebSocketAdapter.java:119)
+	at com.scritorrelo.ZelloWebSocketAdapter.onBinaryMessage(ZelloWebSocketAdapter.java:92)
+	at com.neovisionaries.ws.client.ListenerManager.callOnBinaryMessage(ListenerManager.java:385)
+	at com.neovisionaries.ws.client.ReadingThread.callOnBinaryMessage(ReadingThread.java:276)
+	at com.neovisionaries.ws.client.ReadingThread.handleBinaryFrame(ReadingThread.java:996)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:755)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+2021-07-13 15:34:29 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientConnectionException: The database is open in exclusive mode; can not open additional connections [90135-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:622)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.get(DbException.java:181)
+	at org.h2.message.DbException.get(DbException.java:170)
+	at org.h2.engine.Session.checkSuspended(Session.java:1369)
+	at org.h2.engine.Session.transitionToState(Session.java:1361)
+	at org.h2.engine.Session.waitIfExclusiveModeEnabled(Session.java:1633)
+	at org.h2.command.Command.executeUpdate(Command.java:240)
+	at org.h2.jdbc.JdbcPreparedStatement.executeUpdateInternal(JdbcPreparedStatement.java:191)
+	at org.h2.jdbc.JdbcPreparedStatement.executeUpdate(JdbcPreparedStatement.java:152)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:51)
+	at com.scritorrelo.ZelloWebSocketAdapter.imageBinaryHandler(ZelloWebSocketAdapter.java:119)
+	at com.scritorrelo.ZelloWebSocketAdapter.onBinaryMessage(ZelloWebSocketAdapter.java:92)
+	at com.neovisionaries.ws.client.ListenerManager.callOnBinaryMessage(ListenerManager.java:385)
+	at com.neovisionaries.ws.client.ReadingThread.callOnBinaryMessage(ReadingThread.java:276)
+	at com.neovisionaries.ws.client.ReadingThread.handleBinaryFrame(ReadingThread.java:996)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:755)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+2021-07-13 15:36:32 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Hexadecimal string with odd number of characters: "[B@8076c90b"; SQL statement:
+INSERT INTO IMAGE (uuid,id,channel,for_user,from_user,timestamp,type,source,height,width,thumbnail,fullsize) VALUES ('b5865e36-b04c-4678-9e2a-de17b085c5a1',1620,'Test9376','','zenfeed','2021-07-13 15:36:32.626','jpeg','library',0,0,'[B@8076c90b','[B@5d70a625') [90003-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:590)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.get(DbException.java:181)
+	at org.h2.util.StringUtils.convertHexToBytes(StringUtils.java:1040)
+	at org.h2.value.Value.convertToBlob(Value.java:1300)
+	at org.h2.value.Value.convertTo(Value.java:838)
+	at org.h2.value.Value.convertTo(Value.java:772)
+	at org.h2.value.TypeInfo.cast(TypeInfo.java:515)
+	at org.h2.table.Column.validateConvertUpdateSequence(Column.java:378)
+	at org.h2.table.Table.validateConvertUpdateSequence(Table.java:845)
+	at org.h2.command.dml.Insert.insertRows(Insert.java:187)
+	at org.h2.command.dml.Insert.update(Insert.java:151)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:198)
+	at org.h2.command.Command.executeUpdate(Command.java:251)
+	at org.h2.jdbc.JdbcPreparedStatement.executeUpdateInternal(JdbcPreparedStatement.java:191)
+	at org.h2.jdbc.JdbcPreparedStatement.executeUpdate(JdbcPreparedStatement.java:152)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:51)
+	at com.scritorrelo.ZelloWebSocketAdapter.imageBinaryHandler(ZelloWebSocketAdapter.java:119)
+	at com.scritorrelo.ZelloWebSocketAdapter.onBinaryMessage(ZelloWebSocketAdapter.java:92)
+	at com.neovisionaries.ws.client.ListenerManager.callOnBinaryMessage(ListenerManager.java:385)
+	at com.neovisionaries.ws.client.ReadingThread.callOnBinaryMessage(ReadingThread.java:276)
+	at com.neovisionaries.ws.client.ReadingThread.handleBinaryFrame(ReadingThread.java:996)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:755)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+2021-07-13 15:55:24 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Hexadecimal string with odd number of characters: "javax.sql.rowset.serial.SerialBlob@3a1af8ba"; SQL statement:
+INSERT INTO IMAGE (uuid,id,channel,for_user,from_user,timestamp,type,source,height,width,thumbnail,fullsize) VALUES ('58e16b45-3754-40d1-9067-2ed6d23a10e8',46880,'Test9376','','zenfeed','2021-07-13 15:55:24.788','jpeg','library',0,0,'javax.sql.rowset.serial.SerialBlob@3a1af8ba','javax.sql.rowset.serial.SerialBlob@7288981c') [90003-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:590)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.get(DbException.java:181)
+	at org.h2.util.StringUtils.convertHexToBytes(StringUtils.java:1040)
+	at org.h2.value.Value.convertToBlob(Value.java:1300)
+	at org.h2.value.Value.convertTo(Value.java:838)
+	at org.h2.value.Value.convertTo(Value.java:772)
+	at org.h2.value.TypeInfo.cast(TypeInfo.java:515)
+	at org.h2.table.Column.validateConvertUpdateSequence(Column.java:378)
+	at org.h2.table.Table.validateConvertUpdateSequence(Table.java:845)
+	at org.h2.command.dml.Insert.insertRows(Insert.java:187)
+	at org.h2.command.dml.Insert.update(Insert.java:151)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:198)
+	at org.h2.command.Command.executeUpdate(Command.java:251)
+	at org.h2.jdbc.JdbcPreparedStatement.executeUpdateInternal(JdbcPreparedStatement.java:191)
+	at org.h2.jdbc.JdbcPreparedStatement.executeUpdate(JdbcPreparedStatement.java:152)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:51)
+	at com.scritorrelo.ZelloWebSocketAdapter.imageBinaryHandler(ZelloWebSocketAdapter.java:119)
+	at com.scritorrelo.ZelloWebSocketAdapter.onBinaryMessage(ZelloWebSocketAdapter.java:92)
+	at com.neovisionaries.ws.client.ListenerManager.callOnBinaryMessage(ListenerManager.java:385)
+	at com.neovisionaries.ws.client.ReadingThread.callOnBinaryMessage(ReadingThread.java:276)
+	at com.neovisionaries.ws.client.ReadingThread.handleBinaryFrame(ReadingThread.java:996)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:755)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+2021-07-13 16:06:52 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Invalid value "11" for parameter "parameterIndex" [90008-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:590)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.getInvalidValueException(DbException.java:280)
+	at org.h2.jdbc.JdbcPreparedStatement.setParameter(JdbcPreparedStatement.java:1503)
+	at org.h2.jdbc.JdbcPreparedStatement.setBlob(JdbcPreparedStatement.java:822)
+	at com.scritorrelo.zello.message.image.Image.getSqlStatement(Image.java:57)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:50)
+	at com.scritorrelo.ZelloWebSocketAdapter.imageBinaryHandler(ZelloWebSocketAdapter.java:119)
+	at com.scritorrelo.ZelloWebSocketAdapter.onBinaryMessage(ZelloWebSocketAdapter.java:92)
+	at com.neovisionaries.ws.client.ListenerManager.callOnBinaryMessage(ListenerManager.java:385)
+	at com.neovisionaries.ws.client.ReadingThread.callOnBinaryMessage(ReadingThread.java:276)
+	at com.neovisionaries.ws.client.ReadingThread.handleBinaryFrame(ReadingThread.java:996)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:755)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+2021-07-13 16:09:48 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Invalid value "1" for parameter "parameterIndex" [90008-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:590)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.getInvalidValueException(DbException.java:280)
+	at org.h2.jdbc.JdbcPreparedStatement.setParameter(JdbcPreparedStatement.java:1503)
+	at org.h2.jdbc.JdbcPreparedStatement.setBlob(JdbcPreparedStatement.java:822)
+	at com.scritorrelo.zello.message.image.Image.getSqlStatement(Image.java:57)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:50)
+	at com.scritorrelo.ZelloWebSocketAdapter.imageBinaryHandler(ZelloWebSocketAdapter.java:119)
+	at com.scritorrelo.ZelloWebSocketAdapter.onBinaryMessage(ZelloWebSocketAdapter.java:92)
+	at com.neovisionaries.ws.client.ListenerManager.callOnBinaryMessage(ListenerManager.java:385)
+	at com.neovisionaries.ws.client.ReadingThread.callOnBinaryMessage(ReadingThread.java:276)
+	at com.neovisionaries.ws.client.ReadingThread.handleBinaryFrame(ReadingThread.java:996)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:755)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+2021-07-13 16:13:36 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Invalid value "1" for parameter "parameterIndex" [90008-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:590)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.getInvalidValueException(DbException.java:280)
+	at org.h2.jdbc.JdbcPreparedStatement.setParameter(JdbcPreparedStatement.java:1503)
+	at org.h2.jdbc.JdbcPreparedStatement.setBlob(JdbcPreparedStatement.java:822)
+	at com.scritorrelo.zello.message.image.Image.getSqlStatement(Image.java:60)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:50)
+	at com.scritorrelo.ZelloWebSocketAdapter.imageBinaryHandler(ZelloWebSocketAdapter.java:119)
+	at com.scritorrelo.ZelloWebSocketAdapter.onBinaryMessage(ZelloWebSocketAdapter.java:92)
+	at com.neovisionaries.ws.client.ListenerManager.callOnBinaryMessage(ListenerManager.java:385)
+	at com.neovisionaries.ws.client.ReadingThread.callOnBinaryMessage(ReadingThread.java:276)
+	at com.neovisionaries.ws.client.ReadingThread.handleBinaryFrame(ReadingThread.java:996)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:755)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+2021-07-13 16:14:36 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Invalid value "1" for parameter "parameterIndex" [90008-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:590)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	at org.h2.message.DbException.get(DbException.java:205)
+	at org.h2.message.DbException.getInvalidValueException(DbException.java:280)
+	at org.h2.jdbc.JdbcPreparedStatement.setParameter(JdbcPreparedStatement.java:1503)
+	at org.h2.jdbc.JdbcPreparedStatement.setBlob(JdbcPreparedStatement.java:822)
+	at com.scritorrelo.zello.message.image.Image.getSqlStatement(Image.java:60)
+	at com.scritorrelo.DatabaseManager.saveMessage(DatabaseManager.java:50)
+	at com.scritorrelo.ZelloWebSocketAdapter.imageBinaryHandler(ZelloWebSocketAdapter.java:119)
+	at com.scritorrelo.ZelloWebSocketAdapter.onBinaryMessage(ZelloWebSocketAdapter.java:92)
+	at com.neovisionaries.ws.client.ListenerManager.callOnBinaryMessage(ListenerManager.java:385)
+	at com.neovisionaries.ws.client.ReadingThread.callOnBinaryMessage(ReadingThread.java:276)
+	at com.neovisionaries.ws.client.ReadingThread.handleBinaryFrame(ReadingThread.java:996)
+	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:755)
+	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+2021-07-13 17:20:35 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+
+CREATE TABLE IF NOT EXISTS AUDIO (
+    UUID UUID PRIMARY KEY,
+    ID INT,
+    TIMESTAMP TIMESTAMP,
+    CHANNEL VARCHAR(255),
+    FROM_USER VARCHAR(255),
+    FOR_USER VARCHAR(255),
+    TYPE VARCHAR(255),
+    CODEC VARCHAR(255),
+    CODEC_HEADER VARCHAR(255),
+    PACKET_DURATION INT,
+)[*];
+
+CREATE TABLE IF NOT EXISTS LOCATION (
+    UUID UUID PRIMARY KEY,
+    ID INT,
+    TIMESTAMP TIMESTAMP,
+    CHANNEL VARCHAR(255),
+    FROM_USER VARCHAR(255),
+    FOR_USER VARCHAR(255),
+    FORMATTED_ADDRESS VARCHAR(255),
+    LONGITUDE DOUBLE,
+    LATITUDE DOUBLE,
+    ACCURACY DOUBLE
+);
+
+CREATE TABLE IF NOT EXISTS IMAGE (
+    UUID UUID PRIMARY KEY,
+    ID INT,
+    TIMESTAMP TIMESTAMP,
+    CHANNEL VARCHAR(255),
+    FROM_USER VARCHAR(255),
+    FOR_USER VARCHAR(255),
+    TYPE VARCHAR(255),
+    SOURCE VARCHAR(255),
+    HEIGHT INT,
+    WIDTH INT,
+);
+"; expected "identifier"; SQL statement:
+
+
+CREATE TABLE IF NOT EXISTS AUDIO (
+    UUID UUID PRIMARY KEY,
+    ID INT,
+    TIMESTAMP TIMESTAMP,
+    CHANNEL VARCHAR(255),
+    FROM_USER VARCHAR(255),
+    FOR_USER VARCHAR(255),
+    TYPE VARCHAR(255),
+    CODEC VARCHAR(255),
+    CODEC_HEADER VARCHAR(255),
+    PACKET_DURATION INT,
+);
+
+CREATE TABLE IF NOT EXISTS LOCATION (
+    UUID UUID PRIMARY KEY,
+    ID INT,
+    TIMESTAMP TIMESTAMP,
+    CHANNEL VARCHAR(255),
+    FROM_USER VARCHAR(255),
+    FOR_USER VARCHAR(255),
+    FORMATTED_ADDRESS VARCHAR(255),
+    LONGITUDE DOUBLE,
+    LATITUDE DOUBLE,
+    ACCURACY DOUBLE
+);
+
+CREATE TABLE IF NOT EXISTS IMAGE (
+    UUID UUID PRIMARY KEY,
+    ID INT,
+    TIMESTAMP TIMESTAMP,
+    CHANNEL VARCHAR(255),
+    FROM_USER VARCHAR(255),
+    FOR_USER VARCHAR(255),
+    TYPE VARCHAR(255),
+    SOURCE VARCHAR(255),
+    HEIGHT INT,
+    WIDTH INT,
+);
+ [42001-200]

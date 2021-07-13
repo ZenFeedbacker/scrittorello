@@ -1,10 +1,12 @@
 package com.scritorrelo.zello.message;
 
-import com.healthmarketscience.sqlbuilder.InsertQuery;
 import lombok.ToString;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
@@ -19,17 +21,20 @@ public class Text extends Message {
     }
 
     @Override
-    public String getSqlStatement(){
+    public PreparedStatement getSqlStatement(Connection conn) throws SQLException {
 
-        return new InsertQuery(schema.TEXT_TABLE)
-                .addColumn(schema.UUID_TEXT, uuid)
-                .addColumn(schema.ID_TEXT, 1)
-                .addColumn(schema.CHANNEL_TEXT, channel)
-                .addColumn(schema.FOR_USER_TEXT, forUser)
-                .addColumn(schema.FROM_USER_TEXT, fromUser)
-                .addColumn(schema.TIMESTAMP_TEXT, Timestamp.valueOf(timestamp))
-                .addColumn(schema.TEXT_TEXT, text)
-                .validate()
-                .toString();
+        String  sqlStatement = "INSERT INTO TEXT (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TEXT) VALUES (?,?,?,?,?,?,?)";
+
+        PreparedStatement statement = conn.prepareStatement(sqlStatement);
+
+        statement.setObject(1, uuid);
+        statement.setInt(2, id);
+        statement.setString(3, channel);
+        statement.setString(4, fromUser);
+        statement.setString(5, forUser);
+        statement.setTimestamp(6, Timestamp.valueOf(timestamp));
+        statement.setString(7, text);
+
+        return statement;
     }
 }

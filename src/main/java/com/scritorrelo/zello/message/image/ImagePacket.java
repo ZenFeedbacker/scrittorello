@@ -9,12 +9,11 @@ import java.math.BigInteger;
 import java.util.Arrays;
 
 @ToString
+@Getter
 public class ImagePacket {
 
     private final byte packetType;
-    @Getter
     private final int id;
-    @Getter
     private final boolean isThumbnail;
     private final byte[] data;
 
@@ -26,8 +25,8 @@ public class ImagePacket {
         data = Arrays.copyOfRange(binary, 9, binary.length);
     }
 
-    public void save() {
-        File photo = new File("photo.jpg");
+    public void save(String pathname) {
+        File photo = new File(pathname);
 
         if (photo.exists()) {
             photo.delete();

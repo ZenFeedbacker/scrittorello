@@ -1,17 +1,21 @@
 package com.scritorrelo.zello.message.image;
 
-import com.healthmarketscience.sqlbuilder.InsertQuery;
 import com.scritorrelo.zello.message.Message;
 import lombok.Setter;
 import lombok.ToString;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @ToString(callSuper = true)
 public class Image extends Message {
+
+    private static final String IMAGE_FOLDER = "images\\";
 
     private final String type;
     private final String source;
@@ -33,20 +37,38 @@ public class Image extends Message {
     }
 
     @Override
-    public String getSqlStatement() {
-        return new InsertQuery(schema.IMAGE_TABLE)
-                .addColumn(schema.UUID_IMAGE, uuid)
-                .addColumn(schema.ID_IMAGE, 1)
-                .addColumn(schema.CHANNEL_IMAGE, channel)
-                .addColumn(schema.FOR_USER_IMAGE, forUser)
-                .addColumn(schema.FROM_USER_IMAGE, fromUser)
-                .addColumn(schema.TIMESTAMP_IMAGE, Timestamp.valueOf(timestamp))
-                .addColumn(schema.TYPE_IMAGE, type)
-                .addColumn(schema.SOURCE_IMAGE, source)
-                .addColumn(schema.HEIGHT_IMAGE, height)
-                .addColumn(schema.WIDTH_IMAGE, width)
-                .validate()
-                .toString();
+    public PreparedStatement getSqlStatement(Connection conn) throws SQLException {
+
+        String  sqlStatement = "INSERT INTO IMAGE (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TYPE,SOURCE,HEIGHT,WIDTH) VALUES (?,?,?,?,?,?,?,?,?,?)";
+
+        PreparedStatement statement = conn.prepareStatement(sqlStatement);
+
+        statement.setObject(1, uuid);
+        statement.setInt(2, id);
+        statement.setString(3, channel);
+        statement.setString(4, fromUser);
+        statement.setString(5, forUser);
+        statement.setTimestamp(6, Timestamp.valueOf(timestamp));
+        statement.setString(7, type);
+        statement.setString(8, source);
+        statement.setInt(9, height);
+        statement.setInt(10, width);
+
+        return statement;
+    }
+
+    public String getFullImageFilename(){
+        return uuid.toString() + ".jpg";
+    }
+
+    public String getThumbnailImageFilename(){
+        return uuid.toString() + "_thumbnail.jpg";
+    }
+
+    public void saveFiles(){
+        String currentDir = System.getProperty("user.dir");
+        thumbnail.save(currentDir + MESSAGE_FOLDER + IMAGE_FOLDER + getThumbnailImageFilename());
+        fullsize.save(currentDir +MESSAGE_FOLDER + IMAGE_FOLDER + getFullImageFilename());
     }
 
     public boolean isComplete() {

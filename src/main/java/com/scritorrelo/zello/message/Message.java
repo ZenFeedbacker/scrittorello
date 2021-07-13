@@ -1,27 +1,22 @@
 package com.scritorrelo.zello.message;
 
-import com.scritorrelo.DatabaseSchema;
 import lombok.Getter;
 import lombok.ToString;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 
-import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 @ToString
 public abstract class Message {
 
-    protected DatabaseSchema schema;
+    protected static final String MESSAGE_FOLDER = "\\data\\messages\\";
 
     protected final UUID uuid;
     @Getter
@@ -32,8 +27,6 @@ public abstract class Message {
     protected final LocalDateTime timestamp;
 
     public Message(JSONObject obj, LocalDateTime timestamp) throws JSONException {
-
-        this.schema = DatabaseSchema.getINSTANCE();
 
         this.uuid = UUID.randomUUID();
 
@@ -46,7 +39,7 @@ public abstract class Message {
         id = obj.optInt("message_id") != 0 ? obj.optInt("message_id") : obj.optInt("stream_id");
     }
 
-    public abstract String getSqlStatement();
+    public abstract PreparedStatement getSqlStatement(Connection conn) throws SQLException;
 
     protected byte[] uuidToByteArray(){
 
@@ -57,15 +50,5 @@ public abstract class Message {
                 .putLong(uuid.getLeastSignificantBits());
 
         return  uuidBytes;
-    }
-
-    protected List<Field> getFieldList(){
-        Class<?> clazz = this.getClass().getSuperclass();
-        List<Field> fields = new ArrayList<>(Arrays.asList(clazz.getDeclaredFields()));
-
-        clazz = this.getClass();
-        fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
-
-        return  fields;
     }
 }

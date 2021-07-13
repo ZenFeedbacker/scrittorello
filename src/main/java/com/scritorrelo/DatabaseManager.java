@@ -14,8 +14,8 @@ public class DatabaseManager {
 
     public static void init() throws IOException, SQLException {
 
-        dropTables();
-        createTables();
+       dropTables();
+       createTables();
     }
 
     private static void createTables() throws SQLException, IOException {
@@ -47,7 +47,9 @@ public class DatabaseManager {
         System.out.println("receive text");
         try (Connection conn = getConnection()) {
 
-            PreparedStatement statement = conn.prepareStatement(message.getSqlStatement());
+            PreparedStatement statement = message.getSqlStatement(conn);
+
+            System.out.println(statement.toString());
             int insertedRows = statement.executeUpdate();
             System.out.println("I just inserted " + insertedRows + " users");
         } catch (Exception e) {
