@@ -122,6 +122,7 @@ public class ZelloWebSocketAdapter extends WebSocketAdapter {
 
     public void locationMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         Location location = new Location(obj, timestamp);
+        DatabaseManager.saveMessage(location);
         System.out.println(location);
     }
 

@@ -1,11 +1,11 @@
 package com.scritorrelo.zello.message;
 
+import com.healthmarketscience.sqlbuilder.InsertQuery;
 import lombok.ToString;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @ToString(callSuper = true)
@@ -27,7 +27,18 @@ public class Location extends Message {
     }
 
     @Override
-    public PreparedStatement getSqlStatement(Connection conn) {
-        return null;
-    }
+    public String getSqlStatement() {
+        return new InsertQuery(schema.LOCATION_TABLE)
+                .addColumn(schema.UUID_LOCATION, uuid)
+                .addColumn(schema.ID_LOCATION, 1)
+                .addColumn(schema.CHANNEL_LOCATION, channel)
+                .addColumn(schema.FOR_USER_LOCATION, forUser)
+                .addColumn(schema.FROM_USER_LOCATION, fromUser)
+                .addColumn(schema.TIMESTAMP_LOCATION, Timestamp.valueOf(timestamp))
+                .addColumn(schema.LONGITUDE_LOCATION, longitude)
+                .addColumn(schema.LATITUDE_LOCATION, latitude)
+                .addColumn(schema.ACCURACY_LOCATION, accuracy)
+                .addColumn(schema.FORMATTED_ADDRESS_LOCATION, formattedAddress)
+                .validate()
+                .toString();    }
 }

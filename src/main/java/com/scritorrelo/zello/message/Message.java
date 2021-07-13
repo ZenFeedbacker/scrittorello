@@ -1,14 +1,15 @@
 package com.scritorrelo.zello.message;
 
+import com.scritorrelo.DatabaseSchema;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.UUID;
 
 public abstract class Message {
+
+    protected DatabaseSchema schema;
 
     protected final UUID uuid;
     protected final int id;
@@ -25,6 +28,8 @@ public abstract class Message {
     protected final LocalDateTime timestamp;
 
     public Message(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+
+        this.schema = DatabaseSchema.getINSTANCE();
 
         this.uuid = UUID.randomUUID();
 
@@ -37,7 +42,7 @@ public abstract class Message {
         id = obj.optInt("message_id") != 0 ? obj.optInt("message_id") : obj.optInt("stream_id");
     }
 
-    public abstract PreparedStatement getSqlStatement(Connection conn) throws SQLException, IllegalAccessException;
+    public abstract String getSqlStatement();
 
     protected byte[] uuidToByteArray(){
 

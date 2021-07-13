@@ -1,5 +1,6 @@
 package com.scritorrelo.zello.message.audio;
 
+import com.healthmarketscience.sqlbuilder.InsertQuery;
 import com.scritorrelo.Client;
 import com.scritorrelo.opus.*;
 import com.scritorrelo.zello.message.Message;
@@ -9,8 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +36,20 @@ public class AudioStream extends Message {
     }
 
     @Override
-    public PreparedStatement getSqlStatement(Connection conn) {
-        return null;
+    public String getSqlStatement() {
+        return new InsertQuery(schema.AUDIO_TABLE)
+                .addColumn(schema.UUID_AUDIO, uuid)
+                .addColumn(schema.ID_AUDIO, 1)
+                .addColumn(schema.CHANNEL_AUDIO, channel)
+                .addColumn(schema.FOR_USER_AUDIO, forUser)
+                .addColumn(schema.FROM_USER_AUDIO, fromUser)
+                .addColumn(schema.TIMESTAMP_AUDIO, Timestamp.valueOf(timestamp))
+                .addColumn(schema.TYPE_AUDIO, type)
+                .addColumn(schema.CODEC_AUDIO, codec)
+                .addColumn(schema.CODEC_HEADER_AUDIO, codecHeader)
+                .addColumn(schema.PACKET_DURATION_AUDIO, packetDuration)
+                .validate()
+                .toString();
     }
 
     public void addFrame(AudioFrame frame) {

@@ -1,12 +1,12 @@
 package com.scritorrelo.zello.message.image;
 
+import com.healthmarketscience.sqlbuilder.InsertQuery;
 import com.scritorrelo.zello.message.Message;
 import lombok.ToString;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @ToString(callSuper = true)
@@ -28,7 +28,19 @@ public class Image extends Message {
     }
 
     @Override
-    public PreparedStatement getSqlStatement(Connection conn) {
-        return null;
+    public String getSqlStatement() {
+        return new InsertQuery(schema.IMAGE_TABLE)
+                .addColumn(schema.UUID_IMAGE, uuid)
+                .addColumn(schema.ID_IMAGE, 1)
+                .addColumn(schema.CHANNEL_IMAGE, channel)
+                .addColumn(schema.FOR_USER_IMAGE, forUser)
+                .addColumn(schema.FROM_USER_IMAGE, fromUser)
+                .addColumn(schema.TIMESTAMP_IMAGE, Timestamp.valueOf(timestamp))
+                .addColumn(schema.TYPE_IMAGE, type)
+                .addColumn(schema.SOURCE_IMAGE, source)
+                .addColumn(schema.HEIGHT_IMAGE, height)
+                .addColumn(schema.WIDTH_IMAGE, width)
+                .validate()
+                .toString();
     }
 }
