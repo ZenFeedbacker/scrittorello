@@ -10,14 +10,14 @@ import java.time.LocalDateTime;
 public class Channel {
 
     private final String name;
-    private boolean status;
-    private int usersOnline;
-    private boolean imagesSupported;
-    private boolean textingSupported;
-    private boolean locationsSupported;
-    private String error;
+    private final boolean status;
+    private final int usersOnline;
+    private final boolean imagesSupported;
+    private final boolean textingSupported;
+    private final boolean locationsSupported;
+    private final String error;
     private String errorType;
-    private LocalDateTime lastStatus;
+    private final LocalDateTime lastStatus;
 
     public Channel(JSONObject obj, LocalDateTime timestamp) throws JSONException {
 

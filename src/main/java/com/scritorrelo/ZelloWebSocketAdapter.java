@@ -9,7 +9,7 @@ import com.scritorrelo.zello.Command;
 import com.scritorrelo.zello.message.Location;
 import com.scritorrelo.zello.message.Text;
 import com.scritorrelo.zello.message.audio.AudioFrame;
-import com.scritorrelo.zello.message.audio.AudioStream;
+import com.scritorrelo.zello.message.audio.Audio;
 import com.scritorrelo.zello.message.error.Error;
 import com.scritorrelo.zello.message.image.Image;
 import com.scritorrelo.zello.message.image.ImagePacket;
@@ -28,9 +28,10 @@ import java.util.HashMap;
 public class ZelloWebSocketAdapter extends WebSocketAdapter {
 
     @Setter
-    public ZelloWebSocket ws;
+    private ZelloWebSocket ws;
 
-    final HashMap<Integer, AudioStream> streams = new HashMap<>();
+    private final HashMap<Integer, Audio> streams = new HashMap<>();
+    private final HashMap<Integer, Image> images = new HashMap<>();
 
     public void onTextMessage(WebSocket websocket, String message) throws JSONException, IOException {
 
@@ -98,14 +99,36 @@ public class ZelloWebSocketAdapter extends WebSocketAdapter {
 
     private void imageBinaryHandler(byte[] binary) {
         System.out.println("Received image binary");
-        ImagePacket image = new ImagePacket(binary);
-        System.out.println(image.isThumbnail() ? "Thumbnail" : "Full Image");
+
+        ImagePacket packet = new ImagePacket(binary);
+        System.out.println(packet.isThumbnail() ? "Thumbnail" : "Full Image");
+
+        int id = packet.getId();
+
+        if (images.containsKey(id)) {
+
+            Image image = images.get(id);
+
+            if (packet.isThumbnail()) {
+                image.setThumbnail(packet);
+            } else {
+                image.setFullsize(packet);
+            }
+
+            if (image.isComplete()){
+                DatabaseManager.saveMessage(image);
+                images.remove(image.getId());
+            }
+        }
     }
 
     private void audioBinaryHandler(byte[] binary) {
         System.out.println("Received audio binary");
         AudioFrame audioFrame = new AudioFrame(binary);
-        streams.get(audioFrame.getStream_id()).addFrame(audioFrame);
+        int id = audioFrame.getStream_id();
+        if(streams.containsKey(id)) {
+            streams.get(id).addFrame(audioFrame);
+        }
     }
 
     public void channelStatusHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
@@ -128,21 +151,22 @@ public class ZelloWebSocketAdapter extends WebSocketAdapter {
 
     public void textMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         Text text = new Text(obj, timestamp);
-        DatabaseManager.saveMessage( text);
+        DatabaseManager.saveMessage(text);
     }
 
     public void imageMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         Image image = new Image(obj, timestamp);
+        images.put(image.getId(), image);
         System.out.println(image);
     }
 
     public void streamStartHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
-        AudioStream stream = new AudioStream(obj, timestamp);
+        Audio stream = new Audio(obj, timestamp);
         streams.put(obj.getInt("stream_id"), stream);
     }
 
     public void streamStopHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException, IOException {
-        AudioStream audioStream = streams.get(obj.getInt("stream_id"));
+        Audio audioStream = streams.get(obj.getInt("stream_id"));
         //  audioStream.toFile();
         //  System.out.println(audioStream);
         Stream oggStream = new Stream(audioStream.getOpusStream());
@@ -150,5 +174,6 @@ public class ZelloWebSocketAdapter extends WebSocketAdapter {
         oggFile.writeToFile(Client.outputFile);
         System.out.println("Wrote file " + Client.outputFile);
         //Client.ws.disconnect();
+        DatabaseManager.saveMessage(audioStream);
     }
 }

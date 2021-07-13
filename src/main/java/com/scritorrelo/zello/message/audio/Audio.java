@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ToString(callSuper = true)
-public class AudioStream extends Message {
+public class Audio extends Message {
 
     private final String type;
     private final String codec;
@@ -24,7 +24,7 @@ public class AudioStream extends Message {
     private final int packetDuration;
     private final List<AudioFrame> audioFrames;
 
-    public AudioStream(JSONObject json, LocalDateTime timestamp) throws JSONException {
+    public Audio(JSONObject json, LocalDateTime timestamp) throws JSONException {
 
         super(json, timestamp);
 

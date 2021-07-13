@@ -1,6 +1,8 @@
 package com.scritorrelo.zello.message;
 
 import com.scritorrelo.DatabaseSchema;
+import lombok.Getter;
+import lombok.ToString;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +18,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+@ToString
 public abstract class Message {
 
     protected DatabaseSchema schema;
 
     protected final UUID uuid;
+    @Getter
     protected final int id;
     protected final String channel;
     protected final String fromUser;

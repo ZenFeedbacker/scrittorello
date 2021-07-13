@@ -2,6 +2,7 @@ package com.scritorrelo.zello.message.image;
 
 import com.healthmarketscience.sqlbuilder.InsertQuery;
 import com.scritorrelo.zello.message.Message;
+import lombok.Setter;
 import lombok.ToString;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +17,10 @@ public class Image extends Message {
     private final String source;
     private final int height;
     private final int width;
+    @Setter
+    private ImagePacket thumbnail;
+    @Setter
+    private ImagePacket fullsize;
 
     public Image(JSONObject obj, LocalDateTime timestamp) throws JSONException {
 
@@ -42,5 +47,10 @@ public class Image extends Message {
                 .addColumn(schema.WIDTH_IMAGE, width)
                 .validate()
                 .toString();
+    }
+
+    public boolean isComplete() {
+
+        return thumbnail != null && fullsize != null;
     }
 }

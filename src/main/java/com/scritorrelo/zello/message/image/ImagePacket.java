@@ -12,6 +12,7 @@ import java.util.Arrays;
 public class ImagePacket {
 
     private final byte packetType;
+    @Getter
     private final int id;
     @Getter
     private final boolean isThumbnail;
