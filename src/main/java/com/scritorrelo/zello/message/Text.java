@@ -1,6 +1,10 @@
 package com.scritorrelo.zello.message;
 
-import ch.qos.logback.core.subst.Token;
+import com.healthmarketscience.sqlbuilder.InsertQuery;
+import com.healthmarketscience.sqlbuilder.dbspec.basic.DbColumn;
+import com.healthmarketscience.sqlbuilder.dbspec.basic.DbSchema;
+import com.healthmarketscience.sqlbuilder.dbspec.basic.DbSpec;
+import com.healthmarketscience.sqlbuilder.dbspec.basic.DbTable;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
@@ -69,6 +73,22 @@ public class Text extends Message {
                     break;
             }
         }
+
+
+        DbSpec spec = new DbSpec();
+        DbSchema schema = spec.addDefaultSchema();
+
+        // add table with basic customer info
+        DbTable customerTable = schema.addTable("text");
+        DbColumn custIdCol = customerTable.addColumn("uuid", "uuid", null);
+        DbColumn custNameCol = customerTable.addColumn("name", "varchar", 255);
+        String insertCustomerQuery =
+                new InsertQuery(customerTable)
+                        .addColumn(custIdCol, 1)
+                        .addColumn(custNameCol, "bob")
+                        .validate().toString();
+        System.out.println(insertCustomerQuery);
+
 
         return statement;
     }

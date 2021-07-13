@@ -69,6 +69,8 @@ public class DatabaseManager {
 
             int insertedRows = statement.executeUpdate();
             System.out.println("I just inserted " + insertedRows + " users");
+
+
         } catch (Exception e) {
             System.out.println(e);
         }
