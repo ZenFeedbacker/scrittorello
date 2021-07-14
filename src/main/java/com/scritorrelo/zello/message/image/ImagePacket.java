@@ -2,12 +2,14 @@ package com.scritorrelo.zello.message.image;
 
 import lombok.Getter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.math.BigInteger;
 import java.util.Arrays;
 
+@Slf4j
 @ToString
 @Getter
 public class ImagePacket {
@@ -37,7 +39,7 @@ public class ImagePacket {
             fos.write(data);
             fos.close();
         } catch (java.io.IOException e) {
-            System.out.println("Error " + e);
+            log.error(e.toString());
         }
     }
 }

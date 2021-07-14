@@ -1,6 +1,8 @@
 package com.scritorrelo;
 
 import com.scritorrelo.zello.message.Message;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
@@ -10,7 +12,17 @@ import java.nio.file.Files;
 import java.sql.*;
 
 @Component
+@Slf4j
 public class DatabaseManager {
+
+    @Value("${spring.datasource.url}")
+    private String jdbcUrl;
+
+    @Value("${spring.datasource.username}")
+    private String username;
+
+    @Value("${spring.datasource.password}")
+    private String password;
 
     private static final String CREATE_SCHEMA_FILE = "create_schema.sql";
     private static final String DROP_TABLES_FILE = "drops_tables.sql";
@@ -23,16 +35,16 @@ public class DatabaseManager {
     }
 
     public void saveMessage(Message message) {
-        System.out.println("receive text");
+        log.info("receive text");
         try (Connection conn = getConnection()) {
 
             PreparedStatement statement = message.getSqlStatement(conn);
 
-            System.out.println(statement.toString());
+            log.info(statement.toString());
             int insertedRows = statement.executeUpdate();
-            System.out.println("I just inserted " + insertedRows + " users");
+            log.info("I just inserted " + insertedRows + " users");
         } catch (Exception e) {
-            System.out.println(e);
+            log.error(e.toString());
         }
     }
 
@@ -42,7 +54,7 @@ public class DatabaseManager {
 
             Statement stmt = conn.createStatement();
             stmt.execute(schema);
-            System.out.println("Table Created......");
+            log.info("Database tables created");
         }
     }
 
@@ -52,7 +64,7 @@ public class DatabaseManager {
 
             Statement stmt = conn.createStatement();
             stmt.execute(schema);
-            System.out.println("Tables dropped......");
+            log.info("Database tables dropped.");
         }
     }
 
@@ -61,7 +73,7 @@ public class DatabaseManager {
         return new String(Files.readAllBytes(file.toPath()));
     }
 
-    private static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:h2:file:./data/db", "sa", "password");
+    private Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(jdbcUrl, username, password);
     }
 }

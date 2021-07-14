@@ -1,6 +1,7 @@
 package com.scritorrelo.zello.message.audio;
 
 import com.scritorrelo.Client;
+import com.scritorrelo.ZelloWebSocketAdapter;
 import com.scritorrelo.opus.*;
 import com.scritorrelo.zello.message.Message;
 import lombok.ToString;
@@ -102,7 +103,7 @@ public class Audio extends Message {
 
     public void toFile() throws IOException {
 
-        OutputStream out = new FileOutputStream(Client.outputFile);
+        OutputStream out = new FileOutputStream(ZelloWebSocketAdapter.outputFile);
 
         OpusFile opus = new OpusFile(out);
         opus.getInfo().setSampleRate(48000);

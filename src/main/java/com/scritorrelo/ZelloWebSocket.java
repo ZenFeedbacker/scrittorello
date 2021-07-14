@@ -1,24 +1,33 @@
 package com.scritorrelo;
 
 import com.neovisionaries.ws.client.*;
-import com.scritorrelo.zello.Channel;
 import lombok.Setter;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 
 import javax.annotation.PostConstruct;
 import javax.json.Json;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+import java.nio.charset.Charset;
 import java.util.concurrent.locks.ReentrantLock;
-
-import static com.scritorrelo.WebSocketManager.*;
 
 @Service
 @Scope("prototype")
 class ZelloWebSocket {
+
+    @Value("${:classpath:auth_token}")
+    public Resource AUTH_TOKEN;
+
+    @Value("${scrittorello.server}")
+    public String SERVER;
+
+    @Value("${scrittorello.timeout}")
+    public int TIMEOUT;
 
     @Autowired
     private ObjectFactory<ZelloWebSocketAdapter> adapterObjectFactory;
@@ -53,7 +62,7 @@ class ZelloWebSocket {
         }
     }
 
-    void login() {
+    void login() throws IOException {
 
         String loginMessage = Json.createObjectBuilder()
                 .add("command", "logon")
@@ -71,11 +80,9 @@ class ZelloWebSocket {
         socket.disconnect();
     }
 
-    WebSocketState getState(){
-        return socket.getState();
-    }
+    private String getToken() throws IOException {
+        String token_string = StreamUtils.copyToString(AUTH_TOKEN.getInputStream(), Charset.defaultCharset());
 
-    private String getToken() {
-        return refreshToken == null ? AUTH_TOKEN : refreshToken;
+        return refreshToken == null ? token_string : refreshToken;
     }
 }
