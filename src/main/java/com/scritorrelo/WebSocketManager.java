@@ -8,6 +8,7 @@ import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -37,6 +38,7 @@ class WebSocketManager {
     @Setter
     private String sourceFile = DEFAULT_SOURCE_FILE;
 
+    @PostConstruct
     void init() throws Exception {
         socketMap = new HashMap<>();
 

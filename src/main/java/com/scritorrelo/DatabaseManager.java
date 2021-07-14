@@ -4,6 +4,7 @@ import com.scritorrelo.zello.message.Message;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
+import javax.annotation.PostConstruct;
 import java.io.*;
 import java.nio.file.Files;
 import java.sql.*;
@@ -14,6 +15,7 @@ public class DatabaseManager {
     private static final String CREATE_SCHEMA_FILE = "create_schema.sql";
     private static final String DROP_TABLES_FILE = "drops_tables.sql";
 
+    @PostConstruct
     public void init() throws IOException, SQLException {
 
        dropTables();
