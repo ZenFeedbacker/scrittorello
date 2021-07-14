@@ -5,7 +5,7 @@ import com.scritorrelo.zello.Channel;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.json.Json;
@@ -16,7 +16,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import static com.scritorrelo.WebSocketManager.*;
 
 @Setter
-@Component
+@Service
 @Scope("prototype")
 class ZelloWebSocket {
 

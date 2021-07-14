@@ -2,57 +2,57 @@ package com.scritorrelo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 @SpringBootApplication
-public class Client {
+public class Client implements ApplicationRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
 
     public static final String sampleFile = "src/main/resources/speech.opus";
     public static final String outputFile = "src/main/resources/out.opus";
 
-    public static ApplicationContext ctx;
+    @Autowired
+    private DatabaseManager dbManager;
+    @Autowired
+    private WebSocketManager wsManager;
 
-    public WebSocketManager manager;
-
-    public static void main(String[] args) throws Exception {
-
+    public static void main(String[] args) {
         SpringApplication.run(Client.class);
-        Client client = new Client();
-        client.init();
     }
 
-    private void init() throws Exception {
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
 
-        ctx = new AnnotationConfigApplicationContext(Client.class);
-        manager = ctx.getBean(WebSocketManager.class);
-
-        manager.init();
+        wsManager.init();
 
         System.out.println("connect");
 
-        DatabaseManager.init();
+        dbManager.init();
 
         String line;
 
-        while ((line = getInput().readLine()) != null) {
+        while ((line = getLine()) != null) {
             if (line.equals("")) {
                 break;
             }
         }
-        manager.closeAll();
+        wsManager.closeAll();
 
         System.out.println("Disconnect");
     }
 
-    private static BufferedReader getInput() {
-        return new BufferedReader(new InputStreamReader(System.in));
+    private static String getLine() throws IOException {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        return bf.readLine();
     }
+
 }

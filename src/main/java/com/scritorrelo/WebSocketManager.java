@@ -4,6 +4,8 @@ import com.neovisionaries.ws.client.WebSocketException;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -29,6 +31,9 @@ class WebSocketManager {
 
     public static ReentrantLock socketLock;
 
+    @Autowired
+    private ObjectFactory<ZelloWebSocket> myBeanFactory;
+
     @Setter
     private String sourceFile = DEFAULT_SOURCE_FILE;
 
@@ -49,12 +54,17 @@ class WebSocketManager {
         }
     }
 
+    void closeAll() {
+        socketMap.values().forEach(ZelloWebSocket::disconnect);
+    }
+
     private void initSocket(String channelName) throws WebSocketException {
         logger.info(channelName);
 
-        ZelloWebSocket ws = Client.ctx.getBean(ZelloWebSocket.class);
+        ZelloWebSocket ws = myBeanFactory.getObject();
 
         ws.setChannelName(channelName);
+        System.out.println(ws);
 
         socketLock.lock();
 
@@ -68,7 +78,6 @@ class WebSocketManager {
         ws.login();
 
         socketMap.put(channelName, ws);
-
     }
 
     private static File getFileFromResource(String fileName) throws URISyntaxException {
@@ -81,9 +90,5 @@ class WebSocketManager {
             return new File(resource.toURI());
         }
 
-    }
-
-    void closeAll() {
-        socketMap.values().forEach(ZelloWebSocket::disconnect);
     }
 }

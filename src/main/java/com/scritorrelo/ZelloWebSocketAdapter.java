@@ -16,6 +16,7 @@ import com.scritorrelo.zello.message.image.ImagePacket;
 import lombok.Setter;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
@@ -29,6 +30,9 @@ public class ZelloWebSocketAdapter extends WebSocketAdapter {
 
     @Setter
     private ZelloWebSocket ws;
+
+    @Autowired
+    private static DatabaseManager dbManager;
 
     private final HashMap<Integer, Audio> streams = new HashMap<>();
     private final HashMap<Integer, Image> images = new HashMap<>();
@@ -77,11 +81,6 @@ public class ZelloWebSocketAdapter extends WebSocketAdapter {
         }
     }
 
-    private void refreshTokenHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
-
-        ws.setRefreshToken(obj.getString("refresh_token"));
-    }
-
     public void onBinaryMessage(WebSocket websocket, byte[] binary) {
 
         switch (binary[0]) {
@@ -95,6 +94,11 @@ public class ZelloWebSocketAdapter extends WebSocketAdapter {
                 System.out.println("Received unknown binary, type " + binary[0]);
                 break;
         }
+    }
+
+    private void refreshTokenHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+
+        ws.setRefreshToken(obj.getString("refresh_token"));
     }
 
     private void imageBinaryHandler(byte[] binary) {
@@ -117,7 +121,7 @@ public class ZelloWebSocketAdapter extends WebSocketAdapter {
 
             if (image.isComplete()){
                 image.saveFiles();
-                DatabaseManager.saveMessage(image);
+                dbManager.saveMessage(image);
                 images.remove(image.getId());
             }
         }
@@ -132,41 +136,41 @@ public class ZelloWebSocketAdapter extends WebSocketAdapter {
         }
     }
 
-    public void channelStatusHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+    private void channelStatusHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
 
         Channel channel = new Channel(obj, timestamp);
         ws.setChannel(channel);
         System.out.println(channel);
     }
 
-    public void errorHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+    private void errorHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         Error error = new Error(obj, timestamp);
         System.out.println(error);
     }
 
-    public void locationMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+    private void locationMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         Location location = new Location(obj, timestamp);
-        DatabaseManager.saveMessage(location);
+        dbManager.saveMessage(location);
         System.out.println(location);
     }
 
-    public void textMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+    private void textMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         Text text = new Text(obj, timestamp);
-        DatabaseManager.saveMessage(text);
+        dbManager.saveMessage(text);
     }
 
-    public void imageMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+    private void imageMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         Image image = new Image(obj, timestamp);
         images.put(image.getId(), image);
         System.out.println(image);
     }
 
-    public void streamStartHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+    private void streamStartHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         Audio stream = new Audio(obj, timestamp);
         streams.put(obj.getInt("stream_id"), stream);
     }
 
-    public void streamStopHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException, IOException {
+    private void streamStopHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException, IOException {
         Audio audioStream = streams.get(obj.getInt("stream_id"));
         //  audioStream.toFile();
         //  System.out.println(audioStream);
@@ -175,6 +179,6 @@ public class ZelloWebSocketAdapter extends WebSocketAdapter {
         oggFile.writeToFile(Client.outputFile);
         System.out.println("Wrote file " + Client.outputFile);
         //Client.ws.disconnect();
-        DatabaseManager.saveMessage(audioStream);
+        dbManager.saveMessage(audioStream);
     }
 }
