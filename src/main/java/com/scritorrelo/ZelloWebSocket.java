@@ -20,6 +20,9 @@ import static com.scritorrelo.WebSocketManager.*;
 @Scope("prototype")
 class ZelloWebSocket {
 
+    @Autowired
+    private ObjectFactory<ZelloWebSocketAdapter> adapterObjectFactory;
+
     @Setter
     private String refreshToken;
 
@@ -27,11 +30,6 @@ class ZelloWebSocket {
 
     @Setter
     private String channelName;
-
-    @Autowired
-    private ObjectFactory<ZelloWebSocketAdapter> adapterObjectFactory;
-
-    private Channel channel;
 
     @PostConstruct
     void init() throws IOException {

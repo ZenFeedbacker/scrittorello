@@ -17,6 +17,8 @@ public class Image extends Message {
 
     private static final String IMAGE_FOLDER = "images\\";
 
+    private static final String SQL_STATEMENT =  "INSERT INTO IMAGE (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TYPE,SOURCE,HEIGHT,WIDTH) VALUES (?,?,?,?,?,?,?,?,?,?)";
+
     private final String type;
     private final String source;
     private final int height;
@@ -39,9 +41,7 @@ public class Image extends Message {
     @Override
     public PreparedStatement getSqlStatement(Connection conn) throws SQLException {
 
-        String  sqlStatement = "INSERT INTO IMAGE (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TYPE,SOURCE,HEIGHT,WIDTH) VALUES (?,?,?,?,?,?,?,?,?,?)";
-
-        PreparedStatement statement = conn.prepareStatement(sqlStatement);
+        PreparedStatement statement = conn.prepareStatement(SQL_STATEMENT);
 
         statement.setObject(1, uuid);
         statement.setInt(2, id);
@@ -57,14 +57,6 @@ public class Image extends Message {
         return statement;
     }
 
-    public String getFullImageFilename(){
-        return uuid.toString() + ".jpg";
-    }
-
-    public String getThumbnailImageFilename(){
-        return uuid.toString() + "_thumbnail.jpg";
-    }
-
     public void saveFiles(){
         String currentDir = System.getProperty("user.dir");
         thumbnail.save(currentDir + MESSAGE_FOLDER + IMAGE_FOLDER + getThumbnailImageFilename());
@@ -74,5 +66,13 @@ public class Image extends Message {
     public boolean isComplete() {
 
         return thumbnail != null && fullsize != null;
+    }
+
+    private String getFullImageFilename(){
+        return uuid.toString() + ".jpg";
+    }
+
+    private String getThumbnailImageFilename(){
+        return uuid.toString() + "_thumbnail.jpg";
     }
 }

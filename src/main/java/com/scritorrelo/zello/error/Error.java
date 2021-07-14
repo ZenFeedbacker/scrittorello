@@ -1,4 +1,4 @@
-package com.scritorrelo.zello.message.error;
+package com.scritorrelo.zello.error;
 
 import lombok.ToString;
 import org.json.JSONException;

@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 @ToString(callSuper = true)
 public class Location extends Message {
 
+    private final static String SQL_STATEMENT = "INSERT INTO LOCATION (UUID,ID,CHANNEL,FROM_USER,FOR_USER, TIMESTAMP,LONGITUDE,LATITUDE,ACCURACY,FORMATTED_ADDRESS) VALUES (?,?,?,?,?,?,?,?,?,?)";
+
     private final double longitude;
     private final double latitude;
     private final double accuracy;
@@ -31,9 +33,7 @@ public class Location extends Message {
     @Override
     public PreparedStatement getSqlStatement(Connection conn) throws SQLException {
 
-        String sqlStatement = "INSERT INTO LOCATION (UUID,ID,CHANNEL,FROM_USER,FOR_USER, TIMESTAMP,LONGITUDE,LATITUDE,ACCURACY,FORMATTED_ADDRESS) VALUES (?,?,?,?,?,?,?,?,?,?)";
-
-        PreparedStatement statement = conn.prepareStatement(sqlStatement);
+        PreparedStatement statement = conn.prepareStatement(SQL_STATEMENT);
 
         statement.setObject(1, uuid);
         statement.setInt(2, id);
@@ -46,6 +46,6 @@ public class Location extends Message {
         statement.setDouble(9, accuracy);
         statement.setString(10, formattedAddress);
 
-        return conn.prepareStatement(sqlStatement);
+        return statement;
     }
 }

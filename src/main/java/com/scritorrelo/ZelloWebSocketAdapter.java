@@ -10,7 +10,7 @@ import com.scritorrelo.zello.message.Location;
 import com.scritorrelo.zello.message.Text;
 import com.scritorrelo.zello.message.audio.AudioFrame;
 import com.scritorrelo.zello.message.audio.Audio;
-import com.scritorrelo.zello.message.error.Error;
+import com.scritorrelo.zello.error.Error;
 import com.scritorrelo.zello.message.image.Image;
 import com.scritorrelo.zello.message.image.ImagePacket;
 import lombok.Setter;
@@ -139,7 +139,6 @@ public class ZelloWebSocketAdapter extends WebSocketAdapter {
     private void channelStatusHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
 
         Channel channel = new Channel(obj, timestamp);
-        ws.setChannel(channel);
         System.out.println(channel);
     }
 

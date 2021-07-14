@@ -20,6 +20,8 @@ import java.util.List;
 @ToString(callSuper = true)
 public class Audio extends Message {
 
+    private static final String SQL_STATEMENT = "INSERT INTO AUDIO (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TYPE,CODEC,CODEC_HEADER,PACKET_DURATION) VALUES (?,?,?,?,?,?,?,?,?,?)";
+
     private final String type;
     private final String codec;
     private final String codecHeader;
@@ -40,9 +42,8 @@ public class Audio extends Message {
     @Override
     public PreparedStatement getSqlStatement(Connection conn) throws SQLException {
 
-        String sqlStatement = "INSERT INTO AUDIO (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TYPE,CODEC,CODEC_HEADER,PACKET_DURATION) VALUES (?,?,?,?,?,?,?,?,?,?)";
 
-        PreparedStatement statement = conn.prepareStatement(sqlStatement);
+        PreparedStatement statement = conn.prepareStatement(SQL_STATEMENT);
 
         statement.setObject(1, uuid);
         statement.setInt(2, id);
@@ -55,7 +56,7 @@ public class Audio extends Message {
         statement.setString(9, codecHeader);
         statement.setInt(10, packetDuration);
 
-        return conn.prepareStatement(sqlStatement);
+        return statement;
     }
 
     public void addFrame(AudioFrame frame) {

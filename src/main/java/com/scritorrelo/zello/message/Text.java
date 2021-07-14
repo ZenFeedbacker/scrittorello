@@ -15,6 +15,8 @@ public class Text extends Message {
 
     private final String text;
 
+    private final static String SQL_STATEMENT =  "INSERT INTO TEXT (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TEXT) VALUES (?,?,?,?,?,?,?)";
+
     public Text(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         super(obj, timestamp);
         text = obj.getString("text");
@@ -23,9 +25,7 @@ public class Text extends Message {
     @Override
     public PreparedStatement getSqlStatement(Connection conn) throws SQLException {
 
-        String  sqlStatement = "INSERT INTO TEXT (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TEXT) VALUES (?,?,?,?,?,?,?)";
-
-        PreparedStatement statement = conn.prepareStatement(sqlStatement);
+        PreparedStatement statement = conn.prepareStatement(SQL_STATEMENT);
 
         statement.setObject(1, uuid);
         statement.setInt(2, id);
