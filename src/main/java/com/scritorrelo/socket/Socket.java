@@ -1,4 +1,4 @@
-package com.scritorrelo;
+package com.scritorrelo.socket;
 
 import com.neovisionaries.ws.client.*;
 import lombok.Setter;
@@ -18,7 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 @Scope("prototype")
-class ZelloWebSocket {
+class Socket {
 
     @Value("${:classpath:auth_token}")
     public Resource AUTH_TOKEN;
@@ -30,7 +30,7 @@ class ZelloWebSocket {
     public int TIMEOUT;
 
     @Autowired
-    private ObjectFactory<ZelloWebSocketAdapter> adapterObjectFactory;
+    private ObjectFactory<SocketAdapter> adapterObjectFactory;
 
     @Setter
     private String refreshToken;
@@ -43,7 +43,7 @@ class ZelloWebSocket {
     @PostConstruct
     void init() throws IOException {
 
-        ZelloWebSocketAdapter adapter = adapterObjectFactory.getObject();
+        SocketAdapter adapter = adapterObjectFactory.getObject();
         socket = new WebSocketFactory()
                 .setConnectionTimeout(TIMEOUT)
                 .createSocket(SERVER)

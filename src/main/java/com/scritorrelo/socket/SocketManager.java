@@ -1,4 +1,4 @@
-package com.scritorrelo;
+package com.scritorrelo.socket;
 
 import com.neovisionaries.ws.client.WebSocketException;
 import lombok.Setter;
@@ -23,14 +23,14 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
 @Component
-class WebSocketManager {
+class SocketManager {
 
-    private static final Map<String, ZelloWebSocket> socketMap = new HashMap<>();
+    private static final Map<String, Socket> socketMap = new HashMap<>();
 
     public static final ReentrantLock socketLock = new ReentrantLock();
 
     @Autowired
-    private ObjectFactory<ZelloWebSocket> myBeanFactory;
+    private ObjectFactory<Socket> myBeanFactory;
 
     @Setter
     @Value("${scrittorello.channels}")
@@ -48,7 +48,7 @@ class WebSocketManager {
     @PreDestroy
     private void closeAll() {
         log.info("Closing connections");
-        socketMap.values().forEach(ZelloWebSocket::disconnect);
+        socketMap.values().forEach(Socket::disconnect);
         log.info("All connections closed");
     }
 
@@ -59,7 +59,7 @@ class WebSocketManager {
 
     private void initSocket(String channelName) throws WebSocketException, IOException {
 
-        ZelloWebSocket ws = myBeanFactory.getObject();
+        Socket ws = myBeanFactory.getObject();
 
         ws.setChannelName(channelName);
 

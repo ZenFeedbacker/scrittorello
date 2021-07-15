@@ -1,7 +1,8 @@
-package com.scritorrelo;
+package com.scritorrelo.socket;
 
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
+import com.scritorrelo.DatabaseManager;
 import com.scritorrelo.ogg.OggFile;
 import com.scritorrelo.ogg.Stream;
 import com.scritorrelo.zello.Channel;
@@ -28,13 +29,13 @@ import java.util.HashMap;
 @Controller
 @Scope("prototype")
 @Slf4j
-public class ZelloWebSocketAdapter extends WebSocketAdapter {
+public class SocketAdapter extends WebSocketAdapter {
 
     public static final String sampleFile = "src/main/resources/speech.opus";
     public static final String outputFile = "src/main/resources/out.opus";
 
     @Setter
-    private ZelloWebSocket ws;
+    private Socket ws;
 
     @Autowired
     private DatabaseManager dbManager;
