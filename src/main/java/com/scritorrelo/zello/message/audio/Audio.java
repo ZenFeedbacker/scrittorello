@@ -1,6 +1,8 @@
 package com.scritorrelo.zello.message.audio;
 
-import com.scritorrelo.socket.SocketAdapter;
+import com.scritorrelo.opus.packet.CommentHeaderPacket;
+import com.scritorrelo.opus.packet.DataPacket;
+import com.scritorrelo.opus.packet.IDHeaderPacket;
 import com.scritorrelo.opus.*;
 import com.scritorrelo.zello.message.Message;
 import lombok.ToString;
@@ -42,7 +44,6 @@ public class Audio extends Message {
     @Override
     public PreparedStatement getSqlStatement(Connection conn) throws SQLException {
 
-
         PreparedStatement statement = conn.prepareStatement(SQL_STATEMENT);
 
         statement.setObject(1, uuid);
@@ -63,8 +64,9 @@ public class Audio extends Message {
         audioFrames.add(frame);
     }
 
-    public Stream getOpusStream() {
-        Stream opusStream = new Stream();
+    public OpusStream getOpusStream() {
+
+        OpusStream opusStream = new OpusStream();
 
         opusStream.setIdHeaderPacket(createIDHeader());
         opusStream.addCommentPacket(createCommentHeader());
@@ -102,7 +104,9 @@ public class Audio extends Message {
 
     public void toFile() throws IOException {
 
-        OutputStream out = new FileOutputStream(SocketAdapter.outputFile);
+        String path =  System.getProperty("user.dir") + Message.MESSAGE_FOLDER +  "audios\\" + getUuid().toString() + ".ogg";
+
+        OutputStream out = new FileOutputStream(path);
 
         OpusFile opus = new OpusFile(out);
         opus.getInfo().setSampleRate(48000);

@@ -1,4 +1,4 @@
-package com.scritorrelo.opus;
+package com.scritorrelo.opus.packet;
 
 import com.scritorrelo.Utils;
 import lombok.Getter;
@@ -11,11 +11,11 @@ import static org.apache.commons.lang3.ArrayUtils.isNotEmpty;
 
 public class DataPacket extends Packet {
 
-    int config;
-    boolean stereo;
-    int code;
+    private int config;
+    private boolean stereo;
+    private int code;
     @Getter
-    byte[] data;
+    private byte[] data;
 
     public DataPacket(byte[] data) {
 
@@ -38,16 +38,16 @@ public class DataPacket extends Packet {
     @Override
     public byte[] toByteArray() {
 
-        return isNotEmpty(packet) ? packet : new byte[0];
+        return isNotEmpty(data) ? data : new byte[0];
     }
 
     private char[] tocToCharArr() {
-        char[] config = String.format("%5s", Integer.toBinaryString(this.config & 0xFF)).replace(' ', '0').toCharArray();
-        char[] stereo = new char[1];
-        stereo[0] = this.stereo ? '1' : '0';
-        char[] code = String.format("%2s", Integer.toBinaryString(this.code & 0xFF)).replace(' ', '0').toCharArray();
+        char[] configArr = String.format("%5s", Integer.toBinaryString(this.config & 0xFF)).replace(' ', '0').toCharArray();
+        char[] stereoArr = new char[1];
+        stereoArr[0] = this.stereo ? '1' : '0';
+        char[] codeArr = String.format("%2s", Integer.toBinaryString(this.code & 0xFF)).replace(' ', '0').toCharArray();
 
-        return ArrayUtils.addAll(ArrayUtils.addAll(ArrayUtils.addAll(config, stereo), code));
+        return ArrayUtils.addAll(ArrayUtils.addAll(ArrayUtils.addAll(configArr, stereoArr), codeArr));
     }
 
     @Override
@@ -58,6 +58,6 @@ public class DataPacket extends Packet {
                 "Config: " + config + "\n" +
                 "Stereo: " + stereo + "\n" +
                 "Code: " + code + "\n" +
-                "Data: " + new String(Hex.encodeHex(data)) + "\n";
+                "Data: " + new String(Hex.encodeHex(data), 0, 5) + "...\n";
     }
 }

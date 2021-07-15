@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @ToString(callSuper = true)
 public class Location extends Message {
 
-    private final static String SQL_STATEMENT = "INSERT INTO LOCATION (UUID,ID,CHANNEL,FROM_USER,FOR_USER, TIMESTAMP,LONGITUDE,LATITUDE,ACCURACY,FORMATTED_ADDRESS) VALUES (?,?,?,?,?,?,?,?,?,?)";
+    private static final String SQL_STATEMENT = "INSERT INTO LOCATION (UUID,ID,CHANNEL,FROM_USER,FOR_USER, TIMESTAMP,LONGITUDE,LATITUDE,ACCURACY,FORMATTED_ADDRESS) VALUES (?,?,?,?,?,?,?,?,?,?)";
 
     private final double longitude;
     private final double latitude;

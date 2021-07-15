@@ -13,13 +13,13 @@ import java.time.LocalDateTime;
 @ToString(callSuper = true)
 public class Text extends Message {
 
-    private final String text;
+    private static final String SQL_STATEMENT =  "INSERT INTO TEXT (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TEXT) VALUES (?,?,?,?,?,?,?)";
 
-    private final static String SQL_STATEMENT =  "INSERT INTO TEXT (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TEXT) VALUES (?,?,?,?,?,?,?)";
+    private final String txt;
 
     public Text(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         super(obj, timestamp);
-        text = obj.getString("text");
+        txt = obj.getString("text");
     }
 
     @Override
@@ -33,7 +33,7 @@ public class Text extends Message {
         statement.setString(4, fromUser);
         statement.setString(5, forUser);
         statement.setTimestamp(6, Timestamp.valueOf(timestamp));
-        statement.setString(7, text);
+        statement.setString(7, txt);
 
         return statement;
     }

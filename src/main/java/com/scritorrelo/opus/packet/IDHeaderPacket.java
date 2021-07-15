@@ -1,4 +1,4 @@
-package com.scritorrelo.opus;
+package com.scritorrelo.opus.packet;
 
 import com.scritorrelo.Utils;
 import lombok.AllArgsConstructor;
@@ -7,29 +7,26 @@ import lombok.Builder;
 import java.io.EOFException;
 import java.nio.ByteBuffer;
 
-import java.lang.*;
-
 @Builder
 @AllArgsConstructor
 public class IDHeaderPacket extends Packet {
 
-    public final static String OPUS_ID_HEADER = "OpusHead";
+    public static final String OPUS_ID_HEADER = "OpusHead";
 
-    String signature;
-    int version;
-    int channelCount;
-    short preskip;
-    int sampleRate;
-    short outputGain;
-    int channelMappingFamily;
-    int streamCount;
-    int coupleStreamCount;
-    String channelMapping;
+    private final String signature;
+    private final int version;
+    private final int channelCount;
+    private final short preskip;
+    private final int sampleRate;
+    private final short outputGain;
+    private final int channelMappingFamily;
+    private final int streamCount;
+    private final int coupleStreamCount;
+    private final String channelMapping;
 
     public IDHeaderPacket(byte[] data) throws EOFException {
 
         super(data);
-
 
         signature = Utils.readByteStreamToString(stream, 8);
         version = Utils.readByteStream(stream);
@@ -42,6 +39,10 @@ public class IDHeaderPacket extends Packet {
             streamCount = Utils.readByteStreamToInt(stream);
             coupleStreamCount = Utils.readByteStreamToInt(stream);
             channelMapping = Utils.readByteStreamToString(stream, 8 * channelCount);
+        } else {
+            streamCount = 0;
+            coupleStreamCount = 0;
+            channelMapping = "";
         }
     }
 

@@ -4,10 +4,11 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.scritorrelo.DatabaseManager;
 import com.scritorrelo.ogg.OggFile;
-import com.scritorrelo.ogg.Stream;
+import com.scritorrelo.ogg.OggStream;
 import com.scritorrelo.zello.Channel;
 import com.scritorrelo.zello.Command;
 import com.scritorrelo.zello.message.Location;
+import com.scritorrelo.zello.message.Message;
 import com.scritorrelo.zello.message.Text;
 import com.scritorrelo.zello.message.audio.AudioFrame;
 import com.scritorrelo.zello.message.audio.Audio;
@@ -31,8 +32,7 @@ import java.util.HashMap;
 @Slf4j
 public class SocketAdapter extends WebSocketAdapter {
 
-    public static final String sampleFile = "src/main/resources/speech.opus";
-    public static final String outputFile = "src/main/resources/out.opus";
+    public static final String SAMPLE_FILE = "src/main/resources/speech.opus";
 
     @Setter
     private Socket ws;
@@ -40,9 +40,10 @@ public class SocketAdapter extends WebSocketAdapter {
     @Autowired
     private DatabaseManager dbManager;
 
-    private final HashMap<Integer, Audio> streams = new HashMap<>();
+    private final HashMap<Integer, Audio> audios = new HashMap<>();
     private final HashMap<Integer, Image> images = new HashMap<>();
 
+    @Override
     public void onTextMessage(WebSocket websocket, String message) throws JSONException, IOException {
 
         LocalDateTime timestamp = LocalDateTime.now();
@@ -50,21 +51,21 @@ public class SocketAdapter extends WebSocketAdapter {
         log.info(ws.toString() + ": " + message);
 
         if (obj.has("refresh_token")) {
-            refreshTokenHandler(obj, timestamp);
+            refreshTokenHandler(obj);
             return;
         }
 
         if (obj.has("command")) {
-            String cmnd = obj.getString("command");
+            String cmd = obj.getString("command");
 
-            Command command = Command.valueOf(cmnd);
+            Command command = Command.valueOf(cmd);
 
             switch (command) {
                 case on_stream_start:
                     streamStartHandler(obj, timestamp);
                     break;
                 case on_stream_stop:
-                    streamStopHandler(obj, timestamp);
+                    streamStopHandler(obj);
                     break;
                 case on_text_message:
                     textMessageHandler(obj, timestamp);
@@ -87,6 +88,7 @@ public class SocketAdapter extends WebSocketAdapter {
         }
     }
 
+    @Override
     public void onBinaryMessage(WebSocket websocket, byte[] binary) {
 
         switch (binary[0]) {
@@ -102,7 +104,7 @@ public class SocketAdapter extends WebSocketAdapter {
         }
     }
 
-    private void refreshTokenHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+    private void refreshTokenHandler(JSONObject obj) throws JSONException {
 
         ws.setRefreshToken(obj.getString("refresh_token"));
     }
@@ -135,9 +137,9 @@ public class SocketAdapter extends WebSocketAdapter {
     private void audioBinaryHandler(byte[] binary) {
         log.info("Received audio binary");
         AudioFrame audioFrame = new AudioFrame(binary);
-        int id = audioFrame.getStream_id();
-        if(streams.containsKey(id)) {
-            streams.get(id).addFrame(audioFrame);
+        int id = audioFrame.getStreamId();
+        if(audios.containsKey(id)) {
+            audios.get(id).addFrame(audioFrame);
         }
     }
 
@@ -170,18 +172,16 @@ public class SocketAdapter extends WebSocketAdapter {
 
     private void streamStartHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         Audio stream = new Audio(obj, timestamp);
-        streams.put(obj.getInt("stream_id"), stream);
+        audios.put(obj.getInt("stream_id"), stream);
     }
 
-    private void streamStopHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException, IOException {
-        Audio audioStream = streams.get(obj.getInt("stream_id"));
-        //  audioStream.toFile();
-        //  log.info(audioStream);
-        Stream oggStream = new Stream(audioStream.getOpusStream());
+    private void streamStopHandler(JSONObject obj) throws JSONException, IOException {
+        Audio audio = audios.get(obj.getInt("stream_id"));
+        OggStream oggStream = new OggStream(audio.getOpusStream());
         OggFile oggFile = new OggFile(oggStream);
-        oggFile.writeToFile(outputFile);
-        log.info("Wrote file " + outputFile);
-        //Client.ws.disconnect();
-        dbManager.saveMessage(audioStream);
+        String path =  System.getProperty("user.dir") + Message.MESSAGE_FOLDER +  "audios\\" + audio.getUuid().toString() + ".ogg";
+        oggFile.writeToFile(path);
+        log.info("Wrote file " + path);
+        dbManager.saveMessage(audio);
     }
 }

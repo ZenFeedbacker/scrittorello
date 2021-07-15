@@ -33,7 +33,7 @@ public class Channel {
     }
 
     private boolean getChannelStatus(JSONObject obj){
-        String status = obj.optString("status");
-        return "online".equals(status);
+        String statusStr = obj.optString("status");
+        return "online".equals(statusStr);
     }
 }

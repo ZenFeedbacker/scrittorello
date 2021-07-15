@@ -1,4 +1,4 @@
-package com.scritorrelo.opus;
+package com.scritorrelo.opus.packet;
 
 import com.scritorrelo.Utils;
 import lombok.Getter;
@@ -12,17 +12,17 @@ public abstract class Packet {
 
     ByteArrayInputStream stream;
     @Getter
-    byte[] packet;
+    byte[] packetData;
     int length;
 
-    public Packet(byte[] data) {
+    protected Packet(byte[] data) {
 
-        this.packet = data;
+        this.packetData = data;
         this.length = data.length;
         this.stream = new ByteArrayInputStream(data);
     }
 
-    public static Packet PacketFactory(byte[] data) throws EOFException {
+    public static Packet packetFactory(byte[] data) throws EOFException {
 
         String signature = Utils.readByteArrayToString(data, 8);
 

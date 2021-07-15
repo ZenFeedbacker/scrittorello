@@ -1,5 +1,9 @@
 package com.scritorrelo.opus;
 
+import com.scritorrelo.opus.packet.CommentHeaderPacket;
+import com.scritorrelo.opus.packet.DataPacket;
+import com.scritorrelo.opus.packet.IDHeaderPacket;
+import com.scritorrelo.opus.packet.Packet;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class Stream {
+public class OpusStream {
 
     @Setter
     IDHeaderPacket idHeaderPacket;
@@ -15,7 +19,7 @@ public class Stream {
     final List<Packet> dataPackets;
 
 
-    public Stream() {
+    public OpusStream() {
 
         commentHeaderPackets = new ArrayList<>();
         dataPackets = new ArrayList<>();

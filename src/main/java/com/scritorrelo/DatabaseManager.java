@@ -50,9 +50,7 @@ public class DatabaseManager {
 
     private void createTables() throws SQLException, IOException {
         String schema = parseResourceFile(CREATE_SCHEMA_FILE);
-        try (Connection conn = getConnection()) {
-
-            Statement stmt = conn.createStatement();
+        try (Connection conn = getConnection(); Statement stmt = conn.createStatement()){
             stmt.execute(schema);
             log.info("Database tables created");
         }
@@ -60,9 +58,7 @@ public class DatabaseManager {
 
     private void dropTables() throws IOException, SQLException {
         String schema = parseResourceFile(DROP_TABLES_FILE);
-        try (Connection conn = getConnection()) {
-
-            Statement stmt = conn.createStatement();
+        try (Connection conn = getConnection(); Statement stmt = conn.createStatement()){
             stmt.execute(schema);
             log.info("Database tables dropped.");
         }

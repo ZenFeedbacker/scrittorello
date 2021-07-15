@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,10 +38,10 @@ class SocketManager {
     private String sourceFile;
 
     @PostConstruct
-    private void init() throws Exception {
+    private void init() throws IOException, URISyntaxException, WebSocketException {
         log.info("Initializing sockets");
 
-        for(String channel : getChannels()){
+        for (String channel : getChannels()) {
             initSocket(channel);
         }
     }
@@ -53,8 +54,9 @@ class SocketManager {
     }
 
     private List<String> getChannels() throws IOException, URISyntaxException {
+
         URL res = getClass().getClassLoader().getResource(sourceFile);
-        return Files.readAllLines(Paths.get(res.toURI()));
+        return res == null ? new ArrayList<>() : Files.readAllLines(Paths.get(res.toURI()));
     }
 
     private void initSocket(String channelName) throws WebSocketException, IOException {
@@ -66,7 +68,7 @@ class SocketManager {
         socketLock.lock();
 
         try {
-            ws.connect(socketLock);
+            ws.connect();
         } finally {
             socketLock.unlock();
         }
@@ -74,16 +76,5 @@ class SocketManager {
         ws.login();
 
         socketMap.put(channelName, ws);
-    }
-
-    private static File getFileFromResource(String fileName) throws URISyntaxException {
-
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        URL resource = classLoader.getResource(fileName);
-        if (resource == null) {
-            throw new IllegalArgumentException("file not found! " + fileName);
-        } else {
-            return new File(resource.toURI());
-        }
     }
 }

@@ -14,20 +14,19 @@ import javax.annotation.PostConstruct;
 import javax.json.Json;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 @Scope("prototype")
 class Socket {
 
     @Value("${:classpath:auth_token}")
-    public Resource AUTH_TOKEN;
+    public Resource authToken;
 
     @Value("${scrittorello.server}")
-    public String SERVER;
+    public String server;
 
     @Value("${scrittorello.timeout}")
-    public int TIMEOUT;
+    public int timeout;
 
     @Autowired
     private ObjectFactory<SocketAdapter> adapterObjectFactory;
@@ -35,7 +34,7 @@ class Socket {
     @Setter
     private String refreshToken;
 
-    private WebSocket socket;
+    private WebSocket ws;
 
     @Setter
     private String channelName;
@@ -44,21 +43,21 @@ class Socket {
     void init() throws IOException {
 
         SocketAdapter adapter = adapterObjectFactory.getObject();
-        socket = new WebSocketFactory()
-                .setConnectionTimeout(TIMEOUT)
-                .createSocket(SERVER)
+        ws = new WebSocketFactory()
+                .setConnectionTimeout(timeout)
+                .createSocket(server)
                 .addListener(adapter)
                 .addExtension(WebSocketExtension.PERMESSAGE_DEFLATE);
 
         adapter.setWs(this);
     }
 
-    void connect(ReentrantLock lock) throws WebSocketException {
-        lock.lock();
+    void connect() throws WebSocketException {
+        SocketManager.socketLock.lock();
         try {
-            socket.connect();
+            ws.connect();
         } finally {
-            lock.unlock();
+            SocketManager.socketLock.unlock();
         }
     }
 
@@ -73,16 +72,16 @@ class Socket {
                 .build()
                 .toString();
 
-        socket.sendText(loginMessage);
+        ws.sendText(loginMessage);
     }
 
     void disconnect(){
-        socket.disconnect();
+        ws.disconnect();
     }
 
     private String getToken() throws IOException {
-        String token_string = StreamUtils.copyToString(AUTH_TOKEN.getInputStream(), Charset.defaultCharset());
+        String tokenString = StreamUtils.copyToString(authToken.getInputStream(), Charset.defaultCharset());
 
-        return refreshToken == null ? token_string : refreshToken;
+        return refreshToken == null ? tokenString : refreshToken;
     }
 }

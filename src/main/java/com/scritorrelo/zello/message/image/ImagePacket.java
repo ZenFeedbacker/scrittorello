@@ -6,7 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 @Slf4j
@@ -27,17 +31,20 @@ public class ImagePacket {
         data = Arrays.copyOfRange(binary, 9, binary.length);
     }
 
-    public void save(String pathname) {
+    public void save(String pathname)  {
         File photo = new File(pathname);
 
-        if (photo.exists()) {
-            photo.delete();
+        if (photo.exists()){
+            try {
+                Files.delete(Paths.get(pathname));
+                log.info("File " + pathname + " already existed, was deleted.");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
-        try {
-            FileOutputStream fos = new FileOutputStream(photo.getPath());
+        try (FileOutputStream fos = new FileOutputStream(photo.getPath())) {
             fos.write(data);
-            fos.close();
         } catch (java.io.IOException e) {
             log.error(e.toString());
         }

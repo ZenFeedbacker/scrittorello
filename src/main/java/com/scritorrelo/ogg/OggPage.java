@@ -1,7 +1,7 @@
 package com.scritorrelo.ogg;
 
 import com.scritorrelo.Utils;
-import com.scritorrelo.opus.Packet;
+import com.scritorrelo.opus.packet.Packet;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Setter;
@@ -17,13 +17,13 @@ import java.util.zip.Checksum;
 
 @Builder
 @AllArgsConstructor
-public class Page {
+public class OggPage {
 
-    final static String OGG_PAGE_HEADER = "OggS";
+    static final String OGG_PAGE_HEADER = "OggS";
 
-    private final static int MIN_HEADER_SIZE = 27;
+    private static final int MIN_HEADER_SIZE = 27;
 
-    private final static int POLYNOMIAL = 0x04c11db7;
+    private static final int POLYNOMIAL = 0x04c11db7;
 
     //byte[] data;
     final ByteArrayInputStream stream;
@@ -36,22 +36,22 @@ public class Page {
     boolean continuation = false;
     @Setter
     @Builder.Default
-    boolean EoS = false;
+    boolean eos = false;
     @Setter
     @Builder.Default
-    boolean BoS = false;
+    boolean bos = false;
     @Builder.Default
     int granulePosition = 0;
     int bitstreamSerialNumber;
     @Builder.Default
     int pageSequenceNumber = 0;
-    int CRCChecksum;
+    int checksum;
     @Builder.Default
     int numberPageSegments = 0;
     final List<Integer> segmentTable;
     List<Packet> packets;
 
-    public Page(byte[] data) {
+    public OggPage(byte[] data) {
 
         this.stream = new ByteArrayInputStream(data);
 
@@ -64,13 +64,13 @@ public class Page {
 
             BitSet bits = BitSet.valueOf(new byte[]{Utils.readByteStream(stream)});
             continuation = bits.get(0);
-            BoS = bits.get(1);
-            EoS = bits.get(2);
+            bos = bits.get(1);
+            eos = bits.get(2);
             granulePosition = Utils.readByteStreamToInt(stream, 8);
 
             bitstreamSerialNumber = Utils.readByteStreamToInt(stream, 4);
             pageSequenceNumber = Utils.readByteStreamToInt(stream, 4);
-            CRCChecksum = Utils.readByteStreamToInt(stream, 4);
+            checksum = Utils.readByteStreamToInt(stream, 4);
             numberPageSegments = Utils.readByteStreamToIntBigEndian(stream);
 
             for (int i = 0; i < numberPageSegments; i++) {
@@ -81,12 +81,13 @@ public class Page {
 
             for (int segment : segmentTable) {
                 if (segment != 0) {
-                    Packet packet = Packet.PacketFactory(Utils.readByteStream(stream, segment));
+                    Packet packet = Packet.packetFactory(Utils.readByteStream(stream, segment));
                     packets.add(packet);
                 }
             }
 
-        } catch (EOFException ignored) {
+        } catch (EOFException e) {
+            e.printStackTrace();
         }
     }
 
@@ -100,8 +101,8 @@ public class Page {
 
         BitSet flags = new BitSet();
         flags.set(0, continuation);
-        flags.set(1, BoS);
-        flags.set(2, EoS);
+        flags.set(1, bos);
+        flags.set(2, eos);
 
         byte[] flagsByte = flags.toByteArray();
 
@@ -116,8 +117,8 @@ public class Page {
         header[26] = (byte) numberPageSegments;
 
         int index = 27;
-        for(int segmentSize : segmentTable){
-            header[index] = (byte) segmentSize;
+        for (Integer segmentSize : segmentTable) {
+            header[index] = (byte) segmentSize.intValue();
             index += 1;
         }
 
@@ -126,23 +127,23 @@ public class Page {
 
     public void generateChecksum() {
 
-        Checksum checksum = new CRC32();
-   //   checksum.update(POLYNOMIAL);
+        Checksum crc = new CRC32();
+        //crc.update(POLYNOMIAL);
 
         byte[] header = getHeader();
-        checksum.update(header, 0,  header.length);
+        crc.update(header, 0, header.length);
 
-        for(Packet packet : packets){
+        for (Packet packet : packets) {
             byte[] packetArray = packet.toByteArray();
-            checksum.update(packetArray, 0, packetArray.length);
+            crc.update(packetArray, 0, packetArray.length);
         }
 
-        //checksum.update(data, 0, data.length);
+        //crc.update(data, 0, data.length);
 
         try {
-            this.CRCChecksum = Math.toIntExact(checksum.getValue());
-        } catch (ArithmeticException e){
-            this.CRCChecksum = 0;
+            this.checksum = Math.toIntExact(crc.getValue());
+        } catch (ArithmeticException e) {
+            this.checksum = 0;
         }
     }
 
@@ -164,12 +165,12 @@ public class Page {
         int index = 0;
 
         Utils.copyArrayToArray(getHeader(), page, index);
-        Utils.copyIntToArray(this.CRCChecksum, 4, page, 22);
+        Utils.copyIntToArray(this.checksum, 4, page, 22);
 
 
         index += getHeaderSize();
 
-        for(Packet packet : packets){
+        for (Packet packet : packets) {
             Utils.copyArrayToArray(packet.toByteArray(), page, index);
             index += page.length;
         }
@@ -186,19 +187,15 @@ public class Page {
 
         str.append("-------OggPage-------\n");
 
-//        if (!isNull(data)) {
-//            str.append("Length: ").append(data.length).append("\n");
-//        }
-
-            str.append("Signature: ").append(signature).append("\n").
-                append("Version: ").append(version).append("\n").
+        str.append("Signature: ").append(signature).append("\n")
+                .append("Version: ").append(version).append("\n").
                 append("Continuation: ").append(continuation).append("\n").
-                append("Beginning of Stream: ").append(BoS).append("\n").
-                append("End of Stream: ").append(EoS).append("\n").
+                append("Beginning of Stream: ").append(bos).append("\n").
+                append("End of Stream: ").append(eos).append("\n").
                 append("Granule Position: ").append(granulePosition).append("\n").
                 append("Bitstream serial number: ").append(bitstreamSerialNumber).append("\n").
                 append("Page Sequence Number: ").append(pageSequenceNumber).append("\n").
-                append("CRC Checksum: ").append(CRCChecksum).append("\n").
+                append("CRC Checksum: ").append(checksum).append("\n").
                 append("Number page segments: ").append(numberPageSegments).append("\n");
 
         for (int i = 0; i < numberPageSegments; i++) {

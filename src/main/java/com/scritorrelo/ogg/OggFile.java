@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class OggFile {
 
     byte[] file;
-    List<Page> pages;
+    List<OggPage> pages;
 
     public OggFile(String filename) throws IOException {
 
@@ -29,7 +29,7 @@ public class OggFile {
         List<Integer> indexes = new ArrayList<>();
 
         while (true) {
-            subindex = Bytes.indexOf(Arrays.copyOfRange(file, index, file.length), Page.OGG_PAGE_HEADER.getBytes(StandardCharsets.US_ASCII));
+            subindex = Bytes.indexOf(Arrays.copyOfRange(file, index, file.length), OggPage.OGG_PAGE_HEADER.getBytes(StandardCharsets.US_ASCII));
             if (subindex == -1) {
                 break;
             }
@@ -48,18 +48,18 @@ public class OggFile {
 
         log.info("Number of pages: " + packets.size());
 
-        pages = packets.stream().map(Page::new).collect(Collectors.toList());
+        pages = packets.stream().map(OggPage::new).collect(Collectors.toList());
 
         pages.forEach(p -> log.info(p.toString()));
     }
 
-    public OggFile(Stream oggStream) {
+    public OggFile(OggStream oggStream) {
 
-        file = new byte[oggStream.pages.stream().mapToInt(Page::getPageSize).sum()];
+        file = new byte[oggStream.oggPages.stream().mapToInt(OggPage::getPageSize).sum()];
 
         int idx = 0;
 
-        for (Page page : oggStream.pages) {
+        for (OggPage page : oggStream.oggPages) {
             Utils.copyArrayToArray(page.toByteArray(), file, idx);
             idx += page.getPageSize();
         }

@@ -1,19 +1,20 @@
 package com.scritorrelo.ogg;
 
 import com.scritorrelo.Utils;
-import com.scritorrelo.opus.Packet;
+import com.scritorrelo.opus.OpusStream;
+import com.scritorrelo.opus.packet.Packet;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Stream {
+public class OggStream {
 
-    final List<Page> pages;
+    final List<OggPage> oggPages;
 
-    public Stream(com.scritorrelo.opus.Stream opusStream) {
+    public OggStream(OpusStream opusStream) {
 
-        pages = new ArrayList<>();
+        oggPages = new ArrayList<>();
 
         List<Packet> packetList = opusStream.getDataPackets();
 
@@ -22,11 +23,12 @@ public class Stream {
         for (int i = 0; i < packetList.size() + 2; i++) {
 
             Packet packet;
-            boolean BoS = false;
-            boolean EoS = false;
+            boolean bos = false;
+            boolean eos = false;
+
             if (i == 0) {
                 packet = opusStream.getIdHeaderPacket();
-                BoS = true;
+                bos = true;
             }
             else if (i == 1) {
                 packet = opusStream.getCommentHeaderPackets().get(0);
@@ -35,23 +37,23 @@ public class Stream {
 
             }
             if(i == packetList.size() + 1){
-                EoS = true;
+                eos = true;
             }
 
-            Page oggPage = Page.
+            OggPage oggPage = OggPage.
                             builder().
                             pageSequenceNumber(i).
                             bitstreamSerialNumber(serialNumber).
                             numberPageSegments(1).
-                            EoS(EoS).
-                            BoS(BoS).
+                    eos(eos).
+                    bos(bos).
                             segmentTable(Collections.singletonList(packet.toByteArray().length)).
                             packets(Collections.singletonList(packet)).
                             build();
 
             oggPage.generateChecksum();
 
-            pages.add(oggPage);
+            oggPages.add(oggPage);
         }
     }
 }

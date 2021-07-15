@@ -1,4 +1,4 @@
-package com.scritorrelo.opus;
+package com.scritorrelo.opus.packet;
 
 import com.scritorrelo.Utils;
 import lombok.AllArgsConstructor;
@@ -13,14 +13,14 @@ import java.util.List;
 @AllArgsConstructor
 public class CommentHeaderPacket extends Packet {
 
-    public final static String OPUS_COMMENT_HEADER = "OpusTags";
+    public static final String OPUS_COMMENT_HEADER = "OpusTags";
 
-    String signature;
-    int vendorStrLen;
-    String vendorStr;
-    int userCommentListLen;
-    List<Integer> userCommentLens;
-    List<String> userComments;
+    private final String signature;
+    private final int vendorStrLen;
+    private final String vendorStr;
+    private final int userCommentListLen;
+    private final List<Integer> userCommentLens;
+    private final List<String> userComments;
 
     public CommentHeaderPacket(byte[] data) throws EOFException {
 

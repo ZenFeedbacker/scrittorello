@@ -1,5 +1,8 @@
 package com.scritorrelo;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.math.BigInteger;
@@ -8,7 +11,10 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Utils {
+
+    private static final String EOS_EXCEPTION = "End of Stream.";
 
     public static byte[] readByteStream(ByteArrayInputStream stream, int len) throws EOFException {
 
@@ -17,7 +23,7 @@ public class Utils {
 
         for (int i = 0; i < len; i++) {
             if ((ch = stream.read()) == -1) {
-                throw new EOFException("End of stream.");
+                throw new EOFException(EOS_EXCEPTION);
             }
             data[i] = (byte) ch;
         }
@@ -36,7 +42,7 @@ public class Utils {
         int ch;
 
         if ((ch = stream.read()) == -1) {
-            throw new EOFException("End of stream.");
+            throw new EOFException(EOS_EXCEPTION);
         }
         data = (byte) ch;
 
@@ -75,7 +81,7 @@ public class Utils {
 
         for (int i = 0; i < len; i++) {
             if ((ch = stream.read()) == -1) {
-                throw new EOFException("End of stream.");
+                throw new EOFException(EOS_EXCEPTION);
             }
             data[i] = (char) ch;
         }

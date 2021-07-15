@@ -10,14 +10,14 @@ import java.util.Arrays;
 public class AudioFrame {
 
     private final byte[] type;
-    private final int stream_id;
-    private final int packet_id;
+    private final int streamId;
+    private final int packetId;
     private final byte[] data;
 
     public AudioFrame(byte[] binary) {
         type = Arrays.copyOfRange(binary, 0, 1);
-        stream_id = new BigInteger(Arrays.copyOfRange(binary, 1, 5)).intValue();
-        packet_id = new BigInteger(Arrays.copyOfRange(binary, 5, 9)).intValue();
+        streamId = new BigInteger(Arrays.copyOfRange(binary, 1, 5)).intValue();
+        packetId = new BigInteger(Arrays.copyOfRange(binary, 5, 9)).intValue();
         data = Arrays.copyOfRange(binary, 9, binary.length);
     }
 
@@ -26,8 +26,8 @@ public class AudioFrame {
 
         return "\n" +
                 "Type: " + Hex.encodeHexString(type) + "\n" +
-                "Stream ID: " + stream_id + "\n" +
-                "Packet ID: " + packet_id + "\n" +
+                "Stream ID: " + streamId + "\n" +
+                "Packet ID: " + packetId + "\n" +
                 "Packet length: " + data.length + "\n" +
                 "Data: " + Hex.encodeHexString(data) + "\n";
     }
