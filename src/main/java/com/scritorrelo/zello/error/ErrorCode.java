@@ -1,10 +1,12 @@
 package com.scritorrelo.zello.error;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Arrays;
 
 @Getter
+@AllArgsConstructor
 enum ErrorCode {
 
     UNKNOWN_COMMAND("unknown command", "Server didn't recognize the command received from the client."),
@@ -24,11 +26,6 @@ enum ErrorCode {
 
     private final String code;
     private final String description;
-
-    ErrorCode(String code, String description) {
-        this.code = code;
-        this.description = description;
-    }
 
     public static ErrorCode valueOfCode(String code) {
 

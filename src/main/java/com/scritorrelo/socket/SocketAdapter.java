@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
+import static java.util.Objects.isNull;
+
 @Controller
 @Scope("prototype")
 @Slf4j
@@ -58,28 +60,33 @@ public class SocketAdapter extends WebSocketAdapter {
         if (obj.has("command")) {
             String cmd = obj.getString("command");
 
-            Command command = Command.valueOf(cmd);
+            Command command = Command.valueOfLabel(cmd);
+
+            if(isNull(command)){
+                log.warn("Received unknown command: " + cmd);
+                return;
+            }
 
             switch (command) {
-                case on_stream_start:
+                case STREAM_START:
                     streamStartHandler(obj, timestamp);
                     break;
-                case on_stream_stop:
+                case STREAM_STOP:
                     streamStopHandler(obj);
                     break;
-                case on_text_message:
+                case TEXT:
                     textMessageHandler(obj, timestamp);
                     break;
-                case on_image:
+                case IMAGE:
                     imageMessageHandler(obj, timestamp);
                     break;
-                case on_location:
+                case LOCATION:
                     locationMessageHandler(obj, timestamp);
                     break;
-                case on_channel_status:
+                case CHANNEL_STATUS:
                     channelStatusHandler(obj, timestamp);
                     break;
-                case on_error:
+                case ERROR:
                     errorHandler(obj, timestamp);
                     break;
                 default:
