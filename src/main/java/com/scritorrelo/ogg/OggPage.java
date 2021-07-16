@@ -5,6 +5,7 @@ import com.scritorrelo.opus.packet.Packet;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
@@ -13,8 +14,8 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.zip.CRC32;
-import java.util.zip.Checksum;
 
+@Slf4j
 @Builder
 @AllArgsConstructor
 public class OggPage {
@@ -23,33 +24,31 @@ public class OggPage {
 
     private static final int MIN_HEADER_SIZE = 27;
 
-    private static final int POLYNOMIAL = 0x04c11db7;
-
     //byte[] data;
-    final ByteArrayInputStream stream;
+    private final ByteArrayInputStream stream;
 
     @Builder.Default
-    String signature = OGG_PAGE_HEADER;
+    private String signature = OGG_PAGE_HEADER;
     @Builder.Default
-    int version = 0;
+    private int version = 0;
     @Builder.Default
-    boolean continuation = false;
+    private boolean continuation = false;
     @Setter
     @Builder.Default
-    boolean eos = false;
+    private boolean eos = false;
     @Setter
     @Builder.Default
-    boolean bos = false;
+    private boolean bos = false;
     @Builder.Default
-    int granulePosition = 0;
-    int bitstreamSerialNumber;
+    private int granulePosition = 0;
+    private int bitstreamSerialNumber;
     @Builder.Default
-    int pageSequenceNumber = 0;
-    int checksum;
+    private int pageSequenceNumber = 0;
+    private int checksum;
     @Builder.Default
-    int numberPageSegments = 0;
-    final List<Integer> segmentTable;
-    List<Packet> packets;
+    private  int numberPageSegments = 0;
+    private final List<Integer> segmentTable;
+    private List<Packet> packets;
 
     public OggPage(byte[] data) {
 
@@ -117,6 +116,7 @@ public class OggPage {
         header[26] = (byte) numberPageSegments;
 
         int index = 27;
+
         for (Integer segmentSize : segmentTable) {
             header[index] = (byte) segmentSize.intValue();
             index += 1;
@@ -125,40 +125,50 @@ public class OggPage {
         return header;
     }
 
-    public void generateChecksum() {
+    private int generateChecksum() {
 
-        Checksum crc = new CRC32();
-        //crc.update(POLYNOMIAL);
+        CRC32 crc = new CRC32();
 
         byte[] header = getHeader();
         crc.update(header, 0, header.length);
 
         for (Packet packet : packets) {
             byte[] packetArray = packet.toByteArray();
-            crc.update(packetArray, 0, packetArray.length);
+            crc.update(packetArray);
         }
 
-        //crc.update(data, 0, data.length);
+        return (int) crc.getValue();
+    }
 
-        try {
-            this.checksum = Math.toIntExact(crc.getValue());
-        } catch (ArithmeticException e) {
-            this.checksum = 0;
+    void setGeneratedChecksum() {
+
+        this.checksum = generateChecksum();
+    }
+
+    public boolean checkChecksum() {
+
+        int generatedChecksum = generateChecksum();
+
+        if (this.checksum == generatedChecksum) {
+            log.info("Correct checksum: " + this.checksum);
+            return true;
+        } else {
+            log.warn("Wrong checksum. Saved value: " + this.checksum + " , calculated value: " + generatedChecksum);
+            return false;
         }
     }
 
-
-    public int getHeaderSize() {
+    private int getHeaderSize() {
 
         return MIN_HEADER_SIZE + numberPageSegments;
     }
 
-    public int getPageSize() {
+    int getPageSize() {
 
         return getHeaderSize() + segmentTable.stream().mapToInt(Integer::intValue).sum();
     }
 
-    public byte[] toByteArray() {
+    byte[] toByteArray() {
 
         byte[] page = new byte[getPageSize()];
 
@@ -207,3 +217,4 @@ public class OggPage {
         return str.toString();
     }
 }
+

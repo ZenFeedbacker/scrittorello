@@ -68,6 +68,12 @@ public class Utils {
         return new BigInteger(readByteStream(stream, 1) ).intValue();
     }
 
+    public static int readByteStreamToIntBigEndian(ByteArrayInputStream stream, int len) throws EOFException {
+
+
+        return new BigInteger(readByteStream(stream, len) ).intValue();
+    }
+
     public static int readByteToIntBigEndian(ByteArrayInputStream stream) throws EOFException {
 
 

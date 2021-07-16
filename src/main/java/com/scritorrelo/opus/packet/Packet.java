@@ -15,7 +15,7 @@ public abstract class Packet {
     byte[] packetData;
     int length;
 
-    protected Packet(byte[] data) {
+    Packet(byte[] data) {
 
         this.packetData = data;
         this.length = data.length;

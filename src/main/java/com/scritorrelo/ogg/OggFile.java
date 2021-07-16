@@ -2,6 +2,7 @@ package com.scritorrelo.ogg;
 
 import com.google.common.primitives.Bytes;
 import com.scritorrelo.Utils;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
@@ -16,12 +17,18 @@ import java.util.stream.Collectors;
 @Slf4j
 public class OggFile {
 
-    byte[] file;
-    List<OggPage> pages;
+    private byte[] file;
+    @Getter
+    private List<OggPage> pages;
 
-    public OggFile(String filename) throws IOException {
+    public OggFile(String filename) {
 
-        file = FileUtils.readFileToByteArray(new File(filename));
+        try {
+            file = FileUtils.readFileToByteArray(new File(filename));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
 
         int index = 0;
         int subindex;
@@ -55,11 +62,11 @@ public class OggFile {
 
     public OggFile(OggStream oggStream) {
 
-        file = new byte[oggStream.oggPages.stream().mapToInt(OggPage::getPageSize).sum()];
+        file = new byte[oggStream.getOggPages().stream().mapToInt(OggPage::getPageSize).sum()];
 
         int idx = 0;
 
-        for (OggPage page : oggStream.oggPages) {
+        for (OggPage page : oggStream.getOggPages()) {
             Utils.copyArrayToArray(page.toByteArray(), file, idx);
             idx += page.getPageSize();
         }

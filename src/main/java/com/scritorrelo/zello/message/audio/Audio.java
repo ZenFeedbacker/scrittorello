@@ -6,7 +6,6 @@ import com.scritorrelo.opus.packet.IDHeaderPacket;
 import com.scritorrelo.opus.*;
 import com.scritorrelo.zello.message.Message;
 import lombok.ToString;
-import org.gagravarr.opus.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -100,25 +99,5 @@ public class Audio extends Message {
                 userCommentLens(new ArrayList<>()).
                 userCommentListLen(0).
                 build();
-    }
-
-    public void toFile() throws IOException {
-
-        String path =  System.getProperty("user.dir") + Message.MESSAGE_FOLDER +  "audios\\" + getUuid().toString() + ".ogg";
-
-        OutputStream out = new FileOutputStream(path);
-
-        OpusFile opus = new OpusFile(out);
-        opus.getInfo().setSampleRate(48000);
-        opus.getInfo().setNumChannels(2);
-        opus.getInfo().setOutputGain(0);
-        opus.getInfo().setPreSkip(0);
-        opus.getTags().addComment("title", "Test Dummy Audio");
-
-        for (AudioFrame af : audioFrames) {
-            opus.writeAudioData(new OpusAudioData(af.getData()));
-        }
-
-        opus.close();
     }
 }

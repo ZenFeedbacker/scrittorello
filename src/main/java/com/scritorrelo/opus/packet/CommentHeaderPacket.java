@@ -44,12 +44,18 @@ public class CommentHeaderPacket extends Packet {
     @Override
     public byte[] toByteArray(){
 
-        ByteBuffer bb = ByteBuffer.allocate(20);
+        ByteBuffer bb = ByteBuffer.allocate(8 + 4 + vendorStrLen + 4 + userCommentListLen * 4 + userCommentLens.stream().mapToInt(u->u).sum());
 
         bb.put(signature.getBytes());
         bb.putInt(vendorStrLen);
         bb.put(vendorStr.getBytes());
         bb.putInt(userCommentListLen);
+        for(int len : userCommentLens){
+            bb.putInt(len);
+        }
+        for(String comm : userComments){
+            bb.put(comm.getBytes());
+        }
 
         return bb.array();
     }

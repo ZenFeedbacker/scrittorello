@@ -58,6 +58,6 @@ public class DataPacket extends Packet {
                 "Config: " + config + "\n" +
                 "Stereo: " + stereo + "\n" +
                 "Code: " + code + "\n" +
-                "Data: " + new String(Hex.encodeHex(data), 0, 5) + "...\n";
+                "Data: " + new String(Hex.encodeHex(data), 0, Math.min(data.length, 5)) + "...\n";
     }
 }

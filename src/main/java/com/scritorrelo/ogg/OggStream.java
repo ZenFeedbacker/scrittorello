@@ -3,6 +3,7 @@ package com.scritorrelo.ogg;
 import com.scritorrelo.Utils;
 import com.scritorrelo.opus.OpusStream;
 import com.scritorrelo.opus.packet.Packet;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,7 +11,8 @@ import java.util.List;
 
 public class OggStream {
 
-    final List<OggPage> oggPages;
+    @Getter
+    private final List<OggPage> oggPages;
 
     public OggStream(OpusStream opusStream) {
 
@@ -51,7 +53,7 @@ public class OggStream {
                             packets(Collections.singletonList(packet)).
                             build();
 
-            oggPage.generateChecksum();
+            oggPage.setGeneratedChecksum();
 
             oggPages.add(oggPage);
         }

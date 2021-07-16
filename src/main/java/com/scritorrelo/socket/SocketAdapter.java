@@ -34,8 +34,6 @@ import static java.util.Objects.isNull;
 @Slf4j
 public class SocketAdapter extends WebSocketAdapter {
 
-    public static final String SAMPLE_FILE = "src/main/resources/speech.opus";
-
     @Setter
     private Socket ws;
 
@@ -183,7 +181,7 @@ public class SocketAdapter extends WebSocketAdapter {
     }
 
     private void streamStopHandler(JSONObject obj) throws JSONException, IOException {
-        Audio audio = audios.get(obj.getInt("stream_id"));
+        Audio audio = audios.remove(obj.getInt("stream_id"));
         OggStream oggStream = new OggStream(audio.getOpusStream());
         OggFile oggFile = new OggFile(oggStream);
         String path =  System.getProperty("user.dir") + Message.MESSAGE_FOLDER +  "audios\\" + audio.getUuid().toString() + ".ogg";
