@@ -58,9 +58,10 @@ public class Image extends Message {
     }
 
     public void saveFiles(){
+
         String currentDir = System.getProperty("user.dir");
         thumbnail.save(currentDir + MESSAGE_FOLDER + IMAGE_FOLDER + getThumbnailImageFilename());
-        fullsize.save(currentDir +MESSAGE_FOLDER + IMAGE_FOLDER + getFullImageFilename());
+        fullsize.save(currentDir + MESSAGE_FOLDER + IMAGE_FOLDER + getFullImageFilename());
     }
 
     public boolean isComplete() {

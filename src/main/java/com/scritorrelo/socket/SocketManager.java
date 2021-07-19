@@ -64,6 +64,7 @@ class SocketManager {
         Socket ws = myBeanFactory.getObject();
 
         ws.setChannelName(channelName);
+        log.info("Initializing socket for channel " + channelName);
 
         socketLock.lock();
 
@@ -72,6 +73,8 @@ class SocketManager {
         } finally {
             socketLock.unlock();
         }
+
+        log.info("Logging to channel " + channelName);
 
         ws.login();
 

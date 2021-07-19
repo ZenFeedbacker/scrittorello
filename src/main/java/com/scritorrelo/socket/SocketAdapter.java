@@ -48,10 +48,14 @@ public class SocketAdapter extends WebSocketAdapter {
 
         LocalDateTime timestamp = LocalDateTime.now();
         JSONObject obj = new JSONObject(message);
-        log.info(ws.toString() + ": " + message);
 
         if (obj.has("refresh_token")) {
             refreshTokenHandler(obj);
+            return;
+        }
+
+        if (obj.has("error")) {
+            errorMessageHandler(obj);
             return;
         }
 
@@ -91,6 +95,12 @@ public class SocketAdapter extends WebSocketAdapter {
                     break;
             }
         }
+    }
+
+    private void errorMessageHandler(JSONObject obj) {
+
+        log.error("Error from channel " + ws.getChannelName() + ": " + obj.getString("error"));
+
     }
 
     @Override
@@ -140,7 +150,7 @@ public class SocketAdapter extends WebSocketAdapter {
     }
 
     private void audioBinaryHandler(byte[] binary) {
-        log.info("Received audio binary");
+        log.trace("Received audio binary");
         AudioFrame audioFrame = new AudioFrame(binary);
         int id = audioFrame.getStreamId();
         if(audios.containsKey(id)) {
@@ -156,6 +166,7 @@ public class SocketAdapter extends WebSocketAdapter {
     private void errorHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
         Error error = new Error(obj, timestamp);
         log.error(error.toString());
+        log.error("Error from channel " + ws.getChannelName() + ": " + error.getCode());
     }
 
     private void locationMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
@@ -180,13 +191,13 @@ public class SocketAdapter extends WebSocketAdapter {
         audios.put(obj.getInt("stream_id"), stream);
     }
 
-    private void streamStopHandler(JSONObject obj) throws JSONException, IOException {
+    private void streamStopHandler(JSONObject obj) throws JSONException {
         Audio audio = audios.remove(obj.getInt("stream_id"));
-        OggStream oggStream = new OggStream(audio.getOpusStream());
-        OggFile oggFile = new OggFile(oggStream);
-        String path =  System.getProperty("user.dir") + Message.MESSAGE_FOLDER +  "audios\\" + audio.getUuid().toString() + ".ogg";
-        oggFile.writeToFile(path);
-        log.info("Wrote file " + path);
+        // OggStream oggStream = new OggStream(audio.getOpusStream());
+        // OggFile oggFile = new OggFile(oggStream);
+        //String path =  System.getProperty("user.dir") + Message.MESSAGE_FOLDER +  "audios\\" + audio.getUuid().toString() + ".ogg";
+        //oggFile.writeToFile(path);
+        audio.writeToFile();
         dbManager.saveMessage(audio);
     }
 }

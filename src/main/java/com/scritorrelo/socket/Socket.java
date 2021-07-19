@@ -1,6 +1,7 @@
 package com.scritorrelo.socket;
 
 import com.neovisionaries.ws.client.*;
+import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ class Socket {
     private WebSocket ws;
 
     @Setter
+    @Getter
     private String channelName;
 
     @PostConstruct

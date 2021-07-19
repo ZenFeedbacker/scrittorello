@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.gagravarr.ogg.CRCUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
@@ -115,11 +116,8 @@ public class OggPage {
 
         header[26] = (byte) numberPageSegments;
 
-        int index = 27;
-
-        for (Integer segmentSize : segmentTable) {
-            header[index] = (byte) segmentSize.intValue();
-            index += 1;
+        for(int i = 0; i < segmentTable.size(); i++){
+            header[27 +i] = (byte) segmentTable.get(0).intValue();
         }
 
         return header;
@@ -130,14 +128,21 @@ public class OggPage {
         CRC32 crc = new CRC32();
 
         byte[] header = getHeader();
-        crc.update(header, 0, header.length);
+        crc.update(header);
+        int crcInt = CRCUtils.getCRC(header);
 
+        log.info("My header crc: " + crc.getValue() + ", gargavar header crc: " + crcInt);
         for (Packet packet : packets) {
             byte[] packetArray = packet.toByteArray();
             crc.update(packetArray);
+            crcInt = CRCUtils.getCRC(packetArray, crcInt);
         }
 
-        return (int) crc.getValue();
+        log.info("Saved value: " + this.checksum + ", my crc: " + crc.getValue() + ", gargavarr crc: " + crcInt);
+        return crcInt;
+
+        //return (int) crc.getValue();
+
     }
 
     void setGeneratedChecksum() {
@@ -150,10 +155,10 @@ public class OggPage {
         int generatedChecksum = generateChecksum();
 
         if (this.checksum == generatedChecksum) {
-            log.info("Correct checksum: " + this.checksum);
+            //log.info("Correct checksum: " + this.checksum);
             return true;
         } else {
-            log.warn("Wrong checksum. Saved value: " + this.checksum + " , calculated value: " + generatedChecksum);
+            //log.warn("Wrong checksum. Saved value: " + this.checksum + " , calculated value: " + generatedChecksum);
             return false;
         }
     }

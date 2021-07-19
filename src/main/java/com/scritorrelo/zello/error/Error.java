@@ -1,5 +1,6 @@
 package com.scritorrelo.zello.error;
 
+import lombok.Getter;
 import lombok.ToString;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,6 +14,7 @@ import static java.util.UUID.randomUUID;
 public class Error {
 
     private final UUID uuid;
+    @Getter
     private final ErrorCode code;
     private final LocalDateTime timestamp;
 

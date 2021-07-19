@@ -6,6 +6,7 @@ import com.scritorrelo.opus.packet.IDHeaderPacket;
 import com.scritorrelo.opus.*;
 import com.scritorrelo.zello.message.Message;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -16,18 +17,21 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
+@Slf4j
 @ToString(callSuper = true)
-public class Audio extends Message {
+public class Audio extends Message implements Serializable {
+
+    private static final String AUDIO_FOLDER = "audios\\";
 
     private static final String SQL_STATEMENT = "INSERT INTO AUDIO (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TYPE,CODEC,CODEC_HEADER,PACKET_DURATION) VALUES (?,?,?,?,?,?,?,?,?,?)";
+    private static final long serialVersionUID = -5260559179736969656L;
 
     private final String type;
     private final String codec;
     private final String codecHeader;
     private final int packetDuration;
-    private final List<AudioFrame> audioFrames;
+    private final ArrayList<AudioFrame> audioFrames;
 
     public Audio(JSONObject json, LocalDateTime timestamp) throws JSONException {
 
@@ -99,5 +103,41 @@ public class Audio extends Message {
                 userCommentLens(new ArrayList<>()).
                 userCommentListLen(0).
                 build();
+    }
+
+    public String getPath() {
+        return System.getProperty("user.dir") + MESSAGE_FOLDER + "audioObjects\\" + uuid.toString() + ".ser";
+    }
+
+    public void writeToFile() {
+
+        String path = getPath();
+
+        try (FileOutputStream f = new FileOutputStream(path);
+             ObjectOutputStream o = new ObjectOutputStream(f)) {
+
+            o.writeObject(this);
+            log.info("Wrote file " + path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public Audio readFromFile() {
+
+        String path = getPath();
+
+        try (FileInputStream f = new FileInputStream(path);
+             ObjectInputStream o = new ObjectInputStream(f)) {
+
+            log.info("Read File " + path);
+
+            return (Audio) o.readObject();
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
