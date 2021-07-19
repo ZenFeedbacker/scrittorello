@@ -3,12 +3,9 @@ package com.scritorrelo.socket;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.scritorrelo.DatabaseManager;
-import com.scritorrelo.ogg.OggFile;
-import com.scritorrelo.ogg.OggStream;
-import com.scritorrelo.zello.Channel;
+import com.scritorrelo.zello.ChannelStatus;
 import com.scritorrelo.zello.Command;
 import com.scritorrelo.zello.message.Location;
-import com.scritorrelo.zello.message.Message;
 import com.scritorrelo.zello.message.Text;
 import com.scritorrelo.zello.message.audio.AudioFrame;
 import com.scritorrelo.zello.message.audio.Audio;
@@ -86,10 +83,10 @@ public class SocketAdapter extends WebSocketAdapter {
                     locationMessageHandler(obj, timestamp);
                     break;
                 case CHANNEL_STATUS:
-                    channelStatusHandler(obj, timestamp);
+                    channelStatusHandler(obj);
                     break;
                 case ERROR:
-                    errorHandler(obj, timestamp);
+                    errorHandler(obj);
                     break;
                 default:
                     break;
@@ -161,15 +158,15 @@ public class SocketAdapter extends WebSocketAdapter {
         }
     }
 
-    private void channelStatusHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+    private void channelStatusHandler(JSONObject obj) throws JSONException {
 
-        Channel channel = new Channel(obj, timestamp);
-        log.info("Channel status: " + channel);
+        ChannelStatus channelStatus = new ChannelStatus(obj);
+        log.info(channelStatus.toString());
     }
 
-    private void errorHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+    private void errorHandler(JSONObject obj) throws JSONException {
 
-        Error error = new Error(obj, timestamp);
+        Error error = new Error(obj);
         log.error(error.toString());
         log.error("Error from channel " + ws.getChannelName() + ": " + error.getCode());
     }

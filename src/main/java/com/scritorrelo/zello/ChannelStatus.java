@@ -4,10 +4,8 @@ import lombok.ToString;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.time.LocalDateTime;
-
 @ToString
-public class Channel {
+public class ChannelStatus {
 
     private final String name;
     private final boolean status;
@@ -17,11 +15,8 @@ public class Channel {
     private final boolean locationsSupported;
     private final String error;
     private String errorType;
-    private final LocalDateTime lastStatus;
 
-    public Channel(JSONObject obj, LocalDateTime timestamp) throws JSONException {
-
-        lastStatus = timestamp;
+    public ChannelStatus(JSONObject obj) throws JSONException {
 
         name = obj.getString("channel");
         status = getChannelStatus(obj);

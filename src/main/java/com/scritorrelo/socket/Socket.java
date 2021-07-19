@@ -77,8 +77,8 @@ class Socket {
                 .add("auth_token", getToken())
                 .add("channel", channelName)
                 .add("listen_only", "true")
-                .add("username", username)
-                .add("password", password)
+//                .add("username", username)
+//                .add("password", password)
                 .build()
                 .toString();
 

@@ -5,7 +5,6 @@ import lombok.ToString;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static java.util.UUID.randomUUID;
@@ -16,11 +15,9 @@ public class Error {
     private final UUID uuid;
     @Getter
     private final ErrorCode code;
-    private final LocalDateTime timestamp;
 
-    public Error(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+    public Error(JSONObject obj) throws JSONException {
         uuid = randomUUID();
-        this.timestamp = timestamp;
         code = ErrorCode.valueOfCode(obj.getString("error"));
     }
 }
