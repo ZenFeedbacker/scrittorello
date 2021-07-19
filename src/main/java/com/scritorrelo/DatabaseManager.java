@@ -30,7 +30,7 @@ public class DatabaseManager {
     @PostConstruct
     public void init() throws IOException, SQLException {
 
-       dropTables();
+       //dropTables();
        createTables();
     }
 
