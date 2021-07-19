@@ -1,5 +1,6 @@
 package com.scritorrelo.zello.message;
 
+import lombok.Getter;
 import lombok.ToString;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,6 +16,7 @@ public class Text extends Message {
 
     private static final String SQL_STATEMENT =  "INSERT INTO TEXT (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TEXT) VALUES (?,?,?,?,?,?,?)";
 
+    @Getter
     private final String txt;
 
     public Text(JSONObject obj, LocalDateTime timestamp) throws JSONException {

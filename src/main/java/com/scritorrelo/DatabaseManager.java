@@ -35,14 +35,12 @@ public class DatabaseManager {
     }
 
     public void saveMessage(Message message) {
-        log.info("receive text");
         try (Connection conn = getConnection()) {
 
             PreparedStatement statement = message.getSqlStatement(conn);
 
-            log.info(statement.toString());
-            int insertedRows = statement.executeUpdate();
-            log.info("I just inserted " + insertedRows + " users");
+            statement.executeUpdate();
+            log.info("Inserted " + message.getClass().getSimpleName() + " to database: " + statement);
         } catch (Exception e) {
             log.error(e.toString());
         }
@@ -65,11 +63,13 @@ public class DatabaseManager {
     }
 
     private String parseResourceFile(String path) throws IOException {
+
         File file = ResourceUtils.getFile("classpath:" + path);
         return new String(Files.readAllBytes(file.toPath()));
     }
 
     private Connection getConnection() throws SQLException {
+
         return DriverManager.getConnection(jdbcUrl, username, password);
     }
 }

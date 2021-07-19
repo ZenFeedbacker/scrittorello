@@ -29,6 +29,12 @@ class Socket {
     @Value("${scrittorello.timeout}")
     public int timeout;
 
+    @Value("${scrittorello.username}")
+    public String username;
+
+    @Value("${scrittorello.password}")
+    public String password;
+
     @Autowired
     private ObjectFactory<SocketAdapter> adapterObjectFactory;
 
@@ -71,6 +77,8 @@ class Socket {
                 .add("auth_token", getToken())
                 .add("channel", channelName)
                 .add("listen_only", "true")
+                .add("username", username)
+                .add("password", password)
                 .build()
                 .toString();
 

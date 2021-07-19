@@ -150,48 +150,59 @@ public class SocketAdapter extends WebSocketAdapter {
     }
 
     private void audioBinaryHandler(byte[] binary) {
-        log.trace("Received audio binary");
+
         AudioFrame audioFrame = new AudioFrame(binary);
         int id = audioFrame.getStreamId();
+
+        log.trace("Received audio binary for stream " + id);
+
         if(audios.containsKey(id)) {
             audios.get(id).addFrame(audioFrame);
         }
     }
 
     private void channelStatusHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+
         Channel channel = new Channel(obj, timestamp);
-        log.info(channel.toString());
+        log.info("Channel status: " + channel);
     }
 
     private void errorHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+
         Error error = new Error(obj, timestamp);
         log.error(error.toString());
         log.error("Error from channel " + ws.getChannelName() + ": " + error.getCode());
     }
 
     private void locationMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+
         Location location = new Location(obj, timestamp);
         dbManager.saveMessage(location);
         log.info(location.toString());
     }
 
     private void textMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+
         Text text = new Text(obj, timestamp);
+        log.info("Received text: " + text.getTxt());
         dbManager.saveMessage(text);
     }
 
     private void imageMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+
         Image image = new Image(obj, timestamp);
         images.put(image.getId(), image);
         log.info(image.toString());
     }
 
     private void streamStartHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+
         Audio stream = new Audio(obj, timestamp);
         audios.put(obj.getInt("stream_id"), stream);
     }
 
     private void streamStopHandler(JSONObject obj) throws JSONException {
+
         Audio audio = audios.remove(obj.getInt("stream_id"));
         // OggStream oggStream = new OggStream(audio.getOpusStream());
         // OggFile oggFile = new OggFile(oggStream);
