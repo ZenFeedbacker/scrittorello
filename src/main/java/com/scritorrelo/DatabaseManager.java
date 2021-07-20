@@ -24,7 +24,7 @@ public class DatabaseManager {
     @Value("${spring.datasource.password}")
     private String password;
 
-    private static final String CREATE_SCHEMA_FILE = "create_schema.sql";
+    private static final String CREATE_SCHEMA_FILE = "schema.sql";
     private static final String DROP_TABLES_FILE = "drops_tables.sql";
 
     @PostConstruct
