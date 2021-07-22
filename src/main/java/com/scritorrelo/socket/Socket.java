@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.h2.util.StringUtils;
+import org.json.JSONObject;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
 import javax.annotation.PostConstruct;
-import javax.json.Json;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
@@ -38,6 +38,9 @@ class Socket {
     @Value("${scrittorello.password}")
     public String password;
 
+    @Value("${scrittorello.useAccount}")
+    public String useAccount;
+
     @Autowired
     private ObjectFactory<SocketAdapter> adapterObjectFactory;
 
@@ -50,6 +53,9 @@ class Socket {
 
     @Setter
     @Getter
+    private int sn;
+
+    @Setter @Getter
     private String channelName;
 
     @PostConstruct
@@ -69,7 +75,7 @@ class Socket {
             adapter.setWs(this);
 
         } catch (IOException e) {
-            log.warn("IOException when creating socket for server {}: {}", server, e.getMessage());
+            log.warn("IOException when creating socket {} for server {}: {}", sn, server, e.getMessage());
         }
 
     }
@@ -81,26 +87,36 @@ class Socket {
         try {
             ws.connect();
         } catch (WebSocketException e) {
-            log.warn("WebSocketException while trying to connect to channel {}: {}", channelName, e.getMessage());
+            log.warn("WebSocketException while socket {} tried to connect to channel {}: {}", sn, channelName, e.getMessage());
         } finally {
             SocketManager.socketLock.unlock();
         }
     }
 
+    void reconnect(){
+        try {
+            log.info("[Socket {}] Reconnecting to channel {}", sn, channelName);
+            ws = ws.recreate().connect();
+        } catch (WebSocketException | IOException e) {
+            log.warn("WebSocketException while socket {} tried to reconnect to channel {}: {}", sn, channelName, e.getMessage());
+        }
+    }
+
     void login() {
 
-        String loginMessage = Json.createObjectBuilder()
-                .add("command", "logon")
-                .add("seq", 0)
-                .add("auth_token", getToken())
-                .add("channel", channelName)
-                .add("listen_only", "true")
-//                .add("username", username)
-//                .add("password", password)
-                .build()
-                .toString();
+        JSONObject loginJson = new JSONObject()
+                                .put("command", "logon")
+                                .put("seq", 0)
+                                .put("auth_token", getToken())
+                                .put("channel", channelName)
+                                .put("listen_only", "true");
 
-        ws.sendText(loginMessage);
+        if("true".equals(useAccount)){
+            loginJson.put("username", username);
+            loginJson.put("password", password);
+        }
+
+        ws.sendText(loginJson.toString());
     }
 
     private String getToken() {

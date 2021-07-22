@@ -112,13 +112,12 @@ public class SocketAdapter extends WebSocketAdapter {
     @Override
     public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
         super.onDisconnected(websocket, serverCloseFrame, clientCloseFrame, closedByServer);
-        log.warn("Socket for channel {} was disconnected", ws.getChannelName());
+        log.warn("[Socket {}] Channel {} was disconnected", ws.getSn(), ws.getChannelName());
     }
 
     private void errorMessageHandler(JSONObject obj) {
 
-        log.error("Error from channel " + ws.getChannelName() + ": " + obj.getString("error"));
-
+        log.error("[Socket {}] Channel {} got error message: {} ", ws.getSn(), ws.getChannelName(), obj.getString("error"));
     }
 
     private void refreshTokenHandler(JSONObject obj){
@@ -129,7 +128,7 @@ public class SocketAdapter extends WebSocketAdapter {
     private void imageBinaryHandler(byte[] binary) {
 
         ImagePacket packet = new ImagePacket(binary);
-        log.info("Received" + (packet.isThumbnail() ? "Thumbnail" : "Full Image") + "image binary");
+        log.info("[Socket {}] Channel {} received" + (packet.isThumbnail() ? "Thumbnail" : "Full Image") + "image binary", ws.getSn(), ws.getChannelName());
 
         int id = packet.getId();
 
@@ -156,7 +155,7 @@ public class SocketAdapter extends WebSocketAdapter {
         AudioFrame audioFrame = new AudioFrame(binary);
         int id = audioFrame.getStreamId();
 
-        log.trace("Received audio binary for stream " + id);
+        log.trace("[Socket {}] Channel {} received audio binary for stream {}", ws.getSn(), ws.getChannelName(), id);
 
         if(audios.containsKey(id)) {
             audios.get(id).addFrame(audioFrame);
@@ -166,14 +165,14 @@ public class SocketAdapter extends WebSocketAdapter {
     private void channelStatusHandler(JSONObject obj) {
 
         ChannelStatus channelStatus = new ChannelStatus(obj);
-        log.info(channelStatus.toString());
+        log.info("[Socket {}] {}", ws.getSn() ,channelStatus);
     }
 
     private void errorHandler(JSONObject obj) {
 
         Error error = new Error(obj);
         log.error(error.toString());
-        log.error("Error from channel " + ws.getChannelName() + ": " + error.getCode());
+        log.error("[Socket {}] Channel {} got error command: {}", ws.getSn(), ws.getChannelName(), error.getCode());
     }
 
     private void locationMessageHandler(JSONObject obj, LocalDateTime timestamp) {
@@ -186,7 +185,7 @@ public class SocketAdapter extends WebSocketAdapter {
     private void textMessageHandler(JSONObject obj, LocalDateTime timestamp) {
 
         Text text = new Text(obj, timestamp);
-        log.info("Received text: " + text.getTxt());
+        log.info("[Socket {}] Channel {} received text: {}", ws.getSn(), ws.getChannelName(), text.getTxt());
         dbManager.saveMessage(text);
     }
 
