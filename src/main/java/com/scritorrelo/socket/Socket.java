@@ -24,7 +24,7 @@ import java.nio.charset.Charset;
 class Socket {
 
     @Value("${:classpath:auth_token}")
-    public Resource authToken;
+    public Resource authTokenFile;
 
     @Value("${scrittorello.server}")
     public String server;
@@ -44,6 +44,8 @@ class Socket {
     @Setter
     private String refreshToken;
 
+    private String authToken;
+
     private WebSocket ws;
 
     @Setter
@@ -52,6 +54,8 @@ class Socket {
 
     @PostConstruct
     void init() {
+
+        authToken = getAuthToken();
 
         SocketAdapter adapter = adapterObjectFactory.getObject();
 
@@ -101,15 +105,23 @@ class Socket {
 
     private String getToken() {
 
-        String tokenString = null;
+        return StringUtils.isNullOrEmpty(refreshToken) ? authToken : refreshToken;
+    }
 
-        try {
-            tokenString = StreamUtils.copyToString(authToken.getInputStream(), Charset.defaultCharset());
-        } catch (IOException e) {
-            log.warn("IOException while opening AuthToken file : {}", e.getMessage());
+    private String getAuthToken(){
+
+        if(authTokenFile == null){
+            log.warn("AuthToken field is null");
+            return null;
         }
 
-        return StringUtils.isNullOrEmpty(refreshToken) ? tokenString : refreshToken;
+        try {
+            return StreamUtils.copyToString(authTokenFile.getInputStream(), Charset.defaultCharset());
+        } catch (IOException e) {
+            log.warn("IOException while opening AuthToken file : {}", e.getMessage());
+            return null;
+        }
+
     }
 
     void disconnect(){
