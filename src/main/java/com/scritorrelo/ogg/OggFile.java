@@ -72,9 +72,13 @@ public class OggFile {
         }
     }
 
-    public void writeToFile(String filename) throws IOException {
+    public void writeToFile(String filename)  {
 
-        FileUtils.writeByteArrayToFile(new File(filename), file);
+        try {
+            FileUtils.writeByteArrayToFile(new File(filename), file);
+        } catch (IOException e) {
+            log.warn("IOException while writing ogg file to {}: {}", filename, e.getMessage());
+        }
     }
 
 }

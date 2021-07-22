@@ -16,8 +16,9 @@ public class Error {
     @Getter
     private final ErrorCode code;
 
-    public Error(JSONObject obj) throws JSONException {
+    public Error(JSONObject obj) {
+
         uuid = randomUUID();
-        code = ErrorCode.valueOfCode(obj.getString("error"));
+        code = ErrorCode.valueOfCode(obj.optString("error"));
     }
 }

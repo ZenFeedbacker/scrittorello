@@ -3,6 +3,8 @@ package com.scritorrelo.socket;
 import com.neovisionaries.ws.client.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.h2.util.StringUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +18,7 @@ import javax.json.Json;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+@Slf4j
 @Service
 @Scope("prototype")
 class Socket {
@@ -48,28 +51,39 @@ class Socket {
     private String channelName;
 
     @PostConstruct
-    void init() throws IOException {
+    void init() {
 
         SocketAdapter adapter = adapterObjectFactory.getObject();
-        ws = new WebSocketFactory()
-                .setConnectionTimeout(timeout)
-                .createSocket(server)
-                .addListener(adapter)
-                .addExtension(WebSocketExtension.PERMESSAGE_DEFLATE);
 
-        adapter.setWs(this);
+        try {
+            ws = new WebSocketFactory()
+                    .setConnectionTimeout(timeout)
+                    .createSocket(server)
+                    .addListener(adapter)
+                    .addExtension(WebSocketExtension.PERMESSAGE_DEFLATE);
+
+            adapter.setWs(this);
+
+        } catch (IOException e) {
+            log.warn("IOException when creating socket for server {}: {}", server, e.getMessage());
+        }
+
     }
 
-    void connect() throws WebSocketException {
+    void connect() {
+
         SocketManager.socketLock.lock();
+
         try {
             ws.connect();
+        } catch (WebSocketException e) {
+            log.warn("WebSocketException while trying to connect to channel {}: {}", channelName, e.getMessage());
         } finally {
             SocketManager.socketLock.unlock();
         }
     }
 
-    void login() throws IOException {
+    void login() {
 
         String loginMessage = Json.createObjectBuilder()
                 .add("command", "logon")
@@ -85,13 +99,25 @@ class Socket {
         ws.sendText(loginMessage);
     }
 
+    private String getToken() {
+
+        String tokenString = null;
+
+        try {
+            tokenString = StreamUtils.copyToString(authToken.getInputStream(), Charset.defaultCharset());
+        } catch (IOException e) {
+            log.warn("IOException while opening AuthToken file : {}", e.getMessage());
+        }
+
+        return StringUtils.isNullOrEmpty(refreshToken) ? tokenString : refreshToken;
+    }
+
     void disconnect(){
         ws.disconnect();
     }
 
-    private String getToken() throws IOException {
-        String tokenString = StreamUtils.copyToString(authToken.getInputStream(), Charset.defaultCharset());
+    WebSocketState getState(){
 
-        return refreshToken == null ? tokenString : refreshToken;
+        return ws.getState();
     }
 }

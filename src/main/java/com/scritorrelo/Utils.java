@@ -31,11 +31,6 @@ public class Utils {
         return data;
     }
 
-    public static byte[] readRemainingByteStream(ByteArrayInputStream stream) throws EOFException {
-
-        return readByteStream(stream, stream.available());
-    }
-
     public static byte readByteStream(ByteArrayInputStream stream) throws EOFException {
 
         byte data;

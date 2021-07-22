@@ -3,10 +3,12 @@ package com.scritorrelo.opus.packet;
 import com.scritorrelo.Utils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 
+@Slf4j
 @NoArgsConstructor
 public abstract class Packet {
 
@@ -22,14 +24,23 @@ public abstract class Packet {
         this.stream = new ByteArrayInputStream(data);
     }
 
-    public static Packet packetFactory(byte[] data) throws EOFException {
+    public static Packet packetFactory(byte[] data) {
 
         String signature = Utils.readByteArrayToString(data, 8);
 
         if (IDHeaderPacket.OPUS_ID_HEADER.equals(signature)) {
-            return new IDHeaderPacket(data);
+            try {
+                return new IDHeaderPacket(data);
+            } catch (EOFException e) {
+                log.warn("EOFException while trying to create IDHeaderPacket: {}", e.getMessage());
+                return null;
+            }
         } else if (CommentHeaderPacket.OPUS_COMMENT_HEADER.equals(signature)) {
-            return new CommentHeaderPacket(data);
+            try {
+                return new CommentHeaderPacket(data);
+            } catch (EOFException e) {
+                log.warn("EOFException while trying to create CommentHeaderPacket: {}", e.getMessage());
+                return null;            }
         } else {
             return new DataPacket(data);
         }

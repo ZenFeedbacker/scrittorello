@@ -2,6 +2,7 @@ package com.scritorrelo.socket;
 
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
+import com.neovisionaries.ws.client.WebSocketFrame;
 import com.scritorrelo.DatabaseManager;
 import com.scritorrelo.zello.ChannelStatus;
 import com.scritorrelo.zello.Command;
@@ -14,21 +15,19 @@ import com.scritorrelo.zello.message.image.Image;
 import com.scritorrelo.zello.message.image.ImagePacket;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
 import static java.util.Objects.isNull;
 
+@Slf4j
 @Controller
 @Scope("prototype")
-@Slf4j
 public class SocketAdapter extends WebSocketAdapter {
 
     @Setter
@@ -41,7 +40,7 @@ public class SocketAdapter extends WebSocketAdapter {
     private final HashMap<Integer, Image> images = new HashMap<>();
 
     @Override
-    public void onTextMessage(WebSocket websocket, String message) throws JSONException, IOException {
+    public void onTextMessage(WebSocket websocket, String message) {
 
         LocalDateTime timestamp = LocalDateTime.now();
         JSONObject obj = new JSONObject(message);
@@ -94,12 +93,6 @@ public class SocketAdapter extends WebSocketAdapter {
         }
     }
 
-    private void errorMessageHandler(JSONObject obj) {
-
-        log.error("Error from channel " + ws.getChannelName() + ": " + obj.getString("error"));
-
-    }
-
     @Override
     public void onBinaryMessage(WebSocket websocket, byte[] binary) {
 
@@ -116,9 +109,21 @@ public class SocketAdapter extends WebSocketAdapter {
         }
     }
 
-    private void refreshTokenHandler(JSONObject obj) throws JSONException {
+    @Override
+    public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
+        super.onDisconnected(websocket, serverCloseFrame, clientCloseFrame, closedByServer);
+        log.warn("Socket for channel {} was disconnected", ws.getChannelName());
+    }
 
-        ws.setRefreshToken(obj.getString("refresh_token"));
+    private void errorMessageHandler(JSONObject obj) {
+
+        log.error("Error from channel " + ws.getChannelName() + ": " + obj.getString("error"));
+
+    }
+
+    private void refreshTokenHandler(JSONObject obj){
+
+        ws.setRefreshToken(obj.optString("refresh_token"));
     }
 
     private void imageBinaryHandler(byte[] binary) {
@@ -158,47 +163,47 @@ public class SocketAdapter extends WebSocketAdapter {
         }
     }
 
-    private void channelStatusHandler(JSONObject obj) throws JSONException {
+    private void channelStatusHandler(JSONObject obj) {
 
         ChannelStatus channelStatus = new ChannelStatus(obj);
         log.info(channelStatus.toString());
     }
 
-    private void errorHandler(JSONObject obj) throws JSONException {
+    private void errorHandler(JSONObject obj) {
 
         Error error = new Error(obj);
         log.error(error.toString());
         log.error("Error from channel " + ws.getChannelName() + ": " + error.getCode());
     }
 
-    private void locationMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+    private void locationMessageHandler(JSONObject obj, LocalDateTime timestamp) {
 
         Location location = new Location(obj, timestamp);
         dbManager.saveMessage(location);
         log.info(location.toString());
     }
 
-    private void textMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+    private void textMessageHandler(JSONObject obj, LocalDateTime timestamp) {
 
         Text text = new Text(obj, timestamp);
         log.info("Received text: " + text.getTxt());
         dbManager.saveMessage(text);
     }
 
-    private void imageMessageHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+    private void imageMessageHandler(JSONObject obj, LocalDateTime timestamp) {
 
         Image image = new Image(obj, timestamp);
         images.put(image.getId(), image);
         log.info(image.toString());
     }
 
-    private void streamStartHandler(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+    private void streamStartHandler(JSONObject obj, LocalDateTime timestamp) {
 
         Audio stream = new Audio(obj, timestamp);
         audios.put(obj.getInt("stream_id"), stream);
     }
 
-    private void streamStopHandler(JSONObject obj) throws JSONException {
+    private void streamStopHandler(JSONObject obj) {
 
         Audio audio = audios.remove(obj.getInt("stream_id"));
         // OggStream oggStream = new OggStream(audio.getOpusStream());

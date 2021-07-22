@@ -1,6 +1,6 @@
 package com.scritorrelo.socket;
 
-import com.neovisionaries.ws.client.WebSocketException;
+import com.google.common.base.Joiner;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectFactory;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -38,12 +37,14 @@ class SocketManager {
     private String sourceFile;
 
     @PostConstruct
-    private void init() throws IOException, URISyntaxException, WebSocketException {
+    private void init(){
         log.info("Initializing sockets");
 
         for (String channel : getChannels()) {
             initSocket(channel);
         }
+
+        printSocketsStatus();
     }
 
     @PreDestroy
@@ -53,13 +54,18 @@ class SocketManager {
         log.info("All connections closed");
     }
 
-    private List<String> getChannels() throws IOException, URISyntaxException {
+    private List<String> getChannels()  {
 
         URL res = getClass().getClassLoader().getResource(sourceFile);
-        return res == null ? new ArrayList<>() : Files.readAllLines(Paths.get(res.toURI()));
+        try {
+            return res == null ? new ArrayList<>() : Files.readAllLines(Paths.get(res.toURI()));
+        } catch (IOException | URISyntaxException e) {
+            log.error("Failed to open channels' list file: {}", sourceFile);
+            return null;
+        }
     }
 
-    private void initSocket(String channelName) throws WebSocketException, IOException {
+    private void initSocket(String channelName) {
 
         Socket ws = myBeanFactory.getObject();
 
@@ -79,5 +85,57 @@ class SocketManager {
         ws.login();
 
         socketMap.put(channelName, ws);
+    }
+
+    private void printSocketsStatus() {
+
+        int created, connecting, open, closing, closed;
+        created = connecting = open = closed = closing = 0;
+
+        for (Socket socket : socketMap.values()) {
+            switch (socket.getState()) {
+                case OPEN:
+                    open++;
+                    break;
+                case CREATED:
+                    created++;
+                    break;
+                case CLOSED:
+                    closed++;
+                    break;
+                case CLOSING:
+                    closing++;
+                    break;
+                case CONNECTING:
+                    connecting++;
+                    break;
+            }
+        }
+
+        List<String> states = new ArrayList<>();
+        
+        if (created > 0) {
+            states.add(created + " Created");
+        }
+
+        if (connecting > 0) {
+            states.add(connecting + " Connecting");
+        }
+
+        if (open > 0) {
+            states.add(open +" Open");
+        }
+
+        if (closing > 0) {
+            states.add(closing + " Closing");
+        }
+
+        if (closed > 0) {
+            states.add(closed + " Closed");
+        }
+
+        log.info(socketMap.size() + " Sockets (" + Joiner.on(", ").join(states) + ")");
+
+        socketMap.values().forEach(ws -> log.info("Socket for channel {} is: {}", ws.getChannelName(), ws.getState().toString()));
     }
 }

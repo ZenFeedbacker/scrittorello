@@ -18,6 +18,7 @@ import java.util.UUID;
 public abstract class Message implements Serializable {
 
     public static final String MESSAGE_FOLDER = "\\data\\messages\\";
+    private static final long serialVersionUID = -365386493668373640L;
 
     @Getter
     protected UUID uuid;
@@ -28,14 +29,14 @@ public abstract class Message implements Serializable {
     protected String forUser;
     protected LocalDateTime timestamp;
 
-    protected Message(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+    protected Message(JSONObject obj, LocalDateTime ts) {
 
-        this.uuid = UUID.randomUUID();
+        uuid = UUID.randomUUID();
 
-        this.timestamp = timestamp;
+        timestamp = ts;
 
-        channel = obj.getString("channel");
-        fromUser = obj.getString("from");
+        channel = obj.optString("channel");
+        fromUser = obj.optString("from");
         forUser = obj.optString("for");
 
         id = obj.optInt("message_id") != 0 ? obj.optInt("message_id") : obj.optInt("stream_id");

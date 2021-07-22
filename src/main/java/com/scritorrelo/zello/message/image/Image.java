@@ -3,7 +3,6 @@ package com.scritorrelo.zello.message.image;
 import com.scritorrelo.zello.message.Message;
 import lombok.Setter;
 import lombok.ToString;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Connection;
@@ -28,7 +27,7 @@ public class Image extends Message {
     @Setter
     private ImagePacket fullsize;
 
-    public Image(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+    public Image(JSONObject obj, LocalDateTime timestamp)  {
 
         super(obj, timestamp);
 

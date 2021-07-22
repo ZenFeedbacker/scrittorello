@@ -24,41 +24,64 @@ public class DatabaseManager {
     @Value("${spring.datasource.password}")
     private String password;
 
-    private static final String CREATE_SCHEMA_FILE = "schema.sql";
+    private static final String SCHEMA_FILE = "schema.sql";
     private static final String DROP_TABLES_FILE = "drops_tables.sql";
 
     @PostConstruct
-    public void init() throws IOException, SQLException {
+    public void init(){
 
        //dropTables();
        createTables();
     }
 
     public void saveMessage(Message message) {
+
         try (Connection conn = getConnection()) {
 
             PreparedStatement statement = message.getSqlStatement(conn);
 
             statement.executeUpdate();
             log.info("Inserted " + message.getClass().getSimpleName() + " to database: " + statement);
-        } catch (Exception e) {
-            log.error(e.toString());
+        } catch (SQLException e) {
+            log.warn("SQLException when writing {} message with UUID {} to database: {}", message.getClass().getSimpleName(), message.getUuid(), e.getMessage());
         }
+
     }
 
-    private void createTables() throws SQLException, IOException {
-        String schema = parseResourceFile(CREATE_SCHEMA_FILE);
+    private void createTables() {
+
+        String schema;
+
+        try {
+            schema = parseResourceFile(SCHEMA_FILE);
+        } catch (IOException e) {
+            log.error("IOException while parsing schema file {} while initializing tables: {}", SCHEMA_FILE, e.getMessage());
+            return;
+        }
+
         try (Connection conn = getConnection(); Statement stmt = conn.createStatement()){
             stmt.execute(schema);
             log.info("Database tables created");
+        } catch (SQLException e) {
+            log.error("SQLException while initializing tables: {}", e.getMessage());
         }
     }
 
-    private void dropTables() throws IOException, SQLException {
-        String schema = parseResourceFile(DROP_TABLES_FILE);
+    private void dropTables(){
+
+        String schema = null;
+
+        try {
+            schema = parseResourceFile(DROP_TABLES_FILE);
+        } catch (IOException e) {
+            log.error("IOException while parsing schema file {} while dropping tables: {}", DROP_TABLES_FILE, e.getMessage());
+        }
+
         try (Connection conn = getConnection(); Statement stmt = conn.createStatement()){
             stmt.execute(schema);
             log.info("Database tables dropped.");
+        } catch (SQLException e) {
+            log.error("SQLException while dropping tables: {}", e.getMessage());
         }
     }
 

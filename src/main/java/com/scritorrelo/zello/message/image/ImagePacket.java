@@ -32,6 +32,7 @@ public class ImagePacket {
     }
 
     public void save(String pathname)  {
+
         File photo = new File(pathname);
 
         if (photo.exists()){

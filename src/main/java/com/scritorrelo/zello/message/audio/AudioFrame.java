@@ -11,6 +11,7 @@ import java.util.Arrays;
 public class AudioFrame implements Serializable {
 
     private static final long serialVersionUID = -1097437257673310951L;
+
     private final byte[] type;
     private final int streamId;
     private final int packetId;

@@ -33,14 +33,14 @@ public class Audio extends Message implements Serializable {
     private final int packetDuration;
     private final ArrayList<AudioFrame> audioFrames;
 
-    public Audio(JSONObject json, LocalDateTime timestamp) throws JSONException {
+    public Audio(JSONObject json, LocalDateTime timestamp) {
 
         super(json, timestamp);
 
-        type = json.getString("type");
-        codec = json.getString("codec");
-        codecHeader = json.getString("codec_header");
-        packetDuration = json.getInt("packet_duration");
+        type = json.optString("type");
+        codec = json.optString("codec");
+        codecHeader = json.optString("codec_header");
+        packetDuration = json.optInt("packet_duration");
         audioFrames = new ArrayList<>();
     }
 
@@ -93,22 +93,6 @@ public class Audio extends Message implements Serializable {
                 build();
     }
 
-    private CommentHeaderPacket createCommentHeader() {
-
-        return CommentHeaderPacket.
-                builder().
-                signature(CommentHeaderPacket.OPUS_COMMENT_HEADER).
-                vendorStr("").
-                vendorStrLen(0).
-                userCommentLens(new ArrayList<>()).
-                userCommentListLen(0).
-                build();
-    }
-
-    public String getPath() {
-        return System.getProperty("user.dir") + MESSAGE_FOLDER + "audioObjects\\" + uuid.toString() + ".ser";
-    }
-
     public void writeToFile() {
 
         String path = getPath();
@@ -119,7 +103,7 @@ public class Audio extends Message implements Serializable {
             o.writeObject(this);
             log.info("Wrote file " + path);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.warn("Failed to write Audio object to file {}: {}", path, e.getMessage());
         }
 
     }
@@ -136,8 +120,24 @@ public class Audio extends Message implements Serializable {
             return (Audio) o.readObject();
 
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            log.warn("Failed to read Audio object from file {}: {}", path, e.getMessage());
             return null;
         }
+    }
+
+    private CommentHeaderPacket createCommentHeader() {
+
+        return CommentHeaderPacket.
+                builder().
+                signature(CommentHeaderPacket.OPUS_COMMENT_HEADER).
+                vendorStr("").
+                vendorStrLen(0).
+                userCommentLens(new ArrayList<>()).
+                userCommentListLen(0).
+                build();
+    }
+
+    private String getPath() {
+        return System.getProperty("user.dir") + MESSAGE_FOLDER + "audioObjects\\" + uuid.toString() + ".ser";
     }
 }

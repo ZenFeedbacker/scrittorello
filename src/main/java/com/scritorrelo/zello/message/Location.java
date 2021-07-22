@@ -20,7 +20,7 @@ public class Location extends Message {
     private final double accuracy;
     private final String formattedAddress;
 
-    public Location(JSONObject obj, LocalDateTime timestamp) throws JSONException {
+    public Location(JSONObject obj, LocalDateTime timestamp) {
 
         super(obj, timestamp);
 

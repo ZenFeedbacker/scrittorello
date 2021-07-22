@@ -49,7 +49,7 @@ public class OggPage {
     @Builder.Default
     private  int numberPageSegments = 0;
     private final List<Integer> segmentTable;
-    private List<Packet> packets;
+    private final List<Packet> packets;
 
     public OggPage(byte[] data) {
 
