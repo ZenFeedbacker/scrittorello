@@ -36,7 +36,7 @@ public class ChannelList {
 
     public static String getChannelAlias(String channelName) {
 
-        return channels.get(channelName);
+        return channels.get(channelName) + "[" + channelName + "]";
     }
 
     public static Set<String> getChannelNames() {
