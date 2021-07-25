@@ -1,6 +1,7 @@
 package com.scritorrelo.socket;
 
 import com.neovisionaries.ws.client.*;
+import com.scritorrelo.zello.ChannelList;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -38,11 +39,14 @@ class Socket {
     @Value("${scrittorello.password}")
     public String password;
 
-    @Value("${scrittorello.useAccount}")
-    public String useAccount;
+    @Value("${scrittorello.userAccount}")
+    public String userAccount;
 
     @Autowired
     private ObjectFactory<SocketAdapter> adapterObjectFactory;
+
+    @Autowired
+    private SocketManager socketManager;
 
     @Setter
     private String refreshToken;
@@ -51,11 +55,10 @@ class Socket {
 
     private WebSocket ws;
 
-    @Setter
-    @Getter
+    @Setter @Getter
     private int sn;
 
-    @Setter @Getter
+    @Setter
     private String channelName;
 
     @PostConstruct
@@ -111,7 +114,7 @@ class Socket {
                                 .put("channel", channelName)
                                 .put("listen_only", "true");
 
-        if("true".equals(useAccount)){
+        if("true".equals(userAccount)){
             loginJson.put("username", username);
             loginJson.put("password", password);
         }
@@ -147,5 +150,10 @@ class Socket {
     WebSocketState getState(){
 
         return ws.getState();
+    }
+
+    public Object getChannelName() {
+
+        return ChannelList.getChannelAlias(channelName);
     }
 }

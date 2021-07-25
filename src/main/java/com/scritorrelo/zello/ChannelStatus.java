@@ -1,11 +1,14 @@
 package com.scritorrelo.zello;
 
-import lombok.ToString;
+import com.scritorrelo.socket.SocketManager;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@ToString
 public class ChannelStatus {
+
+    @Autowired
+    private SocketManager socketManager;
 
     private final String name;
     private final boolean status;
@@ -14,7 +17,7 @@ public class ChannelStatus {
     private final boolean textingSupported;
     private final boolean locationsSupported;
     private final String error;
-    private String errorType;
+    private final String errorType;
 
     public ChannelStatus(JSONObject obj) throws JSONException {
 
@@ -25,11 +28,17 @@ public class ChannelStatus {
         textingSupported = obj.optBoolean("texting_supported");
         locationsSupported = obj.optBoolean("locations_supported");
         error = obj.optString("error");
+        errorType = obj.optString("error_type");
     }
 
     private boolean getChannelStatus(JSONObject obj){
 
         String statusStr = obj.optString("status");
         return "online".equals(statusStr);
+    }
+
+    @Override
+    public String toString(){
+        return "ChannelStatus(name=" + ChannelList.getChannelAlias(name)+ ", status=" + status +", usersOnline=" + usersOnline +")";
     }
 }

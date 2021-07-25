@@ -2,6 +2,7 @@ package com.scritorrelo.socket;
 
 import com.google.common.base.Joiner;
 import com.neovisionaries.ws.client.WebSocketState;
+import com.scritorrelo.zello.ChannelList;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectFactory;
@@ -12,11 +13,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
@@ -24,11 +20,11 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-class SocketManager {
+public class SocketManager {
 
     private static final List<Socket> socketMap = new ArrayList<>();
 
-    public static final ReentrantLock socketLock = new ReentrantLock();
+    static final ReentrantLock socketLock = new ReentrantLock();
 
     @Autowired
     private ObjectFactory<Socket> socketObjectFactory;
@@ -37,11 +33,15 @@ class SocketManager {
     @Value("${scrittorello.channels}")
     private String sourceFile;
 
+    @Value("${scrittorello.channelAliasing}")
+    private boolean channelAliasing;
+
+
     @PostConstruct
     private void init(){
         log.info("Initializing sockets.");
 
-        for (String channel : getChannels()) {
+        for (String channel : ChannelList.getChannelNames()) {
             initSocket(channel);
         }
 
@@ -70,23 +70,11 @@ class SocketManager {
         }
     }
 
-    private List<String> getChannels() {
-
-        URL res = getClass().getClassLoader().getResource(sourceFile);
-
-        try {
-            return res == null ? new ArrayList<>() : Files.readAllLines(Paths.get(res.toURI()));
-        } catch (IOException | URISyntaxException e) {
-            log.error("Failed to open channels' list file: {}", sourceFile);
-            return new ArrayList<>();
-        }
-    }
-
     private void initSocket(String channelName) {
 
         int sn = socketMap.size();
 
-        log.info("Initializing socket {} for channel {}", sn, channelName);
+        log.info("Initializing socket {} for channel {}", sn, ChannelList.getChannelAlias(channelName));
 
         Socket ws = socketObjectFactory.getObject();
 
@@ -101,7 +89,7 @@ class SocketManager {
             socketLock.unlock();
         }
 
-        log.info("Logging to channel {}", channelName);
+        log.info("Logging to channel {}", ChannelList.getChannelAlias(channelName));
 
         ws.login();
         
