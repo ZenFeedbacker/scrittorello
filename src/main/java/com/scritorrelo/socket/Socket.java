@@ -55,9 +55,6 @@ class Socket {
 
     private WebSocket ws;
 
-    @Setter @Getter
-    private int sn;
-
     @Setter
     private String channelName;
 
@@ -78,7 +75,7 @@ class Socket {
             adapter.setWs(this);
 
         } catch (IOException e) {
-            log.warn("IOException when creating socket {} for server {}: {}", sn, server, e.getMessage());
+            log.warn("IOException when creating socket for server {}: {}", server, e.getMessage());
         }
 
     }
@@ -90,18 +87,9 @@ class Socket {
         try {
             ws.connect();
         } catch (WebSocketException e) {
-            log.warn("WebSocketException while socket {} tried to connect to channel {}: {}", sn, channelName, e.getMessage());
+            log.warn("WebSocketException while socket tried to connect to channel {}: {}", channelName, e.getMessage());
         } finally {
             SocketManager.socketLock.unlock();
-        }
-    }
-
-    void reconnect(){
-        try {
-            log.info("[Socket {}] Reconnecting to channel {}", sn, channelName);
-            ws = ws.recreate().connect();
-        } catch (WebSocketException | IOException e) {
-            log.warn("WebSocketException while socket {} tried to reconnect to channel {}: {}", sn, channelName, e.getMessage());
         }
     }
 

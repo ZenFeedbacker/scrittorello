@@ -51,14 +51,11 @@ public class SocketManager {
 
     private void initSocket(String channelName) {
 
-        var sn = socketMap.size();
-
-        log.info("Initializing socket {} for channel {}", sn, ChannelList.getChannelAlias(channelName));
+        log.info("Initializing socket for channel {}", ChannelList.getChannelAlias(channelName));
 
         var ws = socketObjectFactory.getObject();
 
         ws.setChannelName(channelName);
-        ws.setSn(sn);
 
         socketLock.lock();
 
