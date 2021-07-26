@@ -25,14 +25,6 @@ public class SocketManager {
     @Autowired
     private ObjectFactory<Socket> socketObjectFactory;
 
-    @Setter
-    @Value("${scrittorello.channels}")
-    private String sourceFile;
-
-    @Value("${scrittorello.channelAliasing}")
-    private boolean channelAliasing;
-
-
     @PostConstruct
     private void init(){
         log.info("Initializing sockets.");

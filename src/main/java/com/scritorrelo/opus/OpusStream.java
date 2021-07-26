@@ -14,9 +14,9 @@ import java.util.List;
 public class OpusStream {
 
     @Setter
-    IDHeaderPacket idHeaderPacket;
-    final List<CommentHeaderPacket> commentHeaderPackets;
-    final List<Packet> dataPackets;
+    private IDHeaderPacket idHeaderPacket;
+    private final List<CommentHeaderPacket> commentHeaderPackets;
+    private final List<Packet> dataPackets;
 
 
     public OpusStream() {
@@ -24,7 +24,6 @@ public class OpusStream {
         commentHeaderPackets = new ArrayList<>();
         dataPackets = new ArrayList<>();
     }
-
 
     public void addCommentPacket(CommentHeaderPacket packet){
         commentHeaderPackets.add(packet);

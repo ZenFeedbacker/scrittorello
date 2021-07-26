@@ -13,8 +13,8 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 
 @Slf4j
-@ToString
 @Getter
+@ToString
 public class ImagePacket {
 
     private final byte packetType;
@@ -30,7 +30,7 @@ public class ImagePacket {
         data = Arrays.copyOfRange(binary, 9, binary.length);
     }
 
-    public void save(String pathname)  {
+    protected void save(String pathname)  {
 
         var photo = new File(pathname);
 
@@ -50,3 +50,4 @@ public class ImagePacket {
         }
     }
 }
+

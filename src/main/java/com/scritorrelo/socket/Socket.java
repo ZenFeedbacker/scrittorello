@@ -2,7 +2,6 @@ package com.scritorrelo.socket;
 
 import com.neovisionaries.ws.client.*;
 import com.scritorrelo.zello.ChannelList;
-import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.h2.util.StringUtils;
@@ -25,22 +24,22 @@ import java.nio.charset.Charset;
 class Socket {
 
     @Value("${:classpath:auth_token}")
-    public Resource authTokenFile;
+    private Resource authTokenFile;
 
     @Value("${scrittorello.server}")
-    public String server;
+    private String server;
 
     @Value("${scrittorello.timeout}")
-    public int timeout;
+    private int timeout;
 
     @Value("${scrittorello.username}")
-    public String username;
+    private String username;
 
     @Value("${scrittorello.password}")
-    public String password;
+    private String password;
 
     @Value("${scrittorello.userAccount}")
-    public String userAccount;
+    private String userAccount;
 
     @Autowired
     private ObjectFactory<SocketAdapter> adapterObjectFactory;
@@ -93,6 +92,11 @@ class Socket {
         }
     }
 
+    void disconnect(){
+
+        ws.disconnect();
+    }
+
     void login() {
 
         var loginJson = new JSONObject()
@@ -110,6 +114,10 @@ class Socket {
         ws.sendText(loginJson.toString());
     }
 
+    String getChannelName() {
+
+        return ChannelList.getChannelAlias(channelName);
+    }
     private String getToken() {
 
         return StringUtils.isNullOrEmpty(refreshToken) ? authToken : refreshToken;
@@ -128,15 +136,5 @@ class Socket {
             log.warn("IOException while opening AuthToken file : {}", e.getMessage());
             return null;
         }
-
-    }
-
-    void disconnect(){
-        ws.disconnect();
-    }
-
-    public Object getChannelName() {
-
-        return ChannelList.getChannelAlias(channelName);
     }
 }

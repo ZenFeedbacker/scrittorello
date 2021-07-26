@@ -1,17 +1,12 @@
 package com.scritorrelo.zello;
 
-import com.scritorrelo.socket.SocketManager;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 
 public class ChannelStatus {
-
-    @Autowired
-    private SocketManager socketManager;
 
     private final String name;
     private final boolean status;

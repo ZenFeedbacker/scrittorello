@@ -15,6 +15,8 @@ import java.sql.*;
 @Slf4j
 public class DatabaseManager {
 
+    private static final String SCHEMA_FILE = "schema.sql";
+
     @Value("${spring.datasource.url}")
     private String jdbcUrl;
 
@@ -23,8 +25,6 @@ public class DatabaseManager {
 
     @Value("${spring.datasource.password}")
     private String password;
-
-    private static final String SCHEMA_FILE = "schema.sql";
 
     @PostConstruct
     public void init(){
