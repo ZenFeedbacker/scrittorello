@@ -32,3 +32,6 @@ data/
 mvnw.cmd
 mvnw
 .mvn/
+
+*.opus
+*.wav
