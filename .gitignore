@@ -28,7 +28,6 @@ hs_err_pid*
 target/
 data/
 
-
 mvnw.cmd
 mvnw
 .mvn/
