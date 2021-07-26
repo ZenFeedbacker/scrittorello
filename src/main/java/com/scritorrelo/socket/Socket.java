@@ -66,7 +66,7 @@ class Socket {
 
         authToken = getAuthToken();
 
-        SocketAdapter adapter = adapterObjectFactory.getObject();
+        var adapter = adapterObjectFactory.getObject();
 
         try {
             ws = new WebSocketFactory()
@@ -107,7 +107,7 @@ class Socket {
 
     void login() {
 
-        JSONObject loginJson = new JSONObject()
+        var loginJson = new JSONObject()
                                 .put("command", "logon")
                                 .put("seq", 0)
                                 .put("auth_token", getToken())
@@ -145,11 +145,6 @@ class Socket {
 
     void disconnect(){
         ws.disconnect();
-    }
-
-    WebSocketState getState(){
-
-        return ws.getState();
     }
 
     public Object getChannelName() {

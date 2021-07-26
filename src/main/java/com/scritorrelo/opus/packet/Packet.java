@@ -19,14 +19,14 @@ public abstract class Packet {
 
     Packet(byte[] data) {
 
-        this.packetData = data;
-        this.length = data.length;
-        this.stream = new ByteArrayInputStream(data);
+        packetData = data;
+        length = data.length;
+        stream = new ByteArrayInputStream(data);
     }
 
     public static Packet packetFactory(byte[] data) {
 
-        String signature = Utils.readByteArrayToString(data, 8);
+        var signature = Utils.readByteArrayToString(data, 8);
 
         if (IDHeaderPacket.OPUS_ID_HEADER.equals(signature)) {
             try {

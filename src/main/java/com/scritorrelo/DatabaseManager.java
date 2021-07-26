@@ -34,9 +34,9 @@ public class DatabaseManager {
 
     public void saveMessage(Message message) {
 
-        try (Connection conn = getConnection()) {
+        try (var conn = getConnection()) {
 
-            PreparedStatement statement = message.getSqlStatement(conn);
+            var statement = message.getSqlStatement(conn);
 
             statement.executeUpdate();
             log.info("Inserted " + message.getClass().getSimpleName() + " to database: " + statement);
@@ -51,13 +51,15 @@ public class DatabaseManager {
         String schema;
 
         try {
-            schema = parseResourceFile(SCHEMA_FILE);
+            schema = parseResourceFile();
         } catch (IOException e) {
-            log.error("IOException while parsing schema file {} while initializing tables: {}", SCHEMA_FILE, e.getMessage());
+            log.error("IOException while parsing schema file {}: {}", SCHEMA_FILE, e.getMessage());
             return;
         }
 
-        try (Connection conn = getConnection(); Statement stmt = conn.createStatement()){
+        try (var conn = getConnection();
+             var stmt = conn.createStatement()){
+
             stmt.execute(schema);
             log.info("Database tables created");
         } catch (SQLException e) {
@@ -65,9 +67,9 @@ public class DatabaseManager {
         }
     }
 
-    private String parseResourceFile(String path) throws IOException {
+    private String parseResourceFile() throws IOException {
 
-        File file = ResourceUtils.getFile("classpath:" + path);
+        var file = ResourceUtils.getFile("classpath:" + SCHEMA_FILE);
         return new String(Files.readAllBytes(file.toPath()));
     }
 

@@ -18,15 +18,15 @@ public class OggStream {
 
         oggPages = new ArrayList<>();
 
-        List<Packet> packetList = opusStream.getDataPackets();
+        var packetList = opusStream.getDataPackets();
 
-        int serialNumber = Utils.randomStreamSerialNumber();
+        var serialNumber = Utils.randomStreamSerialNumber();
 
         for (int i = 0; i < packetList.size() + 2; i++) {
 
             Packet packet;
-            boolean bos = false;
-            boolean eos = false;
+            var bos = false;
+            var eos = false;
 
             if (i == 0) {
                 packet = opusStream.getIdHeaderPacket();
@@ -38,17 +38,18 @@ public class OggStream {
                 packet = packetList.get(i-2);
 
             }
+
             if(i == packetList.size() + 1){
                 eos = true;
             }
 
-            OggPage oggPage = OggPage.
+            var oggPage = OggPage.
                             builder().
                             pageSequenceNumber(i).
                             bitstreamSerialNumber(serialNumber).
                             numberPageSegments(1).
-                    eos(eos).
-                    bos(bos).
+                            eos(eos).
+                            bos(bos).
                             segmentTable(Collections.singletonList(packet.toByteArray().length)).
                             packets(Collections.singletonList(packet)).
                             build();

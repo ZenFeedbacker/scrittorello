@@ -7,7 +7,6 @@ import com.scritorrelo.opus.*;
 import com.scritorrelo.zello.message.Message;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -47,7 +46,7 @@ public class Audio extends Message implements Serializable {
     @Override
     public PreparedStatement getSqlStatement(Connection conn) throws SQLException {
 
-        PreparedStatement statement = conn.prepareStatement(SQL_STATEMENT);
+        var statement = conn.prepareStatement(SQL_STATEMENT);
 
         statement.setObject(1, uuid);
         statement.setInt(2, id);
@@ -69,7 +68,7 @@ public class Audio extends Message implements Serializable {
 
     public OpusStream getOpusStream() {
 
-        OpusStream opusStream = new OpusStream();
+        var opusStream = new OpusStream();
 
         opusStream.setIdHeaderPacket(createIDHeader());
         opusStream.addCommentPacket(createCommentHeader());
@@ -95,10 +94,10 @@ public class Audio extends Message implements Serializable {
 
     public void writeToFile() {
 
-        String path = getPath();
+        var path = getPath();
 
-        try (FileOutputStream f = new FileOutputStream(path);
-             ObjectOutputStream o = new ObjectOutputStream(f)) {
+        try (var f = new FileOutputStream(path);
+             var o = new ObjectOutputStream(f)) {
 
             o.writeObject(this);
             log.info("Wrote file " + path);
@@ -110,10 +109,10 @@ public class Audio extends Message implements Serializable {
 
     public Audio readFromFile() {
 
-        String path = getPath();
+        var path = getPath();
 
-        try (FileInputStream f = new FileInputStream(path);
-             ObjectInputStream o = new ObjectInputStream(f)) {
+        try (var f = new FileInputStream(path);
+             var o = new ObjectInputStream(f)) {
 
             log.info("Read File " + path);
 

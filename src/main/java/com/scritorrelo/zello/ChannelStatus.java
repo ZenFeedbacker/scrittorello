@@ -36,7 +36,7 @@ public class ChannelStatus {
 
     private boolean getChannelStatus(JSONObject obj){
 
-        String statusStr = obj.optString("status");
+        var statusStr = obj.optString("status");
         return "online".equals(statusStr);
     }
 

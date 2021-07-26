@@ -17,6 +17,7 @@ public class Image extends Message {
     private static final String IMAGE_FOLDER = "images\\";
 
     private static final String SQL_STATEMENT =  "INSERT INTO IMAGE (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TYPE,SOURCE,HEIGHT,WIDTH) VALUES (?,?,?,?,?,?,?,?,?,?)";
+    private static final long serialVersionUID = 368724504524736473L;
 
     private final String type;
     private final String source;
@@ -40,7 +41,7 @@ public class Image extends Message {
     @Override
     public PreparedStatement getSqlStatement(Connection conn) throws SQLException {
 
-        PreparedStatement statement = conn.prepareStatement(SQL_STATEMENT);
+        var statement = conn.prepareStatement(SQL_STATEMENT);
 
         statement.setObject(1, uuid);
         statement.setInt(2, id);
@@ -58,7 +59,7 @@ public class Image extends Message {
 
     public void saveFiles(){
 
-        String currentDir = System.getProperty("user.dir");
+        var currentDir = System.getProperty("user.dir");
         thumbnail.save(currentDir + MESSAGE_FOLDER + IMAGE_FOLDER + getThumbnailImageFilename());
         fullsize.save(currentDir + MESSAGE_FOLDER + IMAGE_FOLDER + getFullImageFilename());
     }

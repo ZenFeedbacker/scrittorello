@@ -9,7 +9,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
@@ -33,7 +32,7 @@ public class ImagePacket {
 
     public void save(String pathname)  {
 
-        File photo = new File(pathname);
+        var photo = new File(pathname);
 
         if (photo.exists()){
             try {

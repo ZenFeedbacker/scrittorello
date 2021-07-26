@@ -16,19 +16,19 @@ public class DataPacket extends Packet {
     @Getter
     private byte[] data;
 
-    public DataPacket(byte[] data) {
+    public DataPacket(byte[] packetData) {
 
-        super(data);
+        super(packetData);
 
         try {
-            byte toc = Utils.readByteStream(stream);
-            String tocStr = String.format("%8s", Integer.toBinaryString(toc & 0xFF)).replace(' ', '0');
+            var toc = Utils.readByteStream(stream);
+            var tocStr = String.format("%8s", Integer.toBinaryString(toc & 0xFF)).replace(' ', '0');
 
             config = Integer.parseInt(tocStr.substring(0, 5), 2);
             stereo = tocStr.charAt(5) == '1';
             code = Integer.parseInt(tocStr.substring(6, 8), 2);
 
-            this.data = Utils.readByteStream(stream, stream.available());
+            data = Utils.readByteStream(stream, stream.available());
         } catch (EOFException e) {
             e.printStackTrace();
         }

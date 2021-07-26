@@ -1,6 +1,5 @@
 package com.scritorrelo.socket;
 
-import com.neovisionaries.ws.client.WebSocketState;
 import com.scritorrelo.zello.ChannelList;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +13,6 @@ import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -39,9 +37,7 @@ public class SocketManager {
     private void init(){
         log.info("Initializing sockets.");
 
-        for (String channel : ChannelList.getChannelNames()) {
-            initSocket(channel);
-        }
+        ChannelList.getChannelNames().forEach(this::initSocket);
 
         log.info("Socket initialization finished.");
     }
@@ -55,11 +51,11 @@ public class SocketManager {
 
     private void initSocket(String channelName) {
 
-        int sn = socketMap.size();
+        var sn = socketMap.size();
 
         log.info("Initializing socket {} for channel {}", sn, ChannelList.getChannelAlias(channelName));
 
-        Socket ws = socketObjectFactory.getObject();
+        var ws = socketObjectFactory.getObject();
 
         ws.setChannelName(channelName);
         ws.setSn(sn);

@@ -18,7 +18,7 @@ public class Utils {
 
     public static byte[] readByteStream(ByteArrayInputStream stream, int len) throws EOFException {
 
-        byte[] data = new byte[len];
+        var data = new byte[len];
         int ch;
 
         for (int i = 0; i < len; i++) {
@@ -47,30 +47,20 @@ public class Utils {
 
     public static int readByteStreamToInt(ByteArrayInputStream stream, int len) throws EOFException {
 
-
         return Integer.reverseBytes(new BigInteger(readByteStream(stream, len)).intValue());
     }
 
     public static int readByteStreamToInt(ByteArrayInputStream stream) throws EOFException {
-
 
         return Integer.reverseBytes(new BigInteger(readByteStream(stream, 1)).intValue());
     }
 
     public static int readByteStreamToIntBigEndian(ByteArrayInputStream stream) throws EOFException {
 
-
         return new BigInteger(readByteStream(stream, 1) ).intValue();
     }
 
-    public static int readByteStreamToIntBigEndian(ByteArrayInputStream stream, int len) throws EOFException {
-
-
-        return new BigInteger(readByteStream(stream, len) ).intValue();
-    }
-
     public static int readByteToIntBigEndian(ByteArrayInputStream stream) throws EOFException {
-
 
         return readByteStream(stream) & 0xFF;
     }
@@ -100,15 +90,16 @@ public class Utils {
     }
 
     public static void copyIntToArray(int from, int len, byte [] to, int pos){
-        ByteBuffer byteBuffer = ByteBuffer.allocate(len);
+
+        var byteBuffer = ByteBuffer.allocate(len);
         byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
         byteBuffer.putInt(from);
-        byte[] fromArray = byteBuffer.array();
+        var fromArray = byteBuffer.array();
         System.arraycopy(fromArray, 0, to,  pos, fromArray.length);
     }
 
     public static int randomStreamSerialNumber(){
 
-        return  ThreadLocalRandom.current().nextInt();
+        return ThreadLocalRandom.current().nextInt();
     }
 }

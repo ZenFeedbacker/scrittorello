@@ -42,8 +42,8 @@ public class SocketAdapter extends WebSocketAdapter {
     @Override
     public void onTextMessage(WebSocket websocket, String message) {
 
-        LocalDateTime timestamp = LocalDateTime.now();
-        JSONObject obj = new JSONObject(message);
+        var timestamp = LocalDateTime.now();
+        var obj = new JSONObject(message);
 
         if (obj.has("refresh_token")) {
             refreshTokenHandler(obj);
@@ -56,9 +56,9 @@ public class SocketAdapter extends WebSocketAdapter {
         }
 
         if (obj.has("command")) {
-            String cmd = obj.getString("command");
+            var cmd = obj.getString("command");
 
-            Command command = Command.valueOfLabel(cmd);
+            var command = Command.valueOfLabel(cmd);
 
             if(isNull(command)){
                 log.warn("Received unknown command: " + cmd);
@@ -127,14 +127,14 @@ public class SocketAdapter extends WebSocketAdapter {
 
     private void imageBinaryHandler(byte[] binary) {
 
-        ImagePacket packet = new ImagePacket(binary);
+        var packet = new ImagePacket(binary);
         log.info("[Socket {}] Channel {} received" + (packet.isThumbnail() ? "Thumbnail" : "Full Image") + "image binary", ws.getSn(), ws.getChannelName());
 
-        int id = packet.getId();
+        var id = packet.getId();
 
         if (images.containsKey(id)) {
 
-            Image image = images.get(id);
+            var image = images.get(id);
 
             if (packet.isThumbnail()) {
                 image.setThumbnail(packet);
@@ -152,8 +152,8 @@ public class SocketAdapter extends WebSocketAdapter {
 
     private void audioBinaryHandler(byte[] binary) {
 
-        AudioFrame audioFrame = new AudioFrame(binary);
-        int id = audioFrame.getStreamId();
+        var audioFrame = new AudioFrame(binary);
+        var id = audioFrame.getStreamId();
 
         log.trace("[Socket {}] Channel {} received audio binary for stream {}", ws.getSn(), ws.getChannelName(), id);
 
@@ -164,47 +164,47 @@ public class SocketAdapter extends WebSocketAdapter {
 
     private void channelStatusHandler(JSONObject obj) {
 
-        ChannelStatus channelStatus = new ChannelStatus(obj);
+        var channelStatus = new ChannelStatus(obj);
         log.info("[Socket {}] {}", ws.getSn() ,channelStatus);
     }
 
     private void errorHandler(JSONObject obj) {
 
-        Error error = new Error(obj);
+        var error = new Error(obj);
         log.error(error.toString());
         log.error("[Socket {}] Channel {} got error command: {}", ws.getSn(), ws.getChannelName(), error.getCode());
     }
 
     private void locationMessageHandler(JSONObject obj, LocalDateTime timestamp) {
 
-        Location location = new Location(obj, timestamp);
+        var location = new Location(obj, timestamp);
         dbManager.saveMessage(location);
         log.info(location.toString());
     }
 
     private void textMessageHandler(JSONObject obj, LocalDateTime timestamp) {
 
-        Text text = new Text(obj, timestamp);
+        var text = new Text(obj, timestamp);
         log.info("[Socket {}] Channel {} received text: {}", ws.getSn(), ws.getChannelName(), text.getTxt());
         dbManager.saveMessage(text);
     }
 
     private void imageMessageHandler(JSONObject obj, LocalDateTime timestamp) {
 
-        Image image = new Image(obj, timestamp);
+        var image = new Image(obj, timestamp);
         images.put(image.getId(), image);
         log.info(image.toString());
     }
 
     private void streamStartHandler(JSONObject obj, LocalDateTime timestamp) {
 
-        Audio stream = new Audio(obj, timestamp);
+        var stream = new Audio(obj, timestamp);
         audios.put(obj.getInt("stream_id"), stream);
     }
 
     private void streamStopHandler(JSONObject obj) {
 
-        Audio audio = audios.remove(obj.getInt("stream_id"));
+        var audio = audios.remove(obj.getInt("stream_id"));
         audio.writeToFile();
         dbManager.saveMessage(audio);
     }

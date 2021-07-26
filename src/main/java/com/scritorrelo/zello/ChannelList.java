@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,17 +22,19 @@ public class ChannelList {
     static {
         log.info("Parsing channel list from {}", SOURCE_FILE);
 
-        List<String> channelNames;
+        var uri = ChannelList.class.getClassLoader().getResource(SOURCE_FILE);
 
-        File ourFile = new File(ChannelList.class.getClassLoader().getResource(SOURCE_FILE).getFile());
+        if (uri != null) {
 
-        try {
-            channelNames = Files.readAllLines(ourFile.toPath());
-            for (int i = 0; i < channelNames.size(); i++) {
-                channels.put(channelNames.get(i), Character.toString((char) (i + 'A')));
+            try {
+                var channelNames = Files.readAllLines(new File(uri.getFile()).toPath());
+
+                for (int i = 0; i < channelNames.size(); i++) {
+                    channels.put(channelNames.get(i), Character.toString((char) (i + 'A')));
+                }
+            } catch (IOException e) {
+                log.error("Failed to open channel list file: {}", SOURCE_FILE);
             }
-        } catch (IOException e) {
-            log.error("Failed to open channel list file: {}", SOURCE_FILE);
         }
     }
 

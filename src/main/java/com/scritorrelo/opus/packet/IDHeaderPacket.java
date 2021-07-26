@@ -49,7 +49,7 @@ public class IDHeaderPacket extends Packet {
     @Override
     public byte[] toByteArray() {
 
-        ByteBuffer bb = ByteBuffer.allocate(19);
+        var bb = ByteBuffer.allocate(19);
 
         bb.put(signature.getBytes());
         bb.put((byte) version);

@@ -30,10 +30,10 @@ public class OggFile {
             return;
         }
 
-        int index = 0;
+        var index = 0;
         int subindex;
 
-        List<Integer> indexes = new ArrayList<>();
+        var indexes = new ArrayList<Integer>();
 
         while (true) {
             subindex = Bytes.indexOf(Arrays.copyOfRange(file, index, file.length), OggPage.OGG_PAGE_HEADER.getBytes(StandardCharsets.US_ASCII));
@@ -47,7 +47,7 @@ public class OggFile {
 
         indexes.add(file.length);
 
-        List<byte[]> packets = new ArrayList<>();
+        var packets = new ArrayList<byte[]>();
 
         for (int i = 0; i < indexes.size() - 1; i++) {
             packets.add(Arrays.copyOfRange(file, indexes.get(i), indexes.get(i + 1)));
