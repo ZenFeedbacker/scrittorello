@@ -1,7 +1,6 @@
 package com.scritorrelo.zello.message;
 
 import lombok.ToString;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Connection;

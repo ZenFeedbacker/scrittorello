@@ -3,7 +3,6 @@ package com.scritorrelo.opus.packet;
 import com.scritorrelo.Utils;
 import lombok.Getter;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.EOFException;
 
@@ -39,15 +38,6 @@ public class DataPacket extends Packet {
     public byte[] toByteArray() {
 
         return isNotEmpty(data) ? data : new byte[0];
-    }
-
-    private char[] tocToCharArr() {
-        char[] configArr = String.format("%5s", Integer.toBinaryString(this.config & 0xFF)).replace(' ', '0').toCharArray();
-        char[] stereoArr = new char[1];
-        stereoArr[0] = this.stereo ? '1' : '0';
-        char[] codeArr = String.format("%2s", Integer.toBinaryString(this.code & 0xFF)).replace(' ', '0').toCharArray();
-
-        return ArrayUtils.addAll(ArrayUtils.addAll(ArrayUtils.addAll(configArr, stereoArr), codeArr));
     }
 
     @Override

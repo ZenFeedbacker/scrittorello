@@ -1,5 +1,7 @@
 package com.scritorrelo.zello;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -11,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Slf4j
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ChannelList {
 
     private static final Map<String, String> channels = new HashMap<>();

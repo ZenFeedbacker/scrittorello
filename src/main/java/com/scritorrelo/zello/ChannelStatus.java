@@ -1,9 +1,12 @@
 package com.scritorrelo.zello;
 
 import com.scritorrelo.socket.SocketManager;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
 
 public class ChannelStatus {
 
@@ -39,6 +42,33 @@ public class ChannelStatus {
 
     @Override
     public String toString(){
-        return "ChannelStatus(name=" + ChannelList.getChannelAlias(name)+ ", status=" + status +", usersOnline=" + usersOnline +")";
+
+        var fields = new ArrayList<String>();
+
+        fields.add("name=" + ChannelList.getChannelAlias(name));
+
+        if(status) {
+
+            fields.add("users online=" + usersOnline);
+
+            if (imagesSupported) {
+                fields.add("support images");
+            }
+
+            if (textingSupported) {
+                fields.add("support texts");
+            }
+
+            if (locationsSupported) {
+                fields.add("support locations");
+            }
+
+            if(!StringUtils.isEmpty(error)){
+                fields.add("error=" + error);
+                fields.add("error type=" + errorType);
+            }
+        }
+
+        return  "ChannelStatus(" + StringUtils.join(fields, ", ") + ")";
     }
 }

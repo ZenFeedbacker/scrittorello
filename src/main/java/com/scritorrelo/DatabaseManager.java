@@ -25,12 +25,10 @@ public class DatabaseManager {
     private String password;
 
     private static final String SCHEMA_FILE = "schema.sql";
-    private static final String DROP_TABLES_FILE = "drops_tables.sql";
 
     @PostConstruct
     public void init(){
 
-       //dropTables();
        createTables();
     }
 
@@ -64,24 +62,6 @@ public class DatabaseManager {
             log.info("Database tables created");
         } catch (SQLException e) {
             log.error("SQLException while initializing tables: {}", e.getMessage());
-        }
-    }
-
-    private void dropTables(){
-
-        String schema = null;
-
-        try {
-            schema = parseResourceFile(DROP_TABLES_FILE);
-        } catch (IOException e) {
-            log.error("IOException while parsing schema file {} while dropping tables: {}", DROP_TABLES_FILE, e.getMessage());
-        }
-
-        try (Connection conn = getConnection(); Statement stmt = conn.createStatement()){
-            stmt.execute(schema);
-            log.info("Database tables dropped.");
-        } catch (SQLException e) {
-            log.error("SQLException while dropping tables: {}", e.getMessage());
         }
     }
 

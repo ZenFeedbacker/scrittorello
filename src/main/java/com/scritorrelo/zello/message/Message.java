@@ -3,7 +3,6 @@ package com.scritorrelo.zello.message;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;

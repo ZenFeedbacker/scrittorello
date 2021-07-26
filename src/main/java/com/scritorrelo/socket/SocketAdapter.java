@@ -205,10 +205,6 @@ public class SocketAdapter extends WebSocketAdapter {
     private void streamStopHandler(JSONObject obj) {
 
         Audio audio = audios.remove(obj.getInt("stream_id"));
-        // OggStream oggStream = new OggStream(audio.getOpusStream());
-        // OggFile oggFile = new OggFile(oggStream);
-        //String path =  System.getProperty("user.dir") + Message.MESSAGE_FOLDER +  "audios\\" + audio.getUuid().toString() + ".ogg";
-        //oggFile.writeToFile(path);
         audio.writeToFile();
         dbManager.saveMessage(audio);
     }

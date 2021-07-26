@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.gagravarr.ogg.CRCUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
@@ -25,7 +24,6 @@ public class OggPage {
 
     private static final int MIN_HEADER_SIZE = 27;
 
-    //byte[] data;
     private final ByteArrayInputStream stream;
 
     @Builder.Default
@@ -77,8 +75,6 @@ public class OggPage {
                 segmentTable.add(Utils.readByteToIntBigEndian(stream));
             }
 
-            //this.data = Utils.readRemainingByteStream(stream);
-
             for (int segment : segmentTable) {
                 if (segment != 0) {
                     Packet packet = Packet.packetFactory(Utils.readByteStream(stream, segment));
@@ -127,40 +123,19 @@ public class OggPage {
 
         CRC32 crc = new CRC32();
 
-        byte[] header = getHeader();
-        crc.update(header);
-        int crcInt = CRCUtils.getCRC(header);
+        crc.update(getHeader());
 
-        log.info("My header crc: " + crc.getValue() + ", gargavar header crc: " + crcInt);
         for (Packet packet : packets) {
             byte[] packetArray = packet.toByteArray();
             crc.update(packetArray);
-            crcInt = CRCUtils.getCRC(packetArray, crcInt);
         }
 
-        log.info("Saved value: " + this.checksum + ", my crc: " + crc.getValue() + ", gargavarr crc: " + crcInt);
-        return crcInt;
-
-        //return (int) crc.getValue();
-
+        return (int) crc.getValue();
     }
 
     void setGeneratedChecksum() {
 
         this.checksum = generateChecksum();
-    }
-
-    public boolean checkChecksum() {
-
-        int generatedChecksum = generateChecksum();
-
-        if (this.checksum == generatedChecksum) {
-            //log.info("Correct checksum: " + this.checksum);
-            return true;
-        } else {
-            //log.warn("Wrong checksum. Saved value: " + this.checksum + " , calculated value: " + generatedChecksum);
-            return false;
-        }
     }
 
     private int getHeaderSize() {
@@ -189,8 +164,6 @@ public class OggPage {
             Utils.copyArrayToArray(packet.toByteArray(), page, index);
             index += page.length;
         }
-
-        //Utils.copyArrayToArray(data, page, getHeaderSize());
 
         return page;
     }

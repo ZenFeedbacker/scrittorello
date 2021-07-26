@@ -2,7 +2,6 @@ package com.scritorrelo.zello.error;
 
 import lombok.Getter;
 import lombok.ToString;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.UUID;
