@@ -5,7 +5,9 @@ import com.scritorrelo.opus.packet.DataPacket;
 import com.scritorrelo.opus.packet.IDHeaderPacket;
 import com.scritorrelo.opus.*;
 import com.scritorrelo.zello.message.Message;
+import lombok.Builder;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 
@@ -18,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @Slf4j
+@SuperBuilder
 @ToString(callSuper = true)
 public class Audio extends Message implements Serializable {
 
