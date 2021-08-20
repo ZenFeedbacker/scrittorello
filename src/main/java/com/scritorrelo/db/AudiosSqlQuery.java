@@ -1,4 +1,4 @@
-package com.scritorrelo;
+package com.scritorrelo.db;
 
 import com.scritorrelo.zello.message.audio.Audio;
 import org.springframework.jdbc.object.MappingSqlQuery;
@@ -9,15 +9,16 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class AudiosSqlQuery extends MappingSqlQuery {
+public class AudiosSqlQuery extends MappingSqlQuery<Audio> {
 
     public AudiosSqlQuery(DataSource ds) {
 
         super(ds, "SELECT * FROM AUDIO");
         compile();
     }
+
     @Override
-    protected Object mapRow(ResultSet rs, int i) throws SQLException {
+    protected Audio mapRow(ResultSet rs, int i) throws SQLException {
 
         return Audio.builder()
                 .uuid(rs.getObject(1, UUID.class))

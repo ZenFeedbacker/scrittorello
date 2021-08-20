@@ -1,4 +1,4 @@
-package com.scritorrelo;
+package com.scritorrelo.db;
 
 import com.scritorrelo.zello.message.Message;
 import com.scritorrelo.zello.message.audio.Audio;

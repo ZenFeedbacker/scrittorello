@@ -1,5 +1,6 @@
 package com.scritorrelo;
 
+import com.scritorrelo.db.DatabaseManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +17,7 @@ public class MessageController {
     @GetMapping("/audios")
     public ModelAndView getAllAudios() {
 
-        ModelAndView mav = new ModelAndView("list-audios");
+        var mav = new ModelAndView("list-audios");
         mav.addObject("audios", dbManager.getAllAudios());
         return mav;
 
