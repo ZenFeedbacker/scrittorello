@@ -42,6 +42,7 @@ public class MessageService {
      return new PageImpl<>(list, PageRequest.of(currentPage, pageSize), messages.size());
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends  Message> List<T> getAll(MessageType type){
 
         DataSource dataSource = dbManager.getDataSource();
