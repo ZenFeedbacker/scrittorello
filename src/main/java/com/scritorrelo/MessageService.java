@@ -3,6 +3,7 @@ package com.scritorrelo;
 import com.scritorrelo.db.AudiosSqlQuery;
 import com.scritorrelo.db.DatabaseManager;
 import com.scritorrelo.zello.message.Message;
+import com.scritorrelo.zello.message.MessageType;
 import com.scritorrelo.zello.message.audio.Audio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -49,19 +50,19 @@ public class MessageService {
         return audioQuery.execute();
     }
 
-    public <T extends  Message> List<T> getAll(String type){
+    public <T extends  Message> List<T> getAll(MessageType type){
 
         DataSource dataSource = dbManager.getDataSource();
 
         MappingSqlQuery<T> sqlQuery;
 
         switch (type){
-            case "audio":
+            case Audio:
                 sqlQuery = (MappingSqlQuery<T>) new AudiosSqlQuery(dataSource);
                 break;
-            case "location":
-            case "text":
-            case "image":
+            case Location:
+            case Text:
+            case Image:
             default:
                 return new ArrayList<>();
         }

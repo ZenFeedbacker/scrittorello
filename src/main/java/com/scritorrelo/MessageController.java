@@ -1,5 +1,6 @@
 package com.scritorrelo;
 
+import com.scritorrelo.zello.message.MessageType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +18,7 @@ public class MessageController {
     public ModelAndView getAllAudios() {
 
         var mav = new ModelAndView("list-audios");
-        mav.addObject("audios", messageService.getAll("audio"));
+        mav.addObject("audios", messageService.getAll(MessageType.Audio));
         return mav;
     }
 }
