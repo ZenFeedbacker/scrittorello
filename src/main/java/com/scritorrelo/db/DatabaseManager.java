@@ -15,8 +15,8 @@ import java.nio.file.Files;
 import java.sql.*;
 import java.util.List;
 
-@Component
 @Slf4j
+@Component
 public class DatabaseManager {
 
     private static final String SCHEMA_FILE = "schema.sql";
@@ -91,13 +91,10 @@ public class DatabaseManager {
         return DriverManager.getConnection(jdbcUrl, username, password);
     }
 
-    private DataSource getDataSource() {
+    public DataSource getDataSource() {
 
-        var ds = new DriverManagerDataSource();
+        var ds = new DriverManagerDataSource(jdbcUrl, username, password);
         ds.setDriverClassName(dbDriver);
-        ds.setUrl(jdbcUrl);
-        ds.setUsername(username);
-        ds.setPassword(password);
         return ds;
     }
 }
