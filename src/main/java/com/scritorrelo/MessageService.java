@@ -4,7 +4,6 @@ import com.scritorrelo.db.AudiosSqlQuery;
 import com.scritorrelo.db.DatabaseManager;
 import com.scritorrelo.zello.message.Message;
 import com.scritorrelo.zello.message.MessageType;
-import com.scritorrelo.zello.message.audio.Audio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -41,13 +40,6 @@ public class MessageService {
         }
 
      return new PageImpl<>(list, PageRequest.of(currentPage, pageSize), messages.size());
-    }
-
-
-    public List<Audio> getAllAudios() {
-
-        var audioQuery = new AudiosSqlQuery(dbManager.getDataSource());
-        return audioQuery.execute();
     }
 
     public <T extends  Message> List<T> getAll(MessageType type){
