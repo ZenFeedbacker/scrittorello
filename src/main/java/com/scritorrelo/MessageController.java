@@ -18,7 +18,7 @@ public class MessageController {
     public ModelAndView getAllAudios() {
 
         var mav = new ModelAndView("list-audios");
-        mav.addObject("audios", messageService.getAll(MessageType.Audio));
+        mav.addObject("audios", messageService.getAll(MessageType.AUDIO));
         return mav;
     }
 }

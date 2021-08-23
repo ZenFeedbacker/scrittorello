@@ -50,12 +50,12 @@ public class MessageService {
         MappingSqlQuery<T> sqlQuery;
 
         switch (type){
-            case Audio:
+            case AUDIO:
                 sqlQuery = (MappingSqlQuery<T>) new AudiosSqlQuery(dataSource);
                 break;
-            case Location:
-            case Text:
-            case Image:
+            case LOCATION:
+            case TEXT:
+            case IMAGE:
             default:
                 return new ArrayList<>();
         }
