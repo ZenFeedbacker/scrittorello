@@ -17,7 +17,11 @@ public class AudioFrame implements Serializable {
     private final int packetId;
     private final byte[] data;
 
+    private final byte[] fullBinary;
+
     public AudioFrame(byte[] binary) {
+
+        fullBinary = binary;
 
         type = Arrays.copyOfRange(binary, 0, 1);
         streamId = new BigInteger(Arrays.copyOfRange(binary, 1, 5)).intValue();
@@ -28,8 +32,7 @@ public class AudioFrame implements Serializable {
     @Override
     public String toString() {
 
-        return "\n" +
-                "Type: " + Hex.encodeHexString(type) + "\n" +
+        return "\nType: " + Hex.encodeHexString(type) + "\n" +
                 "Stream ID: " + streamId + "\n" +
                 "Packet ID: " + packetId + "\n" +
                 "Packet length: " + data.length + "\n" +

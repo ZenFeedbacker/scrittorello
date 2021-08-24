@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @ToString(callSuper = true)
 public class Image extends Message {
 
-    private static final String IMAGE_FOLDER = "images\\";
+    private static final String IMAGE_FOLDER = "images" + File.separator;
 
     private static final String SQL_STATEMENT =  "INSERT INTO IMAGE (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TYPE,SOURCE,HEIGHT,WIDTH) VALUES (?,?,?,?,?,?,?,?,?,?)";
     private static final long serialVersionUID = 368724504524736473L;

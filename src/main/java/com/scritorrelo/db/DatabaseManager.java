@@ -46,7 +46,8 @@ public class DatabaseManager {
             var statement = message.getSqlStatement(conn);
 
             statement.executeUpdate();
-            log.info("Inserted " + message.getClass().getSimpleName() + " to database: " + statement);
+            log.info("Inserted " + message.getClass().getSimpleName() + " to database: ");
+            log.trace(statement.toString());
         } catch (SQLException e) {
             log.warn("SQLException when writing {} message with UUID {} to database: {}", message.getClass().getSimpleName(), message.getUuid(), e.getMessage());
         }

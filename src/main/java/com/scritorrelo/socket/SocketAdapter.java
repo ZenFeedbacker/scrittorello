@@ -4,6 +4,7 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketFrame;
 import com.scritorrelo.db.DatabaseManager;
+import com.scritorrelo.decoder.Decoder;
 import com.scritorrelo.zello.ChannelStatus;
 import com.scritorrelo.zello.Command;
 import com.scritorrelo.zello.message.Location;
@@ -205,6 +206,8 @@ public class SocketAdapter extends WebSocketAdapter {
     private void streamStopHandler(JSONObject obj) {
 
         var audio = audios.remove(obj.getInt("stream_id"));
+        Decoder decoder = new Decoder(audio);
+        decoder.writeToFile();
         audio.writeToFile();
         dbManager.saveMessage(audio);
     }

@@ -6,6 +6,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public abstract class Message implements Serializable {
 
-    public static final String MESSAGE_FOLDER = "\\data\\messages\\";
+    public static final String MESSAGE_FOLDER = File.separator + "data" + File.separator  + "messages" + File.separator ;
     private static final long serialVersionUID = -365386493668373640L;
 
     @Getter

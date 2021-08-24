@@ -5,7 +5,7 @@ import com.scritorrelo.opus.packet.DataPacket;
 import com.scritorrelo.opus.packet.IDHeaderPacket;
 import com.scritorrelo.opus.*;
 import com.scritorrelo.zello.message.Message;
-import lombok.Builder;
+import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -18,13 +18,14 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @SuperBuilder
 @ToString(callSuper = true)
 public class Audio extends Message implements Serializable {
 
-    private static final String AUDIO_FOLDER = "audios\\";
+    private static final String AUDIO_FOLDER = "audios";
 
     private static final String SQL_STATEMENT = "INSERT INTO AUDIO (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TYPE,CODEC,CODEC_HEADER,PACKET_DURATION) VALUES (?,?,?,?,?,?,?,?,?,?)";
     private static final long serialVersionUID = -5260559179736969656L;
@@ -33,7 +34,8 @@ public class Audio extends Message implements Serializable {
     private final String codec;
     private final String codecHeader;
     private final int packetDuration;
-    private final ArrayList<AudioFrame> audioFrames;
+    @Getter
+    private final List<AudioFrame> audioFrames;
 
     public Audio(JSONObject json, LocalDateTime timestamp) {
 
@@ -140,6 +142,10 @@ public class Audio extends Message implements Serializable {
     }
 
     private String getPath() {
-        return System.getProperty("user.dir") + MESSAGE_FOLDER + "audioObjects\\" + uuid.toString() + ".ser";
+        return System.getProperty("user.dir") + MESSAGE_FOLDER + "audioObjects" + File.separator  + uuid.toString() + ".ser";
+    }
+
+    public String getOggPath() {
+        return System.getProperty("user.dir") + "/data/messages/audios/" + uuid.toString() + ".ogg";
     }
 }
