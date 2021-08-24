@@ -208,7 +208,7 @@ public class SocketAdapter extends WebSocketAdapter {
         var audio = audios.remove(obj.getInt("stream_id"));
         Decoder decoder = new Decoder(audio);
         decoder.writeToFile();
-        audio.writeToFile();
+        //audio.writeToFile();
         dbManager.saveMessage(audio);
     }
 }

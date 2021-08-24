@@ -1,7 +1,6 @@
 package com.scritorrelo.decoder;
 
 import com.scritorrelo.Utils;
-import com.scritorrelo.opus.packet.Packet;
 import com.scritorrelo.zello.message.audio.Audio;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -26,13 +25,10 @@ public class Decoder {
 
     private final String path;
 
-
     private final Deque<byte[]> packets = new ArrayDeque<>();
     private int pageIndex = 0;
     private final int bitstreamSerialNumber = Utils.randomStreamSerialNumber();
-    private final ByteArrayOutputStream oggData = new ByteArrayOutputStream();
     private int[] checksumTable;
-    private byte[] oggHeader;
 
 
     public Decoder(Audio audio) {
@@ -42,9 +38,10 @@ public class Decoder {
         path = audio.getOggPath();
 
         initChecksumTable();
+    }
 
-        this.oggHeader = getPage(getIDHeader(), 2);
-        this.oggHeader = ArrayUtils.addAll(this.oggHeader, this.getPage(getCommentHeader(), 0));
+    private byte[] getOggHeader(){
+        return ArrayUtils.addAll(getPage(getIDHeader(), 2), this.getPage(getCommentHeader(), 0));
     }
 
     public void writeToFile() {
@@ -58,16 +55,17 @@ public class Decoder {
 
     private byte[] getOGG() {
 
-        byte[] data = this.oggHeader;
+
+        byte[] oggData = getOggHeader();
 
         while (!this.packets.isEmpty()) {
             byte[] packet = this.packets.remove();
-            data = ArrayUtils.addAll(oggData.toByteArray(), this.getPage(packet, this.packets.isEmpty() ? 4 : 0));
+            oggData = ArrayUtils.addAll(oggData, this.getPage(packet, this.packets.isEmpty() ? 4 : 0));
         }
 
         this.pageIndex = 2;
 
-        return data;
+        return oggData;
     }
 
     private byte[] getPage(byte[] segmentData, int headerType) {
