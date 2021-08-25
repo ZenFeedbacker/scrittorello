@@ -16,8 +16,8 @@ public class OpusStream {
     @Setter
     private IDHeaderPacket idHeaderPacket;
     private final List<CommentHeaderPacket> commentHeaderPackets;
-    private final List<Packet> dataPackets;
-
+    @Setter
+    private List<Packet> dataPackets;
 
     public OpusStream() {
 

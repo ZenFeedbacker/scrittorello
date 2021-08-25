@@ -2,6 +2,10 @@ package com.scritorrelo.ogg;
 
 import com.google.common.primitives.Bytes;
 import com.scritorrelo.Utils;
+import com.scritorrelo.opus.OpusStream;
+import com.scritorrelo.opus.packet.CommentHeaderPacket;
+import com.scritorrelo.opus.packet.IDHeaderPacket;
+import com.scritorrelo.opus.packet.Packet;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -9,20 +13,18 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
 public class OggFile {
 
-    private byte[] file;
     @Getter
     private List<OggPage> pages;
 
     public OggFile(String filename) {
 
+        byte[] file;
         try {
             file = FileUtils.readFileToByteArray(new File(filename));
         } catch (IOException e) {
@@ -59,26 +61,4 @@ public class OggFile {
 
         pages.forEach(p -> log.info(p.toString()));
     }
-
-    public OggFile(OggStream oggStream) {
-
-        file = new byte[oggStream.getOggPages().stream().mapToInt(OggPage::getPageSize).sum()];
-
-        int idx = 0;
-
-        for (OggPage page : oggStream.getOggPages()) {
-            Utils.copyArrayToArray(page.toByteArray(), file, idx);
-            idx += page.getPageSize();
-        }
-    }
-
-    public void writeToFile(String filename)  {
-
-        try {
-            FileUtils.writeByteArrayToFile(new File(filename), file);
-        } catch (IOException e) {
-            log.warn("IOException while writing ogg file to {}: {}", filename, e.getMessage());
-        }
-    }
-
 }

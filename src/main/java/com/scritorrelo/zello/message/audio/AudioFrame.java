@@ -17,11 +17,7 @@ public class AudioFrame implements Serializable {
     private final int packetId;
     private final byte[] data;
 
-    private final byte[] fullBinary;
-
     public AudioFrame(byte[] binary) {
-
-        fullBinary = binary;
 
         type = Arrays.copyOfRange(binary, 0, 1);
         streamId = new BigInteger(Arrays.copyOfRange(binary, 1, 5)).intValue();

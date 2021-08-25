@@ -98,26 +98,16 @@ public class Utils {
         System.arraycopy(fromArray, 0, to,  pos, fromArray.length);
     }
 
+    public static byte[] intToLittleEndianByteArray(int num, int len){
+
+        var byteBuffer = ByteBuffer.allocate(len);
+        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        byteBuffer.putInt(num);
+        return byteBuffer.array();
+    }
+
     public static int randomStreamSerialNumber(){
 
-        return ThreadLocalRandom.current().nextInt();
-    }
-
-    public static byte[] longToBytes(long x) {
-
-        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-        buffer.putLong(x);
-        return buffer.array();
-    }
-
-
-    public static long hexToLong(String hex) {
-
-        return new BigInteger(hex, 16).longValue();
-    }
-
-    public static byte[] hexToBytes(String hex){
-
-        return longToBytes(hexToLong(hex));
+        return ThreadLocalRandom.current().nextInt() & Integer.MAX_VALUE;
     }
 }

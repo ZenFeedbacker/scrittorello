@@ -4,6 +4,7 @@ import com.scritorrelo.Utils;
 import com.scritorrelo.opus.packet.Packet;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,10 +33,8 @@ public class OggPage {
     private int version = 0;
     @Builder.Default
     private boolean continuation = false;
-    @Setter
     @Builder.Default
     private boolean eos = false;
-    @Setter
     @Builder.Default
     private boolean bos = false;
     @Builder.Default
@@ -47,11 +46,12 @@ public class OggPage {
     @Builder.Default
     private  int numberPageSegments = 0;
     private final List<Integer> segmentTable;
+    @Getter
     private final List<Packet> packets;
 
     public OggPage(byte[] data) {
 
-        this.stream = new ByteArrayInputStream(data);
+        stream = new ByteArrayInputStream(data);
 
         segmentTable = new ArrayList<>();
         packets = new ArrayList<>();
@@ -60,12 +60,12 @@ public class OggPage {
             signature = Utils.readByteStreamToString(stream, 4);
             version = Utils.readByteStreamToInt(stream);
 
-            BitSet bits = BitSet.valueOf(new byte[]{Utils.readByteStream(stream)});
+            var bits = BitSet.valueOf(new byte[]{Utils.readByteStream(stream)});
             continuation = bits.get(0);
             bos = bits.get(1);
             eos = bits.get(2);
-            granulePosition = Utils.readByteStreamToInt(stream, 8);
 
+            granulePosition = Utils.readByteStreamToInt(stream, 8);
             bitstreamSerialNumber = Utils.readByteStreamToInt(stream, 4);
             pageSequenceNumber = Utils.readByteStreamToInt(stream, 4);
             checksum = Utils.readByteStreamToInt(stream, 4);
@@ -77,7 +77,7 @@ public class OggPage {
 
             for (int segment : segmentTable) {
                 if (segment != 0) {
-                    Packet packet = Packet.packetFactory(Utils.readByteStream(stream, segment));
+                    var packet = Packet.packetFactory(Utils.readByteStream(stream, segment));
                     packets.add(packet);
                 }
             }
@@ -89,18 +89,18 @@ public class OggPage {
 
     private byte[] getHeader() {
 
-        byte[] header = new byte[MIN_HEADER_SIZE + numberPageSegments];
+        var header = new byte[MIN_HEADER_SIZE + numberPageSegments];
 
         Utils.copyArrayToArray("OggS".getBytes(StandardCharsets.US_ASCII), header, 0);
 
         header[4] = (byte) version;
 
-        BitSet flags = new BitSet();
+        var flags = new BitSet();
         flags.set(0, continuation);
         flags.set(1, bos);
         flags.set(2, eos);
 
-        byte[] flagsByte = flags.toByteArray();
+        var flagsByte = flags.toByteArray();
 
         header[5] = flagsByte.length == 0 ? 0 : flagsByte[0];
 
@@ -121,12 +121,12 @@ public class OggPage {
 
     private int generateChecksum() {
 
-        CRC32 crc = new CRC32();
+        var crc = new CRC32();
 
         crc.update(getHeader());
 
         for (Packet packet : packets) {
-            byte[] packetArray = packet.toByteArray();
+            var packetArray = packet.toByteArray();
             crc.update(packetArray);
         }
 
@@ -135,7 +135,7 @@ public class OggPage {
 
     void setGeneratedChecksum() {
 
-        this.checksum = generateChecksum();
+        checksum = generateChecksum();
     }
 
     private int getHeaderSize() {
@@ -150,7 +150,7 @@ public class OggPage {
 
     byte[] toByteArray() {
 
-        byte[] page = new byte[getPageSize()];
+        var page = new byte[getPageSize()];
 
         int index = 0;
 
@@ -171,7 +171,7 @@ public class OggPage {
     @Override
     public String toString() {
 
-        StringBuilder str = new StringBuilder();
+        var str = new StringBuilder();
 
         str.append("-------OggPage-------\n");
 
