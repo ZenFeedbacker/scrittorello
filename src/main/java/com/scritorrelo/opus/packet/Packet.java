@@ -13,6 +13,7 @@ import java.io.EOFException;
 public abstract class Packet {
 
     ByteArrayInputStream stream;
+    @Getter
     int length;
 
     Packet(byte[] data) {

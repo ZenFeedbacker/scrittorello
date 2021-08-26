@@ -71,7 +71,7 @@ public class Audio extends Message implements Serializable {
         audioFrames.add(frame);
     }
 
-    public OpusStream getOpusStream() {
+    public void printOpusStream() {
 
         var opusStream = new OpusStream();
 
@@ -80,7 +80,8 @@ public class Audio extends Message implements Serializable {
 
         audioFrames.forEach(packet -> opusStream.addDataPacket(new DataPacket(packet.getData())));
 
-        return opusStream;
+
+        opusStream.getDataPackets().forEach(d -> System.out.println("Length: " + d.getLength()));
     }
 
     private IDHeaderPacket createIDHeader() {

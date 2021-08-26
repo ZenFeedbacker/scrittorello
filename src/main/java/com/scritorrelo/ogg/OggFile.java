@@ -1,11 +1,6 @@
 package com.scritorrelo.ogg;
 
 import com.google.common.primitives.Bytes;
-import com.scritorrelo.Utils;
-import com.scritorrelo.opus.OpusStream;
-import com.scritorrelo.opus.packet.CommentHeaderPacket;
-import com.scritorrelo.opus.packet.IDHeaderPacket;
-import com.scritorrelo.opus.packet.Packet;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -55,10 +50,10 @@ public class OggFile {
             packets.add(Arrays.copyOfRange(file, indexes.get(i), indexes.get(i + 1)));
         }
 
-        log.info("Number of pages: " + packets.size());
+        System.out.println("Number of pages: " + packets.size());
 
         pages = packets.stream().map(OggPage::new).collect(Collectors.toList());
 
-        pages.forEach(p -> log.info(p.toString()));
+        pages.forEach(p -> System.out.println(p.toString()));
     }
 }

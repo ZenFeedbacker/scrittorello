@@ -45,26 +45,6 @@ public class Utils {
         return data;
     }
 
-    public static int readByteStreamToInt(ByteArrayInputStream stream, int len) throws EOFException {
-
-        return Integer.reverseBytes(new BigInteger(readByteStream(stream, len)).intValue());
-    }
-
-    public static int readByteStreamToInt(ByteArrayInputStream stream) throws EOFException {
-
-        return Integer.reverseBytes(new BigInteger(readByteStream(stream, 1)).intValue());
-    }
-
-    public static int readByteStreamToIntBigEndian(ByteArrayInputStream stream) throws EOFException {
-
-        return new BigInteger(readByteStream(stream, 1) ).intValue();
-    }
-
-    public static int readByteToIntBigEndian(ByteArrayInputStream stream) throws EOFException {
-
-        return readByteStream(stream) & 0xFF;
-    }
-
     public static String readByteStreamToString(ByteArrayInputStream stream, int len) throws EOFException {
 
         char[] data = new char[len];
@@ -80,8 +60,22 @@ public class Utils {
         return new String(data);
     }
 
-    public static String readByteArrayToString(byte[] stream, int len) {
+    public static int readByteStreamToInt(ByteArrayInputStream stream, int len) throws EOFException {
 
+        return Integer.reverseBytes(new BigInteger(readByteStream(stream, len)).intValue());
+    }
+
+    public static int readByteStreamToInt(ByteArrayInputStream stream) throws EOFException {
+
+        return new BigInteger(readByteStream(stream, 1) ).intValue();
+    }
+
+    public static int readByteToInt(ByteArrayInputStream stream) throws EOFException {
+
+        return readByteStream(stream) & 0xFF;
+    }
+
+    public static String readByteArrayToString(byte[] stream, int len) {
         return new String(Arrays.copyOf(stream, len));
     }
 
@@ -98,9 +92,9 @@ public class Utils {
         System.arraycopy(fromArray, 0, to,  pos, fromArray.length);
     }
 
-    public static byte[] intToLittleEndianByteArray(int num, int len){
+    public static byte[] intToByteArray(int num){
 
-        var byteBuffer = ByteBuffer.allocate(len);
+        var byteBuffer = ByteBuffer.allocate(4);
         byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
         byteBuffer.putInt(num);
         return byteBuffer.array();

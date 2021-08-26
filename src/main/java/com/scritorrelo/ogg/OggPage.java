@@ -69,10 +69,10 @@ public class OggPage {
             bitstreamSerialNumber = Utils.readByteStreamToInt(stream, 4);
             pageSequenceNumber = Utils.readByteStreamToInt(stream, 4);
             checksum = Utils.readByteStreamToInt(stream, 4);
-            numberPageSegments = Utils.readByteStreamToIntBigEndian(stream);
+            numberPageSegments = Utils.readByteStreamToInt(stream);
 
             for (int i = 0; i < numberPageSegments; i++) {
-                segmentTable.add(Utils.readByteToIntBigEndian(stream));
+                segmentTable.add(Utils.readByteToInt(stream));
             }
 
             for (int segment : segmentTable) {
@@ -155,7 +155,7 @@ public class OggPage {
         int index = 0;
 
         Utils.copyArrayToArray(getHeader(), page, index);
-        Utils.copyIntToArray(this.checksum, 4, page, 22);
+        Utils.copyIntToArray(checksum, 4, page, 22);
 
 
         index += getHeaderSize();

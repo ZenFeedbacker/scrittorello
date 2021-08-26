@@ -8,7 +8,6 @@ import org.gagravarr.ogg.CRCUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
@@ -27,11 +26,14 @@ public class Decoder {
     private int pageIndex = 0;
     private final int bitstreamSerialNumber = Utils.randomStreamSerialNumber();
 
+
     public Decoder(Audio audio) {
 
         audio.getAudioFrames().forEach(f -> packets.add(f.getData()));
 
         path = audio.getOggPath();
+
+        audio.printOpusStream();
     }
 
     public void writeToFile() {
@@ -45,8 +47,7 @@ public class Decoder {
 
     private byte[] getOGG() {
 
-        var oggData = getPage(getIDHeader(), 2);
-        oggData = ArrayUtils.addAll(oggData, getPage(getCommentHeader(), 0));
+        var oggData = ArrayUtils.addAll(getPage(getIDHeader(), 2), getPage(getCommentHeader(), 0));
 
         while (!this.packets.isEmpty()) {
             oggData = ArrayUtils.addAll(oggData, getPage(packets.remove(), packets.isEmpty() ? 4 : 0));
@@ -66,31 +67,23 @@ public class Decoder {
         // Header type
         bb.put((byte) headerType);
         // Granule position
-        bb.putLong(new BigInteger("ffffffff", 16).longValue());
+        bb.putLong(0);
         // Bitstream serial number
-        bb.put(Utils.intToLittleEndianByteArray(bitstreamSerialNumber, 4));
+        bb.put(Utils.intToByteArray(bitstreamSerialNumber));
         // Page sequence number
-        bb.put(Utils.intToLittleEndianByteArray(pageIndex++, 4));
+        bb.put(Utils.intToByteArray(pageIndex++));
         // CRC checksum temporary
         bb.putInt(0);
         // Page segments
         bb.put((byte) 1);
         // Segments table
         bb.put((byte) segmentData.length);
-
-        int checksum = CRCUtils.getCRC(bb.array());
-
         // Segment data
         bb.put(segmentData);
 
-        if (segmentData.length > 0) {
-            checksum = CRCUtils.getCRC(segmentData, checksum);
-        }
-
         // CRC checksum
         byte[] page = bb.array();
-
-        Utils.copyArrayToArray(Utils.intToLittleEndianByteArray(checksum, 4), page, 22);
+        Utils.copyArrayToArray(Utils.intToByteArray(CRCUtils.getCRC(bb.array())), page, 22);
 
         return page;
     }
@@ -108,7 +101,7 @@ public class Decoder {
         // Pre-skip
         bb.putShort((short) 0);
         // Sample rate
-        bb.put(Utils.intToLittleEndianByteArray(16000, 4));
+        bb.put(Utils.intToByteArray(16000));
         // Output gain
         bb.putShort((short) 0);
         // Channel map
@@ -124,7 +117,7 @@ public class Decoder {
         bb.put(OPUS_COMMENT_HEADER.getBytes(StandardCharsets.UTF_8));
 
         // Vendor string length
-        bb.put(Utils.intToLittleEndianByteArray(4, 4));
+        bb.put(Utils.intToByteArray(4));
 
         // Vendor string
         bb.put("abcd".getBytes(StandardCharsets.UTF_8));
