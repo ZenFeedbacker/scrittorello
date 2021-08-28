@@ -54,12 +54,6 @@ public class DatabaseManager {
 
     }
 
-    public List<Audio> getAllAudios() {
-
-        var audioQuery = new AudiosSqlQuery(getDataSource());
-        return audioQuery.execute();
-    }
-
     private void createTables() {
 
         String schema;

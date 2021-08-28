@@ -1,11 +1,6 @@
 package com.scritorrelo.zello.message.audio;
 
-import com.scritorrelo.opus.packet.CommentHeaderPacket;
-import com.scritorrelo.opus.packet.DataPacket;
-import com.scritorrelo.opus.packet.IDHeaderPacket;
-import com.scritorrelo.opus.*;
 import com.scritorrelo.zello.message.Message;
-import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +29,6 @@ public class Audio extends Message implements Serializable {
     private final String codec;
     private final String codecHeader;
     private final int packetDuration;
-    @Getter
     private final List<AudioFrame> audioFrames;
 
     public Audio(JSONObject json, LocalDateTime timestamp) {
@@ -69,84 +63,5 @@ public class Audio extends Message implements Serializable {
 
     public void addFrame(AudioFrame frame) {
         audioFrames.add(frame);
-    }
-
-    public void printOpusStream() {
-
-        var opusStream = new OpusStream();
-
-        opusStream.setIdHeaderPacket(createIDHeader());
-        opusStream.addCommentPacket(createCommentHeader());
-
-        audioFrames.forEach(packet -> opusStream.addDataPacket(new DataPacket(packet.getData())));
-
-
-        opusStream.getDataPackets().forEach(d -> System.out.println("Length: " + d.getLength()));
-    }
-
-    private IDHeaderPacket createIDHeader() {
-
-        return IDHeaderPacket.
-                builder().
-                signature(IDHeaderPacket.OPUS_ID_HEADER).
-                version(1).
-                channelCount(1).
-                outputGain((short) 0).
-                channelMappingFamily(0).
-                sampleRate(48000).
-                preskip((short) 0).
-                build();
-    }
-
-    public void writeToFile() {
-
-        var path = getPath();
-
-        try (var f = new FileOutputStream(path);
-             var o = new ObjectOutputStream(f)) {
-
-            o.writeObject(this);
-            log.info("Wrote file " + path);
-        } catch (IOException e) {
-            log.warn("Failed to write Audio object to file {}: {}", path, e.getMessage());
-        }
-
-    }
-
-    public Audio readFromFile() {
-
-        var path = getPath();
-
-        try (var f = new FileInputStream(path);
-             var o = new ObjectInputStream(f)) {
-
-            log.info("Read File " + path);
-
-            return (Audio) o.readObject();
-
-        } catch (IOException | ClassNotFoundException e) {
-            log.warn("Failed to read Audio object from file {}: {}", path, e.getMessage());
-            return null;
-        }
-    }
-
-    private CommentHeaderPacket createCommentHeader() {
-
-        return CommentHeaderPacket.
-                builder().
-                signature(CommentHeaderPacket.OPUS_COMMENT_HEADER).
-                vendorStr("").
-                vendorStrLen(0).
-                userCommentLens(new ArrayList<>()).
-                userCommentListLen(0).
-                build();
-    }
-
-    private String getPath() {
-        return System.getProperty("user.dir") + MESSAGE_FOLDER + "audioObjects" + File.separator  + uuid.toString() + ".ser";
-    }
-
-    public String getOggPath() {
-        return System.getProperty("user.dir") + "/data/messages/audios/" + uuid.toString() + ".ogg";
     }
 }
