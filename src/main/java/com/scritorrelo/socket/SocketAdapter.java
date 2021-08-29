@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
@@ -206,7 +208,12 @@ public class SocketAdapter extends WebSocketAdapter {
 
         var audio = audios.remove(obj.getInt("stream_id"));
 
+        Instant one = Instant.now();
+
         audio.write();
+        Instant two = Instant.now();
+        Duration res = Duration.between(one, two);
+        System.out.println(res.toMillis());
 
         dbManager.saveMessage(audio);
     }

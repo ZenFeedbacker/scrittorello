@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -92,6 +91,7 @@ public class Audio extends Message implements Serializable {
     private void convertToWav() {
 
         var commands = new ArrayList<String>();
+
         commands.add("./audios");
         commands.add("-f");
         commands.add(getFilePath() + ".pcm");
@@ -104,7 +104,7 @@ public class Audio extends Message implements Serializable {
         commands.add("rm");
         commands.add(getFilePath() + ".pcm");
 
-        runShellCommand(commands);
+        //runShellCommand(commands);
     }
 
     private void runShellCommand(List<String> comm){
@@ -126,6 +126,7 @@ public class Audio extends Message implements Serializable {
             process.waitFor();
         } catch (InterruptedException e) {
             e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
     }
 
