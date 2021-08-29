@@ -10,7 +10,7 @@
     </parent>
     <groupId>com</groupId>
     <artifactId>scritorrelo</artifactId>
-    <version>0.1.0</version>
+    <version>0.3.0</version>
     <name>Scritorrelo</name>
     <description/>
     <properties>
@@ -91,6 +91,25 @@
             <artifactId>vorbis-java-core</artifactId>
             <version>0.8</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>5.3.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+            <version>2.4.8</version>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>5.7.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -102,8 +121,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
         </plugins>

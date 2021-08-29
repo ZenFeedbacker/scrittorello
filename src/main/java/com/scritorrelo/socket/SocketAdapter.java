@@ -3,7 +3,7 @@ package com.scritorrelo.socket;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketFrame;
-import com.scritorrelo.DatabaseManager;
+import com.scritorrelo.db.DatabaseManager;
 import com.scritorrelo.zello.ChannelStatus;
 import com.scritorrelo.zello.Command;
 import com.scritorrelo.zello.message.Location;
@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
@@ -60,7 +62,7 @@ public class SocketAdapter extends WebSocketAdapter {
 
             var command = Command.valueOfLabel(cmd);
 
-            if(isNull(command)){
+            if (isNull(command)) {
                 log.warn("Received unknown command: " + cmd);
                 return;
             }
@@ -120,7 +122,7 @@ public class SocketAdapter extends WebSocketAdapter {
         log.error("Channel {} got error message: {} ", ws.getChannelName(), obj.getString("error"));
     }
 
-    private void refreshTokenHandler(JSONObject obj){
+    private void refreshTokenHandler(JSONObject obj) {
 
         ws.setRefreshToken(obj.optString("refresh_token"));
     }
@@ -142,7 +144,7 @@ public class SocketAdapter extends WebSocketAdapter {
                 image.setFullsize(packet);
             }
 
-            if (image.isComplete()){
+            if (image.isComplete()) {
                 image.saveFiles();
                 dbManager.saveMessage(image);
                 images.remove(image.getId());
@@ -157,7 +159,7 @@ public class SocketAdapter extends WebSocketAdapter {
 
         log.trace("Channel {} received audio binary for stream {}", ws.getChannelName(), id);
 
-        if(audios.containsKey(id)) {
+        if (audios.containsKey(id)) {
             audios.get(id).addFrame(audioFrame);
         }
     }
@@ -205,7 +207,14 @@ public class SocketAdapter extends WebSocketAdapter {
     private void streamStopHandler(JSONObject obj) {
 
         var audio = audios.remove(obj.getInt("stream_id"));
-        audio.writeToFile();
+
+        Instant one = Instant.now();
+
+        audio.write();
+        Instant two = Instant.now();
+        Duration res = Duration.between(one, two);
+        System.out.println(res.toMillis());
+
         dbManager.saveMessage(audio);
     }
 }

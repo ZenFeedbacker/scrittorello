@@ -28,8 +28,7 @@ public class AudioFrame implements Serializable {
     @Override
     public String toString() {
 
-        return "\n" +
-                "Type: " + Hex.encodeHexString(type) + "\n" +
+        return "\nType: " + Hex.encodeHexString(type) + "\n" +
                 "Stream ID: " + streamId + "\n" +
                 "Packet ID: " + packetId + "\n" +
                 "Packet length: " + data.length + "\n" +

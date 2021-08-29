@@ -3,8 +3,10 @@ package com.scritorrelo.zello.message;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,20 +15,21 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @ToString
+@SuperBuilder
 @NoArgsConstructor
 public abstract class Message implements Serializable {
 
-    public static final String MESSAGE_FOLDER = "\\data\\messages\\";
+    public static final String MESSAGE_FOLDER = File.separator + "data" + File.separator  + "messages" + File.separator ;
     private static final long serialVersionUID = -365386493668373640L;
 
     @Getter
-    protected UUID uuid;
+    public UUID uuid;
     @Getter
-    protected int id;
-    protected String channel;
-    protected String fromUser;
-    protected String forUser;
-    protected LocalDateTime timestamp;
+    public int id;
+    public String channel;
+    public String fromUser;
+    public String forUser;
+    public LocalDateTime timestamp;
 
     protected Message(JSONObject obj, LocalDateTime ts) {
 
