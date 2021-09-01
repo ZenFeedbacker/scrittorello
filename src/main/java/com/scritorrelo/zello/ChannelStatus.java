@@ -40,7 +40,7 @@ public class ChannelStatus {
 
         var fields = new ArrayList<String>();
 
-        fields.add("name=" + ChannelList.getChannelAlias(name));
+        fields.add("name=" + name);
 
         if(status) {
 
