@@ -1,0 +1,9 @@
+version: "3.7"
+services:
+  scrittorello:
+    image: scrittorello:latest
+    volumes:
+      - ${PWD}/application.properties/application-worker.properties.2:/scrittorello/src/main/resources/application-worker.properties
+    ports:
+      - "8080:8080"
+      - "80:80"
