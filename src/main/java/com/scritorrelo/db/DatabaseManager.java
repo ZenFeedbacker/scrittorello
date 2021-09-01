@@ -3,6 +3,7 @@ package com.scritorrelo.db;
 import com.scritorrelo.zello.message.Message;
 import com.scritorrelo.zello.message.audio.Audio;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
@@ -15,8 +16,11 @@ import java.nio.file.Files;
 import java.sql.*;
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 @Slf4j
 @Component
+@Configurable
 public class DatabaseManager {
 
     private static final String SCHEMA_FILE = "schema.sql";
@@ -41,15 +45,17 @@ public class DatabaseManager {
 
     public void saveMessage(Message message) {
 
-        try (var conn = getConnection()) {
+        if(!isNull(message)) {
+            try (var conn = getConnection()) {
 
-            var statement = message.getSqlStatement(conn);
+                var statement = message.getSqlStatement(conn);
 
-            statement.executeUpdate();
-            log.info("Inserted " + message.getClass().getSimpleName() + " to database: ");
-            log.trace(statement.toString());
-        } catch (SQLException e) {
-            log.warn("SQLException when writing {} message with UUID {} to database: {}", message.getClass().getSimpleName(), message.getUuid(), e.getMessage());
+                statement.executeUpdate();
+                log.info("Inserted " + message.getClass().getSimpleName() + " to database: ");
+                log.trace(statement.toString());
+            } catch (SQLException e) {
+                log.warn("SQLException when writing {} message with UUID {} to database: {}", message.getClass().getSimpleName(), message.getUuid(), e.getMessage());
+            }
         }
 
     }

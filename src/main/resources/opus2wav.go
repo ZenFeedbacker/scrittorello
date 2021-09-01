@@ -20,7 +20,7 @@ type packet []byte
 
 func main() {
 	// Handle the flags arguments
-	var channels = flag.Int("channel", 1, "the number of chanels the opus was recorded with")
+	var channels = flag.Int("channel", 1, "the number of channels the opus was recorded with")
 	var sampleRate = flag.Int("sr", 16000, "the sample rate the audio was recorded with")
 	var fileName = flag.String("f", "", "the opus file to be decoded")
 	var outFileName = flag.String("o", "out.pcm", "the name of the file to write to. If writing to stdout as base64, still use this flag to specify type")
@@ -45,7 +45,7 @@ func main() {
 	// Create the final data aggregator
 	pcmData := bytes.Buffer{}
 
-	// Iterate through the packets, decoding themm and adding them to the aggregator
+	// Iterate through the packets, decoding them and adding them to the aggregator
 	for _, p := range pkts {
 		pcm := make([]int16, 2000)
 		n, err := dec.Decode([]byte(p), pcm)
@@ -145,7 +145,7 @@ func readDataBase64(fname string) []packet {
 	return pkts
 }
 
-// int16ToByteSlice takes a int16 slice and divides it into two seperate bytes
+// int16ToByteSlice takes a int16 slice and divides it into two separate bytes
 // in little endian form
 func int16ToByteSlice(s []int16) []byte {
 	ret := []byte{}
