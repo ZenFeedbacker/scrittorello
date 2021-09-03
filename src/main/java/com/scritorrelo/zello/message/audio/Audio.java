@@ -68,15 +68,12 @@ public class Audio extends Message implements Serializable {
         statement.setDouble(11, duration);
 
         var wavInputStream = loadWavFile();
-        if(wavInputStream != null) {
+        if (wavInputStream != null) {
             statement.setBlob(12, loadWavFile());
         }
 
         return statement;
     }
-
-
-
 
     public void addFrame(AudioFrame frame) {
         audioFrames.add(frame);
@@ -88,7 +85,7 @@ public class Audio extends Message implements Serializable {
         convertToWav();
     }
 
-    public void deleteFiles(){
+    public void deleteFiles() {
 
         deletePcm();
         deleteWav();
@@ -125,7 +122,7 @@ public class Audio extends Message implements Serializable {
         duration = getDurationOfWavInSeconds(getFilePath() + WAV_EXTENSION);
     }
 
-    private void deletePcm(){
+    private void deletePcm() {
 
         var commands = new ArrayList<String>();
         commands.add("rm");
@@ -134,7 +131,7 @@ public class Audio extends Message implements Serializable {
         runShellCommand(commands);
     }
 
-    private void deleteWav(){
+    private void deleteWav() {
 
         var commands = new ArrayList<String>();
         commands.add("rm");
@@ -143,7 +140,7 @@ public class Audio extends Message implements Serializable {
         runShellCommand(commands);
     }
 
-    private FileInputStream loadWavFile(){
+    private FileInputStream loadWavFile() {
         try {
             return new FileInputStream(getFilePath() + ".wav");
         } catch (FileNotFoundException e) {
