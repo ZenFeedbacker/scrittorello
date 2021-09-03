@@ -133,7 +133,7 @@ public class Audio extends Message implements Serializable {
 
     private void runShellCommand(List<String> comm) {
 
-        var builder = new ProcessBuilder(comm).inheritIO();
+        var builder = new ProcessBuilder(comm);
 
         builder.directory(new File(System.getProperty("user.dir") + "/src/main/resources"));
 
