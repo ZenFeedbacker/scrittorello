@@ -28,7 +28,7 @@ public class Audio extends Message implements Serializable {
     private static final String WAV_EXTENSION = ".wav";
     private static final String PCM_EXTENSION = ".pcm";
 
-    private static final String SQL_STATEMENT = "INSERT INTO AUDIO (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TYPE,CODEC,CODEC_HEADER,PACKET_DURATION) VALUES (?,?,?,?,?,?,?,?,?,?)";
+    private static final String SQL_STATEMENT = "INSERT INTO AUDIO (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TYPE,CODEC,CODEC_HEADER,PACKET_DURATION, DURATION, FILE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
     private static final long serialVersionUID = -5260559179736969656L;
 
     private final String type;
@@ -66,6 +66,12 @@ public class Audio extends Message implements Serializable {
         statement.setString(8, codec);
         statement.setString(9, codecHeader);
         statement.setInt(10, packetDuration);
+        statement.setDouble(11, duration);
+
+        var wavInputStream = loadWavFile();
+        if(wavInputStream != null) {
+            statement.setBlob(12, loadWavFile());
+        }
 
         return statement;
     }
@@ -114,6 +120,15 @@ public class Audio extends Message implements Serializable {
         runShellCommand(commands);
 
         duration = getDurationOfWavInSeconds(getFilePath() + WAV_EXTENSION);
+    }
+
+    private FileInputStream loadWavFile(){
+        try {
+            return new FileInputStream(getFilePath() + ".wav");
+        } catch (FileNotFoundException e) {
+            log.warn("Error reading {} file: {}", getFilePath() + ".wav", e.getMessage());
+            return null;
+        }
     }
 
     private void runShellCommand(List<String> comm) {
