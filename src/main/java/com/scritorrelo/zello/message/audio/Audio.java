@@ -28,7 +28,7 @@ public class Audio extends Message implements Serializable {
     private static final String WAV_EXTENSION = ".wav";
     private static final String PCM_EXTENSION = ".pcm";
 
-    private static final String SQL_STATEMENT = "INSERT INTO AUDIO (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TYPE,CODEC,CODEC_HEADER,PACKET_DURATION, DURATION, FILE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+    private static final String SQL_STATEMENT = "INSERT INTO AUDIO (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TYPE,CODEC,CODEC_HEADER,PACKET_DURATION,DURATION,FILE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
     private static final long serialVersionUID = -5260559179736969656L;
 
     private final String type;
@@ -48,7 +48,6 @@ public class Audio extends Message implements Serializable {
         codecHeader = json.optString("codec_header");
         packetDuration = json.optInt("packet_duration");
         audioFrames = new ArrayList<>();
-        duration = -1;
     }
 
     @Override
@@ -76,13 +75,23 @@ public class Audio extends Message implements Serializable {
         return statement;
     }
 
+
+
+
     public void addFrame(AudioFrame frame) {
         audioFrames.add(frame);
     }
 
     public void write() {
+
         writeToFile();
         convertToWav();
+    }
+
+    public void deleteFiles(){
+
+        deletePcm();
+        deleteWav();
     }
 
     private void writeToFile() {
@@ -113,13 +122,25 @@ public class Audio extends Message implements Serializable {
 
         runShellCommand(commands);
 
-        commands = new ArrayList<>();
+        duration = getDurationOfWavInSeconds(getFilePath() + WAV_EXTENSION);
+    }
+
+    private void deletePcm(){
+
+        var commands = new ArrayList<String>();
         commands.add("rm");
         commands.add(getFilePath() + PCM_EXTENSION);
 
         runShellCommand(commands);
+    }
 
-        duration = getDurationOfWavInSeconds(getFilePath() + WAV_EXTENSION);
+    private void deleteWav(){
+
+        var commands = new ArrayList<String>();
+        commands.add("rm");
+        commands.add(getFilePath() + WAV_EXTENSION);
+
+        runShellCommand(commands);
     }
 
     private FileInputStream loadWavFile(){

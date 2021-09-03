@@ -43,14 +43,15 @@ public class DatabaseManager {
 
     public void saveMessage(Message message) {
 
-        if(!isNull(message)) {
+        if (!isNull(message)) {
             try (var conn = getConnection()) {
 
                 var statement = message.getSqlStatement(conn);
 
                 statement.executeUpdate();
-                log.info("Inserted " + message.getClass().getSimpleName() + " to database: ");
+                log.info("Inserted {} with UUID {} to database.", message.getClass().getSimpleName(), message.uuid);
                 log.trace(statement.toString());
+
             } catch (SQLException e) {
                 log.warn("SQLException when writing {} message with UUID {} to database: {}", message.getClass().getSimpleName(), message.getUuid(), e.getMessage());
             }
