@@ -2,11 +2,9 @@ package com.scritorrelo.zello.message.audio;
 
 import com.scritorrelo.zello.message.Message;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 
-import java.io.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -18,16 +16,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-@SuperBuilder
 @ToString(callSuper = true)
-public class Audio extends Message implements Serializable {
-
-    private static final String AUDIO_FOLDER = "audios" + File.separator;
-    private static final String WAV_EXTENSION = ".wav";
-    private static final String PCM_EXTENSION = ".pcm";
+public class Audio extends Message {
 
     private static final String SQL_STATEMENT = "INSERT INTO AUDIO (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TYPE,CODEC,CODEC_HEADER,PACKET_DURATION,FILE) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
-    private static final long serialVersionUID = -5260559179736969656L;
 
     private final String type;
     private final String codec;

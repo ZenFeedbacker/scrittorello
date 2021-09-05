@@ -1,4 +1,4 @@
-package com.scritorrelo.db;
+package com.scritorrelo;
 
 import com.scritorrelo.zello.message.Message;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +49,7 @@ public class DatabaseManager {
                 var statement = message.getSqlStatement(conn);
 
                 statement.executeUpdate();
-                log.info("Inserted {} with UUID {} to database.", message.getClass().getSimpleName(), message.uuid);
+                log.info("Inserted {} with UUID {} to database.", message.getClass().getSimpleName(), message.getUuid());
                 log.trace(statement.toString());
 
             } catch (SQLException e) {

@@ -3,7 +3,7 @@ package com.scritorrelo.socket;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketFrame;
-import com.scritorrelo.db.DatabaseManager;
+import com.scritorrelo.DatabaseManager;
 import com.scritorrelo.zello.ChannelStatus;
 import com.scritorrelo.zello.Command;
 import com.scritorrelo.zello.message.Location;
