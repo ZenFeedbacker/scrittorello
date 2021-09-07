@@ -1,12 +1,15 @@
 package com.scritorrelo.zello.message.audio;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.BitSet;
 
 @Getter
+@Slf4j
 public class AudioFrame {
 
     private final byte[] type;

@@ -19,12 +19,12 @@ import java.util.stream.Collectors;
 @ToString(callSuper = true)
 public class Audio extends Message {
 
-    private static final String SQL_STATEMENT = "INSERT INTO AUDIO (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TYPE,CODEC,CODEC_HEADER,PACKET_DURATION,FILE) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+    private static final String SQL_STATEMENT = "INSERT INTO AUDIO (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TYPE,CODEC,CODEC_HEADER,PACKET_DURATION,DURATION,FILE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
     private final String type;
     private final String codec;
     private final String codecHeader;
-    private final int packetDuration;
+    private final double packetDuration;
     private final List<AudioFrame> audioFrames;
 
     public Audio(JSONObject json, LocalDateTime timestamp) {
@@ -34,7 +34,7 @@ public class Audio extends Message {
         type = json.optString("type");
         codec = json.optString("codec");
         codecHeader = json.optString("codec_header");
-        packetDuration = json.optInt("packet_duration");
+        packetDuration = json.optDouble("packet_duration");
         audioFrames = new ArrayList<>();
     }
 
@@ -52,10 +52,15 @@ public class Audio extends Message {
         statement.setString(7, type);
         statement.setString(8, codec);
         statement.setString(9, codecHeader);
-        statement.setInt(10, packetDuration);
-        statement.setString(11, framesToString());
+        statement.setDouble(10, packetDuration);
+        statement.setDouble(11, getAudioDuration());
+        statement.setString(12, framesToString());
 
         return statement;
+    }
+
+    private double getAudioDuration() {
+        return packetDuration * audioFrames.size();
     }
 
     private String framesToString(){
