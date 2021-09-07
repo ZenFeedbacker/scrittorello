@@ -58,10 +58,6 @@ public class Audio extends Message {
         return statement;
     }
 
-    private double getAudioDuration() {
-        return packetDuration * audioFrames.size();
-    }
-
     private String framesToString(){
 
         var buffer = new StringBuilder();
