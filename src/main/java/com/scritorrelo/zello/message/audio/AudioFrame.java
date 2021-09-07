@@ -1,16 +1,15 @@
 package com.scritorrelo.zello.message.audio;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 
-import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Arrays;
 
 @Getter
-public class AudioFrame implements Serializable {
-
-    private static final long serialVersionUID = -1097437257673310951L;
+@Slf4j
+public class AudioFrame {
 
     private final byte[] type;
     private final int streamId;

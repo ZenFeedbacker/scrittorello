@@ -1,7 +1,6 @@
-package com.scritorrelo.db;
+package com.scritorrelo;
 
 import com.scritorrelo.zello.message.Message;
-import com.scritorrelo.zello.message.audio.Audio;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +13,6 @@ import javax.sql.DataSource;
 import java.io.*;
 import java.nio.file.Files;
 import java.sql.*;
-import java.util.List;
 
 import static java.util.Objects.isNull;
 
@@ -45,19 +43,19 @@ public class DatabaseManager {
 
     public void saveMessage(Message message) {
 
-        if(!isNull(message)) {
+        if (!isNull(message)) {
             try (var conn = getConnection()) {
 
                 var statement = message.getSqlStatement(conn);
 
                 statement.executeUpdate();
-                log.info("Inserted " + message.getClass().getSimpleName() + " to database: ");
+                log.info("Inserted {} with UUID {} to database.", message.getClass().getSimpleName(), message.getUuid());
                 log.trace(statement.toString());
+
             } catch (SQLException e) {
                 log.warn("SQLException when writing {} message with UUID {} to database: {}", message.getClass().getSimpleName(), message.getUuid(), e.getMessage());
             }
         }
-
     }
 
     private void createTables() {
@@ -71,9 +69,7 @@ public class DatabaseManager {
             return;
         }
 
-        try (var conn = getConnection();
-             var stmt = conn.createStatement()) {
-
+        try (var conn = getConnection(); var stmt = conn.createStatement()) {
             stmt.execute(schema);
             log.info("Database tables created");
         } catch (SQLException e) {

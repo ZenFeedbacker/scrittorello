@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 public class Location extends Message {
 
     private static final String SQL_STATEMENT = "INSERT INTO LOCATION (UUID,ID,CHANNEL,FROM_USER,FOR_USER, TIMESTAMP,LONGITUDE,LATITUDE,ACCURACY,FORMATTED_ADDRESS) VALUES (?,?,?,?,?,?,?,?,?,?)";
-    private static final long serialVersionUID = 751965899797991200L;
 
     private final double longitude;
     private final double latitude;

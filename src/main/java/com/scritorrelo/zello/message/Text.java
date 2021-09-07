@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 public class Text extends Message {
 
     private static final String SQL_STATEMENT =  "INSERT INTO TEXT (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TEXT) VALUES (?,?,?,?,?,?,?)";
-    private static final long serialVersionUID = 3025534561633718542L;
 
     @Getter
     private final String txt;

@@ -2,13 +2,9 @@ package com.scritorrelo.zello.message.audio;
 
 import com.scritorrelo.zello.message.Message;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -20,24 +16,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-@SuperBuilder
 @ToString(callSuper = true)
-public class Audio extends Message implements Serializable {
+public class Audio extends Message {
 
-    private static final String AUDIO_FOLDER = "audios" + File.separator;
-    private static final String WAV_EXTENSION = ".wav";
-    private static final String PCM_EXTENSION = ".pcm";
-
-    private static final String SQL_STATEMENT = "INSERT INTO AUDIO (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TYPE,CODEC,CODEC_HEADER,PACKET_DURATION) VALUES (?,?,?,?,?,?,?,?,?,?)";
-    private static final long serialVersionUID = -5260559179736969656L;
+    private static final String SQL_STATEMENT = "INSERT INTO AUDIO (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TYPE,CODEC,CODEC_HEADER,PACKET_DURATION,FILE) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 
     private final String type;
     private final String codec;
     private final String codecHeader;
-    private final int packetDuration;
+    private final double packetDuration;
     private final List<AudioFrame> audioFrames;
-
-    private double duration;
 
     public Audio(JSONObject json, LocalDateTime timestamp) {
 
@@ -46,9 +34,8 @@ public class Audio extends Message implements Serializable {
         type = json.optString("type");
         codec = json.optString("codec");
         codecHeader = json.optString("codec_header");
-        packetDuration = json.optInt("packet_duration");
+        packetDuration = json.optDouble("packet_duration");
         audioFrames = new ArrayList<>();
-        duration = -1;
     }
 
     @Override
@@ -65,100 +52,30 @@ public class Audio extends Message implements Serializable {
         statement.setString(7, type);
         statement.setString(8, codec);
         statement.setString(9, codecHeader);
-        statement.setInt(10, packetDuration);
+        statement.setDouble(10, packetDuration);
+        statement.setString(11, framesToString());
 
         return statement;
     }
 
+    private double getAudioDuration() {
+        return packetDuration * audioFrames.size();
+    }
+
+    private String framesToString(){
+
+        var buffer = new StringBuilder();
+
+
+        for (byte[] data : audioFrames.stream().map(AudioFrame::getData).collect(Collectors.toList())) {
+            String encoded = Base64.getEncoder().encodeToString(data);
+            buffer.append(encoded).append("\n");
+        }
+
+        return  buffer.toString();
+    }
+
     public void addFrame(AudioFrame frame) {
         audioFrames.add(frame);
-    }
-
-    public void write() {
-        writeToFile();
-        convertToWav();
-    }
-
-    private void writeToFile() {
-
-        try (var f0 = new FileWriter(getFilePath() + PCM_EXTENSION)) {
-
-            for (byte[] data : audioFrames.stream().map(AudioFrame::getData).collect(Collectors.toList())) {
-                String encoded = Base64.getEncoder().encodeToString(data);
-                f0.write(encoded);
-                f0.write("\n");
-            }
-            f0.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void convertToWav() {
-
-        var commands = new ArrayList<String>();
-
-        commands.add("./audios");
-        commands.add("-f");
-        commands.add(getFilePath() + PCM_EXTENSION);
-        commands.add("-o");
-        commands.add(getFilePath() + WAV_EXTENSION);
-
-        runShellCommand(commands);
-
-        commands = new ArrayList<>();
-        commands.add("rm");
-        commands.add(getFilePath() + PCM_EXTENSION);
-
-        runShellCommand(commands);
-
-        duration = getDurationOfWavInSeconds(getFilePath() + WAV_EXTENSION);
-    }
-
-    private void runShellCommand(List<String> comm) {
-
-        var builder = new ProcessBuilder(comm).inheritIO();
-
-        builder.directory(new File(System.getProperty("user.dir") + "/src/main/resources"));
-
-        Process process;
-
-        try {
-            process = builder.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        try {
-            process.waitFor();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            Thread.currentThread().interrupt();
-        }
-    }
-
-
-    private static double getDurationOfWavInSeconds(String filename) {
-
-        var file = new File(filename);
-
-        try (var stream = AudioSystem.getAudioInputStream(file)) {
-
-            var format = stream.getFormat();
-
-            double duration = file.length() / format.getSampleRate() / (format.getSampleSizeInBits() / 8.0) / format.getChannels();
-
-            return Math.round(duration * 100.0) / 100.0;
-
-        } catch (UnsupportedAudioFileException | IOException e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
-
-    private String getFilePath() {
-        return System.getProperty("user.dir") + MESSAGE_FOLDER + AUDIO_FOLDER + uuid;
     }
 }
