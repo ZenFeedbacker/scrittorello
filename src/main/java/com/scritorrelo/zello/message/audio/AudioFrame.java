@@ -6,7 +6,6 @@ import org.apache.commons.codec.binary.Hex;
 
 import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.BitSet;
 
 @Getter
 @Slf4j
