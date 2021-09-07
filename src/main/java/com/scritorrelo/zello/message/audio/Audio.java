@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @ToString(callSuper = true)
 public class Audio extends Message {
 
-    private static final String SQL_STATEMENT = "INSERT INTO AUDIO (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TYPE,CODEC,CODEC_HEADER,PACKET_DURATION,DURATION,FILE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+    private static final String SQL_STATEMENT = "INSERT INTO AUDIO (UUID,ID,CHANNEL,FROM_USER,FOR_USER,TIMESTAMP,TYPE,CODEC,CODEC_HEADER,PACKET_DURATION,FILE) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 
     private final String type;
     private final String codec;
@@ -53,8 +53,7 @@ public class Audio extends Message {
         statement.setString(8, codec);
         statement.setString(9, codecHeader);
         statement.setDouble(10, packetDuration);
-        statement.setDouble(11, getAudioDuration());
-        statement.setString(12, framesToString());
+        statement.setString(11, framesToString());
 
         return statement;
     }
