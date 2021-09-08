@@ -58,23 +58,10 @@ public class Audio extends Message {
         return statement;
     }
 
-<<<<<<< HEAD
-    private double getAudioDuration() {
-        return packetDuration * audioFrames.size();
-    }
-
     private String framesToString(){
 
         var buffer = new StringBuilder();
 
-
-=======
-    private String framesToString(){
-
-        var buffer = new StringBuilder();
-
-
->>>>>>> development
         for (byte[] data : audioFrames.stream().map(AudioFrame::getData).collect(Collectors.toList())) {
             String encoded = Base64.getEncoder().encodeToString(data);
             buffer.append(encoded).append("\n");
