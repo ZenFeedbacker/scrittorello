@@ -58,6 +58,9 @@ class Socket {
     @PostConstruct
     void init() {
 
+        log.info("مرصد أبو الحسن");
+        System.out.println("مرصد أبو الحسن");
+
         log.info("Initializing socket");
 
 
