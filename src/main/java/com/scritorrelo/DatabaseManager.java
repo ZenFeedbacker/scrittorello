@@ -48,9 +48,9 @@ public class DatabaseManager {
 
         log.info("Looking for unused channel name");
 
-        try (var conn = getConnection(); var stmt = conn.prepareStatement("UPDATE channel SET used=true WHERE used = false LIMIT 1 RETURNING *")) {
+        try (var conn = getConnection(); var stmt = conn.createStatement()) {
 
-            var rs = stmt.executeQuery();
+            var rs = stmt.executeQuery("SELECT * FROM channel WHERE used = false LIMIT 1");
 
             if (rs.next()) {
                 var id = rs.getInt("id");
@@ -58,6 +58,11 @@ public class DatabaseManager {
                 var authentication = rs.getBoolean("authentication");
 
                 log.info("Found channel #" + id + ": " + name + (authentication ? ", authentication required." : "."));
+
+                try (var updateStmt = conn.prepareStatement("UPDATE channel SET used=true WHERE id=?")) {
+                    updateStmt.setInt(1, id);
+                    updateStmt.executeUpdate();
+                }
 
                 return new ImmutablePair<>(rs.getString("name"), rs.getBoolean("authentication"));
             } else {
@@ -70,19 +75,21 @@ public class DatabaseManager {
 
         log.info("Authentication required, looking for unused credentials");
 
+        try (var conn = getConnection(); var stmt = conn.createStatement()) {
 
-        try (var conn = getConnection(); var stmt = conn.prepareStatement("UPDATE zello_account SET used=true WHERE used = false LIMIT 1 RETURNING *")) {
-
-
-            var rs = stmt.executeQuery();
+            var rs = stmt.executeQuery("SELECT * FROM zello_account WHERE used = false LIMIT 1");
 
             if (rs.next()) {
 
                 var id = rs.getInt("id");
                 var uname = rs.getString("username");
                 var pword = rs.getString("password");
+                log.info("Found unused credentials #{}: {}.", id, pword);
 
-                log.info("Found unused credentials #{}: {}.", id, uname);
+                try (var updateStmt = conn.prepareStatement("UPDATE zello_account SET used=true WHERE id=?")) {
+                    updateStmt.setInt(1, id);
+                    updateStmt.executeUpdate();
+                }
 
                 return new ImmutablePair<>(uname, pword);
             } else {
