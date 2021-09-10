@@ -2,16 +2,12 @@ package com.scritorrelo;
 
 import com.scritorrelo.zello.message.Message;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ResourceUtils;
 
-import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
-import java.io.*;
-import java.nio.file.Files;
 import java.sql.*;
 
 import static java.util.Objects.isNull;
@@ -20,8 +16,6 @@ import static java.util.Objects.isNull;
 @Component
 @Configurable
 public class DatabaseManager {
-
-    private static final String SCHEMA_FILE = "schema.sql";
 
     @Value("${spring.datasource.driverClassName}")
     private String dbDriver;
@@ -35,11 +29,6 @@ public class DatabaseManager {
     @Value("${spring.datasource.password}")
     private String password;
 
-    @PostConstruct
-    public void init() {
-
-        createTables();
-    }
 
     public void saveMessage(Message message) {
 
@@ -58,40 +47,36 @@ public class DatabaseManager {
         }
     }
 
-    private void createTables() {
-
-        String schema;
-
-        try {
-            schema = parseResourceFile();
-        } catch (IOException e) {
-            log.error("IOException while parsing schema file {}: {}", SCHEMA_FILE, e.getMessage());
-            return;
-        }
+    public Pair<String, Boolean> getUnusedChannelName() throws SQLException {
 
         try (var conn = getConnection(); var stmt = conn.createStatement()) {
-            stmt.execute(schema);
-            log.info("Database tables created");
-        } catch (SQLException e) {
-            log.error("SQLException while initializing tables: {}", e.getMessage());
+
+            var rs = stmt.executeQuery("SELECT * FROM channel WHERE connected = false LIMIT 1");
+
+            if (rs.next()) {
+                return new ImmutablePair<>(rs.getString("name"), rs.getBoolean("authentication"));
+            } else {
+                throw new SQLException("Error retrieving unused channel name");
+            }
         }
     }
 
-    private String parseResourceFile() throws IOException {
+    public Pair<String, String> getUnusedCredentials() throws SQLException {
 
-        var file = ResourceUtils.getFile("classpath:" + SCHEMA_FILE);
-        return new String(Files.readAllBytes(file.toPath()));
+        try (var conn = getConnection(); var stmt = conn.createStatement()) {
+
+            var rs = stmt.executeQuery("SELECT * FROM zello_account WHERE used = false LIMIT 1");
+
+            if (rs.next()) {
+                return new ImmutablePair<>(rs.getString("username"), rs.getString("password"));
+            } else {
+                return new ImmutablePair<>("", "");
+            }
+        }
     }
 
     private Connection getConnection() throws SQLException {
 
         return DriverManager.getConnection(jdbcUrl, username, password);
-    }
-
-    public DataSource getDataSource() {
-
-        var ds = new DriverManagerDataSource(jdbcUrl, username, password);
-        ds.setDriverClassName(dbDriver);
-        return ds;
     }
 }

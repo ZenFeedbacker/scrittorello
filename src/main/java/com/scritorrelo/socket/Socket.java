@@ -1,6 +1,7 @@
 package com.scritorrelo.socket;
 
 import com.neovisionaries.ws.client.*;
+import com.scritorrelo.DatabaseManager;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -8,16 +9,17 @@ import org.h2.util.StringUtils;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.sql.SQLException;
 
 @Slf4j
 @Component
@@ -26,27 +28,21 @@ class Socket {
     @Value("${:classpath:auth_token}")
     private Resource authTokenFile;
 
-    @Value("${scrittorello.server}")
-    private String server;
+    private static final String SERVER = "wss://zello.io/ws";
 
-    @Value("${scrittorello.timeout}")
-    private int timeout;
+    private static final int TIMEOUT = 5000;
 
     @Getter
-    @Value("${scrittorello.channelName}")
     private String channelName;
-
-    @Value("${scrittorello.username}")
-    private String username;
-
-    @Value("${scrittorello.password}")
-    private String password;
-
-    @Value("${scrittorello.userAccount}")
-    private String userAccount;
 
     @Autowired
     private SocketAdapter socketAdapter;
+
+    @Autowired
+    private DatabaseManager databaseManager;
+
+    @Autowired
+    private ApplicationContext appContext;
 
     @Setter
     private String refreshToken;
@@ -58,31 +54,32 @@ class Socket {
     @PostConstruct
     void init() {
 
-        log.info("مرصد أبو الحسن");
-        System.out.println("مرصد أبو الحسن");
-
         log.info("Initializing socket");
-
 
         authToken = getAuthToken();
 
-
         try {
             ws = new WebSocketFactory()
-                    .setConnectionTimeout(timeout)
-                    .createSocket(server)
+                    .setConnectionTimeout(TIMEOUT)
+                    .createSocket(SERVER)
                     .addListener(socketAdapter)
                     .addExtension(WebSocketExtension.PERMESSAGE_DEFLATE);
 
             socketAdapter.setWs(this);
 
         } catch (IOException e) {
-            log.warn("IOException when creating socket for server {}: {}", server, e.getMessage());
+            log.warn("IOException when creating socket for server {}: {}", SERVER, e.getMessage());
             return;
         }
 
         connect();
-        login();
+
+        try {
+            login();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            SpringApplication.exit(appContext, () -> 0);
+        }
 
         log.info("Socket initialization finished.");
     }
@@ -99,12 +96,17 @@ class Socket {
 
     @PreDestroy
     void disconnect(){
+
         log.info("Closing connection");
         ws.disconnect();
         log.info("Connection closed");
     }
 
-    void login() {
+    void login() throws SQLException {
+
+        var channel = databaseManager.getUnusedChannelName();
+
+        channelName = channel.getLeft();
 
         var loginJson = new JSONObject()
                                 .put("command", "logon")
@@ -113,9 +115,12 @@ class Socket {
                                 .put("channel", channelName)
                                 .put("listen_only", "true");
 
-        if("true".equals(userAccount)){
-            loginJson.put("username", username);
-            loginJson.put("password", password);
+        if(Boolean.TRUE.equals(channel.getRight())){
+
+            var credentials = databaseManager.getUnusedCredentials();
+
+            loginJson.put("username", credentials.getLeft());
+            loginJson.put("password", credentials.getRight());
         }
 
         ws.sendText(loginJson.toString());
