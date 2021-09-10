@@ -17,17 +17,14 @@ import static java.util.Objects.isNull;
 @Configurable
 public class DatabaseManager {
 
-    @Value("${spring.datasource.driverClassName}")
-    private String dbDriver;
-
     @Value("${spring.datasource.url}")
     private String jdbcUrl;
 
     @Value("${spring.datasource.username}")
-    private String username;
+    private String dbUsername;
 
     @Value("${spring.datasource.password}")
-    private String password;
+    private String dbPassword;
 
 
     public void saveMessage(Message message) {
@@ -49,34 +46,50 @@ public class DatabaseManager {
 
     public Pair<String, Boolean> getUnusedChannelName() throws SQLException {
 
+        log.info("Looking for unused channel name");
+
         try (var conn = getConnection(); var stmt = conn.createStatement()) {
 
-            var rs = stmt.executeQuery("SELECT * FROM channel WHERE connected = false LIMIT 1");
+            var rs = stmt.executeQuery("SELECT * FROM channel WHERE used = false LIMIT 1");
 
             if (rs.next()) {
+                var id = rs.getInt("id");
+                var name = rs.getString("name");
+                var authentication = rs.getBoolean("authentication");
+
+                log.info("Found channel #" + id + ": " + name + (authentication ? ", authentication required." : "." ));
+
                 return new ImmutablePair<>(rs.getString("name"), rs.getBoolean("authentication"));
             } else {
-                throw new SQLException("Error retrieving unused channel name");
+                throw new SQLException("Error retrieving unused channel name.");
             }
         }
     }
 
     public Pair<String, String> getUnusedCredentials() throws SQLException {
 
+        log.info("Authentication required, looking for unused credentials");
+
+        
         try (var conn = getConnection(); var stmt = conn.createStatement()) {
 
             var rs = stmt.executeQuery("SELECT * FROM zello_account WHERE used = false LIMIT 1");
 
             if (rs.next()) {
-                return new ImmutablePair<>(rs.getString("username"), rs.getString("password"));
+
+                var id = rs.getInt("id");
+                var uname = rs.getString("username");
+                var pword = rs.getString("password");
+                log.info("Found unused credentials #{}: {}.", id, pword);
+                return new ImmutablePair<>(uname, pword);
             } else {
-                return new ImmutablePair<>("", "");
+                throw new SQLException("Error retrieving unused credentials.");
             }
         }
     }
 
     private Connection getConnection() throws SQLException {
 
-        return DriverManager.getConnection(jdbcUrl, username, password);
+        return DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword);
     }
 }
