@@ -50,6 +50,8 @@ public class DatabaseManager {
 
         try (var conn = getConnection(); var stmt = conn.createStatement()) {
 
+            stmt.execute("SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL SERIALIZABLE");
+
             var rs = stmt.executeQuery("SELECT * FROM channel WHERE used = false LIMIT 1");
 
             if (rs.next()) {
@@ -77,6 +79,8 @@ public class DatabaseManager {
 
 
         try (var conn = getConnection(); var stmt = conn.createStatement()) {
+
+            stmt.execute("SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL SERIALIZABLE");
 
             var rs = stmt.executeQuery("SELECT * FROM zello_account WHERE used = false LIMIT 1");
 
