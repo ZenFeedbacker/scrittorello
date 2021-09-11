@@ -28,7 +28,7 @@ public class DatabaseManager {
     @Value("${spring.datasource.password}")
     private String dbPassword;
 
-    @Value("${bar}")
+    @Value("${ID}")
     private int id;
 
     public void saveMessage(Message message) {
