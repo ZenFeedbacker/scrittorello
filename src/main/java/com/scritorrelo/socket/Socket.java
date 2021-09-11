@@ -104,7 +104,7 @@ class Socket {
 
     void login() throws SQLException {
 
-        var channel = databaseManager.getUnusedChannelName();
+        var channel = databaseManager.getChannelName();
 
         channelName = channel.getLeft();
 
@@ -117,7 +117,7 @@ class Socket {
 
         if(Boolean.TRUE.equals(channel.getRight())){
 
-            var credentials = databaseManager.getUnusedCredentials();
+            var credentials = databaseManager.getCredentials();
 
             loginJson.put("username", credentials.getLeft());
             loginJson.put("password", credentials.getRight());

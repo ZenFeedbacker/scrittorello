@@ -4,8 +4,10 @@ import com.scritorrelo.zello.message.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -26,6 +28,8 @@ public class DatabaseManager {
     @Value("${spring.datasource.password}")
     private String dbPassword;
 
+    @Value("${bar}")
+    private int id;
 
     public void saveMessage(Message message) {
 
@@ -44,56 +48,45 @@ public class DatabaseManager {
         }
     }
 
-    public Pair<String, Boolean> getUnusedChannelName() throws SQLException {
+    public Pair<String, Boolean> getChannelName() throws SQLException {
 
-        log.info("Looking for unused channel name");
+        log.info("Looking for channel name");
 
         try (var conn = getConnection(); var stmt = conn.createStatement()) {
 
-            var rs = stmt.executeQuery("SELECT * FROM channel WHERE used = false LIMIT 1");
+            var rs = stmt.executeQuery("SELECT * FROM channel WHERE id=" + id);
 
             if (rs.next()) {
-                var id = rs.getInt("id");
                 var name = rs.getString("name");
                 var authentication = rs.getBoolean("authentication");
 
                 log.info("Found channel #" + id + ": " + name + (authentication ? ", authentication required." : "."));
 
-                try (var updateStmt = conn.prepareStatement("UPDATE channel SET used=true WHERE id=?")) {
-                    updateStmt.setInt(1, id);
-                    updateStmt.executeUpdate();
-                }
-
                 return new ImmutablePair<>(rs.getString("name"), rs.getBoolean("authentication"));
             } else {
-                throw new SQLException("Error retrieving unused channel name.");
+                throw new SQLException("Error retrieving channel name.");
             }
         }
     }
 
-    public Pair<String, String> getUnusedCredentials() throws SQLException {
+    public Pair<String, String> getCredentials() throws SQLException {
 
-        log.info("Authentication required, looking for unused credentials");
+        log.info("Authentication required, looking for credentials");
 
         try (var conn = getConnection(); var stmt = conn.createStatement()) {
 
-            var rs = stmt.executeQuery("SELECT * FROM zello_account WHERE used = false LIMIT 1");
+            var rs = stmt.executeQuery("SELECT * FROM zello_account WHERE id=" + id);
 
             if (rs.next()) {
 
-                var id = rs.getInt("id");
                 var uname = rs.getString("username");
                 var pword = rs.getString("password");
-                log.info("Found unused credentials #{}: {}.", id, pword);
 
-                try (var updateStmt = conn.prepareStatement("UPDATE zello_account SET used=true WHERE id=?")) {
-                    updateStmt.setInt(1, id);
-                    updateStmt.executeUpdate();
-                }
+                log.info("Found unused credentials #{}: {}.", id, uname);
 
                 return new ImmutablePair<>(uname, pword);
             } else {
-                throw new SQLException("Error retrieving unused credentials.");
+                throw new SQLException("Error retrieving credentials.");
             }
         }
     }
