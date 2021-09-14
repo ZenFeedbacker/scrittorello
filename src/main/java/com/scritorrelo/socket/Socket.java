@@ -95,12 +95,7 @@ class Socket {
 
         log.info("Recreating socket");
 
-        try {
-            ws.recreate().connect();
-            login();
-        } catch (WebSocketException | IOException e) {
-            log.warn("{}} when recreating socket: {}", e.getClass().getSimpleName(), e.getMessage());
-        }
+        init();
     }
 
     void connect() {
