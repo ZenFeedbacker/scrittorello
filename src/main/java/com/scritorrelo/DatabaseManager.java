@@ -4,10 +4,8 @@ import com.scritorrelo.zello.message.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -48,7 +46,7 @@ public class DatabaseManager {
         }
     }
 
-    public Pair<String, Boolean> getChannelName() throws SQLException {
+    public String getChannelName() throws SQLException {
 
         log.info("Looking for channel name");
 
@@ -62,7 +60,7 @@ public class DatabaseManager {
 
                 log.info("Found channel #" + id + ": " + name + (authentication ? ", authentication required." : "."));
 
-                return new ImmutablePair<>(rs.getString("name"), rs.getBoolean("authentication"));
+                return rs.getString("name");
             } else {
                 throw new SQLException("Error retrieving channel name.");
             }

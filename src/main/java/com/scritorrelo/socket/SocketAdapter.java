@@ -112,7 +112,10 @@ public class SocketAdapter extends WebSocketAdapter {
     @Override
     public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
         super.onDisconnected(websocket, serverCloseFrame, clientCloseFrame, closedByServer);
-        log.warn("Channel {} was disconnected", ws.getChannelName());
+        log.error("Channel {} was disconnected" + (closedByServer ? " by server" : "") + ", current status is {}", ws.getChannelName(), ws.getState().toString());
+        log.warn("Server close frame: {}", serverCloseFrame.getPayloadText());
+        log.warn("Client close frame: {}", clientCloseFrame.getPayloadText());
+        ws.recreate();
     }
 
     private void errorMessageHandler(JSONObject obj) {

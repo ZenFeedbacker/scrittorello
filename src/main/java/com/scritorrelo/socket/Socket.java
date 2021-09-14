@@ -5,11 +5,9 @@ import com.scritorrelo.DatabaseManager;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.h2.util.StringUtils;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -20,6 +18,8 @@ import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.sql.SQLException;
+
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Slf4j
 @Component
@@ -34,6 +34,10 @@ class Socket {
 
     @Getter
     private String channelName;
+
+    private String username;
+
+    private String password;
 
     @Autowired
     private SocketAdapter socketAdapter;
@@ -68,73 +72,108 @@ class Socket {
             socketAdapter.setWs(this);
 
         } catch (IOException e) {
-            log.warn("IOException when creating socket for server {}: {}", SERVER, e.getMessage());
+            log.warn("IOException when creating socket: {}", e.getMessage());
             return;
         }
 
         connect();
 
-        try {
-            login();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            SpringApplication.exit(appContext, () -> 0);
-        }
+        login();
 
         log.info("Socket initialization finished.");
     }
 
-    void connect() {
-
-
-        try {
-            ws.connect();
-        } catch (WebSocketException e) {
-            log.warn("WebSocketException while socket tried to connect to channel {}: {}", channelName, e.getMessage());
-        }
-    }
-
     @PreDestroy
-    void disconnect(){
+    void disconnect() {
 
         log.info("Closing connection");
         ws.disconnect();
         log.info("Connection closed");
     }
 
-    void login() throws SQLException {
+    void recreate() {
 
-        var channel = databaseManager.getChannelName();
+        log.info("Recreating socket");
 
-        channelName = channel.getLeft();
-
-        var loginJson = new JSONObject()
-                                .put("command", "logon")
-                                .put("seq", 0)
-                                .put("auth_token", getToken())
-                                .put("channel", channelName)
-                                .put("listen_only", "true");
-
-        if(Boolean.TRUE.equals(channel.getRight())){
-
-            var credentials = databaseManager.getCredentials();
-
-            loginJson.put("username", credentials.getLeft());
-            loginJson.put("password", credentials.getRight());
+        try {
+            ws.recreate().connect();
+            login();
+        } catch (WebSocketException | IOException e) {
+            log.warn("{}} when recreating socket: {}", e.getClass().getSimpleName(), e.getMessage());
         }
+    }
+
+    void connect() {
+
+        log.info("Connecting socket.");
+        try {
+            ws.connect();
+        } catch (WebSocketException e) {
+            log.error("WebSocketException while socket tried to connect to channel {}: {}", channelName, e.getMessage());
+        }
+    }
+
+    void login() {
+
+        obtainChannelName();
+        obtainCredentials();
+
+        var loginJson =
+                new JSONObject()
+                        .put("command", "logon")
+                        .put("seq", 0)
+                        .put("auth_token", getToken())
+                        .put("channel", channelName)
+                        .put("listen_only", "true")
+                        .put("username", username)
+                        .put("password", password);
 
         ws.sendText(loginJson.toString());
     }
 
-    private String getToken() {
-
-        return StringUtils.isNullOrEmpty(refreshToken) ? authToken : refreshToken;
+    WebSocketState getState(){
+        return ws.getState();
     }
 
-    private String getAuthToken(){
+    private String getToken() {
 
-        if(authTokenFile == null){
-            log.warn("AuthToken field is null");
+        return isEmpty(refreshToken) ? authToken : refreshToken;
+    }
+
+    private void obtainChannelName() {
+
+        log.info("Obtaining channel name.");
+
+        if (isEmpty(channelName)) {
+            try {
+                channelName = databaseManager.getChannelName();
+                log.info("Obtained channel name {}", channelName);
+            } catch (SQLException e) {
+                log.error("SQLException while obtaining channel Name: {}", e.getMessage());
+            }
+        }
+    }
+
+    private void obtainCredentials() {
+
+        log.info("Obtaining account credentials.");
+
+        if (isEmpty(username) || isEmpty(password)) {
+            try {
+                var credentials = databaseManager.getCredentials();
+                username = credentials.getLeft();
+                password = credentials.getRight();
+                log.info("Obtained account for user {}.", username);
+            } catch (SQLException e) {
+                log.error("SQLException while obtaining account credentials: {}", e.getMessage());
+            }
+        }
+    }
+
+    private String getAuthToken() {
+
+        if (authTokenFile == null) {
+            log.warn("AuthTokenFile field is null");
             return null;
         }
 

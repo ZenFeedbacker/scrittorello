@@ -24,9 +24,9 @@ public class Image extends Message {
     private final int height;
     private final int width;
     @Setter
-    private transient ImagePacket thumbnail;
+    private ImagePacket thumbnail;
     @Setter
-    private transient ImagePacket fullsize;
+    private ImagePacket fullsize;
 
     public Image(JSONObject obj, LocalDateTime timestamp)  {
 
