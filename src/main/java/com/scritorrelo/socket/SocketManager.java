@@ -39,13 +39,11 @@ public class SocketManager  {
 
     private static final String SERVER = "wss://zello.io/ws";
 
-    private String channelName = "Test1653";
+    private String channelName;
 
     private String username;
 
     private String password;
-
-    private String userAccount = "false";
 
     @Setter
     WebSocketSession wsSession;
@@ -83,20 +81,17 @@ public class SocketManager  {
 
     void login() {
 
-        //obtainChannelName();
+        obtainChannelName();
+        obtainCredentials();
 
         var loginJson = new JSONObject()
                 .put(KEY_COMMAND, "logon")
                 .put("seq", 0)
                 .put("auth_token", getToken())
                 .put("channel", channelName)
-                .put("listen_only", "true");
-
-        if ("true".equals(userAccount)) {
-            //obtainCredentials();
-            loginJson.put("InitializingBeanusername", username);
-            loginJson.put("password", password);
-        }
+                .put("listen_only", "true")
+                .put("username", username)
+                .put("password", password);
 
         log.info("Send message: {}", loginJson);
 
