@@ -1,17 +1,18 @@
 package com.scritorrelo.socket;
 
-import com.neovisionaries.ws.client.*;
 import com.scritorrelo.DatabaseManager;
-import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.client.WebSocketConnectionManager;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -23,116 +24,90 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Slf4j
 @Component
-class Socket {
+public class SocketManager  {
+
+    static final String KEY_COMMAND = "command";
 
     @Value("${:classpath:auth_token}")
     private Resource authTokenFile;
 
+    @Autowired
+    private SocketHandler socketHandler;
+
+    @Autowired
+    private DatabaseManager databaseManager;
+
     private static final String SERVER = "wss://zello.io/ws";
 
-    private static final int TIMEOUT = 5000;
-
-    @Getter
-    private String channelName;
+    private String channelName = "Test1653";
 
     private String username;
 
     private String password;
 
-    @Autowired
-    private SocketAdapter socketAdapter;
+    private String userAccount = "false";
 
-    @Autowired
-    private DatabaseManager databaseManager;
-
-    @Autowired
-    private ApplicationContext appContext;
+    @Setter
+    WebSocketSession wsSession;
 
     @Setter
     private String refreshToken;
 
     private String authToken;
 
-    private WebSocket ws;
+    private WebSocketConnectionManager wsConnManager;
 
     @PostConstruct
-    void init() {
+    private void initManager() {
 
         log.info("Initializing socket");
 
         authToken = getAuthToken();
 
-        try {
-            ws = new WebSocketFactory()
-                    .setConnectionTimeout(TIMEOUT)
-                    .createSocket(SERVER)
-                    .addListener(socketAdapter)
-                    .addExtension(WebSocketExtension.PERMESSAGE_DEFLATE);
+        wsConnManager = new WebSocketConnectionManager(new StandardWebSocketClient(), socketHandler, SERVER);
 
-            socketAdapter.setWs(this);
+        wsConnManager.setAutoStartup(true);
 
-        } catch (IOException e) {
-            log.warn("IOException when creating socket: {}", e.getMessage());
-            return;
-        }
-
-        connect();
-
-        login();
+        wsConnManager.start();
 
         log.info("Socket initialization finished.");
     }
 
     @PreDestroy
-    void disconnect() {
+    void disconnect() throws IOException {
 
         log.info("Closing connection");
-        ws.disconnect();
+        wsSession.close();
         log.info("Connection closed");
-    }
-
-    void recreate() {
-
-        log.info("Recreating socket");
-
-        init();
-    }
-
-    void connect() {
-
-        log.info("Connecting socket.");
-        try {
-            ws.connect();
-        } catch (WebSocketException e) {
-            log.error("WebSocketException while socket tried to connect to channel {}: {}", channelName, e.getMessage());
-        }
     }
 
     void login() {
 
-        obtainChannelName();
-        obtainCredentials();
+        //obtainChannelName();
 
-        var loginJson =
-                new JSONObject()
-                        .put("command", "logon")
-                        .put("seq", 0)
-                        .put("auth_token", getToken())
-                        .put("channel", channelName)
-                        .put("listen_only", "true")
-                        .put("username", username)
-                        .put("password", password);
+        var loginJson = new JSONObject()
+                .put(KEY_COMMAND, "logon")
+                .put("seq", 0)
+                .put("auth_token", getToken())
+                .put("channel", channelName)
+                .put("listen_only", "true");
 
-        ws.sendText(loginJson.toString());
+        if ("true".equals(userAccount)) {
+            //obtainCredentials();
+            loginJson.put("InitializingBeanusername", username);
+            loginJson.put("password", password);
+        }
+
+        log.info("Send message: {}", loginJson);
+
+        sendMessage(loginJson.toString());
     }
 
-    WebSocketState getState(){
-        return ws.getState();
-    }
-
-    private String getToken() {
-
-        return isEmpty(refreshToken) ? authToken : refreshToken;
+    public void reconnect() {
+        log.info("Recreating socket");
+        refreshToken = null;
+        wsConnManager.stop();
+        wsConnManager.start();
     }
 
     private void obtainChannelName() {
@@ -165,6 +140,23 @@ class Socket {
         }
     }
 
+    private void sendMessage(String message) {
+
+        if (wsSession != null && message != null) {
+            try {
+                log.debug("Send message: " + message);
+                wsSession.sendMessage(new TextMessage(message));
+            } catch (Throwable e) {
+                log.error("Send message failed: ", e);
+            }
+        }
+    }
+
+    private String getToken() {
+
+        return isEmpty(refreshToken) ? authToken : refreshToken;
+    }
+
     private String getAuthToken() {
 
         if (authTokenFile == null) {
@@ -179,4 +171,7 @@ class Socket {
             return null;
         }
     }
+
+
+
 }

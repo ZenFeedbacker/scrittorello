@@ -1,49 +1,65 @@
 package com.scritorrelo.socket;
 
-import com.neovisionaries.ws.client.WebSocket;
-import com.neovisionaries.ws.client.WebSocketAdapter;
-import com.neovisionaries.ws.client.WebSocketFrame;
 import com.scritorrelo.DatabaseManager;
 import com.scritorrelo.zello.ChannelStatus;
 import com.scritorrelo.zello.Command;
+import com.scritorrelo.zello.error.Error;
 import com.scritorrelo.zello.message.Location;
 import com.scritorrelo.zello.message.Text;
-import com.scritorrelo.zello.message.audio.AudioFrame;
 import com.scritorrelo.zello.message.audio.Audio;
-import com.scritorrelo.zello.error.Error;
+import com.scritorrelo.zello.message.audio.AudioFrame;
 import com.scritorrelo.zello.message.image.Image;
 import com.scritorrelo.zello.message.image.ImagePacket;
-import lombok.Setter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
+import org.springframework.web.socket.BinaryMessage;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
+import static com.scritorrelo.socket.SocketManager.KEY_COMMAND;
 import static java.util.Objects.isNull;
 
 @Slf4j
-@Controller
-@Scope("prototype")
-public class SocketAdapter extends WebSocketAdapter {
+@Service
+public class SocketHandler extends AbstractWebSocketHandler  {
 
-    @Setter
-    private Socket ws;
+    private static final int BINARY_BUFFER_SIZE = 2000000;
 
     @Autowired
     private DatabaseManager dbManager;
+
+    @Autowired
+    private SocketManager socketManager;
 
     private final HashMap<Integer, Audio> audios = new HashMap<>();
     private final HashMap<Integer, Image> images = new HashMap<>();
 
     @Override
-    public void onTextMessage(WebSocket websocket, String message) {
+    public void afterConnectionEstablished(@NonNull WebSocketSession session) throws Exception {
 
+        super.afterConnectionEstablished(session);
+        session.setBinaryMessageSizeLimit(BINARY_BUFFER_SIZE);
+        socketManager.setWsSession(session);
+        socketManager.login();
+    }
+
+    @Override
+    protected void handleTextMessage(@NonNull WebSocketSession session, @NonNull TextMessage message) throws Exception {
+
+        super.handleTextMessage(session, message);
         var timestamp = LocalDateTime.now();
-        var obj = new JSONObject(message);
+
+        log.trace(message.getPayload());
+
+        var obj = new JSONObject(message.getPayload());
 
         if (obj.has("refresh_token")) {
             refreshTokenHandler(obj);
@@ -55,8 +71,8 @@ public class SocketAdapter extends WebSocketAdapter {
             return;
         }
 
-        if (obj.has("command")) {
-            var cmd = obj.getString("command");
+        if (obj.has(KEY_COMMAND)) {
+            var cmd = obj.getString(KEY_COMMAND);
 
             var command = Command.valueOfLabel(cmd);
 
@@ -94,7 +110,11 @@ public class SocketAdapter extends WebSocketAdapter {
     }
 
     @Override
-    public void onBinaryMessage(WebSocket websocket, byte[] binary) {
+    protected void handleBinaryMessage(@NonNull WebSocketSession session, @NonNull BinaryMessage message) throws Exception {
+
+        super.handleBinaryMessage(session, message);
+
+        var binary = message.getPayload().array();
 
         switch (binary[0]) {
             case ((byte) 1):
@@ -110,28 +130,31 @@ public class SocketAdapter extends WebSocketAdapter {
     }
 
     @Override
-    public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
-        super.onDisconnected(websocket, serverCloseFrame, clientCloseFrame, closedByServer);
-        log.error("Channel {} was disconnected" + (closedByServer ? " by server" : "") + ", current status is {}", ws.getChannelName(), ws.getState().toString());
-        log.error("Server close frame: {}", serverCloseFrame.getPayloadText());
-        log.error("Client close frame: {}", clientCloseFrame.getPayloadText());
-        ws.recreate();
-    }
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus){
 
-    private void errorMessageHandler(JSONObject obj) {
-
-        log.error("Channel {} got error message: {} ", ws.getChannelName(), obj.getString("error"));
+        try {
+            super.afterConnectionClosed(session, closeStatus);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        log.error("Channel was disconnected, close code is {}, reason is {}.", closeStatus.getCode(), closeStatus.getReason());
+        socketManager.reconnect();
     }
 
     private void refreshTokenHandler(JSONObject obj) {
 
-        ws.setRefreshToken(obj.optString("refresh_token"));
+        socketManager.setRefreshToken(obj.optString("refresh_token"));
+    }
+
+    private void errorMessageHandler(JSONObject obj) {
+
+        log.error("Got error message: {} ", obj.getString("error"));
     }
 
     private void imageBinaryHandler(byte[] binary) {
 
         var packet = new ImagePacket(binary);
-        log.info("Channel {} received" + (packet.isThumbnail() ? "Thumbnail" : "Full Image") + "image binary", ws.getChannelName());
+        log.info("Channel received " + (packet.isThumbnail() ? "Thumbnail" : "Full Image") + " binary");
 
         var id = packet.getId();
 
@@ -146,7 +169,6 @@ public class SocketAdapter extends WebSocketAdapter {
             }
 
             if (image.isComplete()) {
-                image.saveFiles();
                 dbManager.saveMessage(image);
                 images.remove(image.getId());
             }
@@ -158,7 +180,7 @@ public class SocketAdapter extends WebSocketAdapter {
         var audioFrame = new AudioFrame(binary);
         var id = audioFrame.getStreamId();
 
-        log.trace("Channel {} received audio binary for stream {}", ws.getChannelName(), id);
+        log.info("Channel received audio binary for stream {}", id);
 
         if (audios.containsKey(id)) {
             audios.get(id).addFrame(audioFrame);
@@ -175,7 +197,7 @@ public class SocketAdapter extends WebSocketAdapter {
 
         var error = new Error(obj);
         log.error(error.toString());
-        log.error("Channel {} got error command: {}", ws.getChannelName(), error.getCode());
+        log.error("Channel got error command: {}", error.getCode());
     }
 
     private void locationMessageHandler(JSONObject obj, LocalDateTime timestamp) {
@@ -188,7 +210,7 @@ public class SocketAdapter extends WebSocketAdapter {
     private void textMessageHandler(JSONObject obj, LocalDateTime timestamp) {
 
         var text = new Text(obj, timestamp);
-        log.info("Channel {} received text: {}", ws.getChannelName(), text.getTxt());
+        log.info("Channel received text: {}", text.getTxt());
         dbManager.saveMessage(text);
     }
 

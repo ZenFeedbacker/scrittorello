@@ -40,23 +40,31 @@ public class ChannelStatus {
 
         var fields = new ArrayList<String>();
 
-        fields.add("name=" + name);
+        fields.add("Name=" + name);
 
         if(status) {
 
-            fields.add("users online=" + usersOnline);
+            fields.add("Users=" + usersOnline);
 
-            if (imagesSupported) {
-                fields.add("support images");
+            if(imagesSupported || textingSupported || locationsSupported){
+
+                var supported = new ArrayList<String>();
+
+                if (imagesSupported) {
+                    supported.add("images");
+                }
+
+                if (textingSupported) {
+                    supported.add("texts");
+                }
+
+                if (locationsSupported) {
+                    supported.add("locations");
+                }
+
+                fields.add("Supports: " + String.join(", ", supported));
             }
 
-            if (textingSupported) {
-                fields.add("support texts");
-            }
-
-            if (locationsSupported) {
-                fields.add("support locations");
-            }
 
             if(!StringUtils.isEmpty(error)){
                 fields.add("error=" + error);
