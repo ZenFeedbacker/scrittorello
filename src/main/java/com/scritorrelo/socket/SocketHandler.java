@@ -180,7 +180,7 @@ public class SocketHandler extends AbstractWebSocketHandler  {
         var audioFrame = new AudioFrame(binary);
         var id = audioFrame.getStreamId();
 
-        log.info("Channel received audio binary for stream {}", id);
+        log.trace("Channel received audio binary for stream {}", id);
 
         if (audios.containsKey(id)) {
             audios.get(id).addFrame(audioFrame);
