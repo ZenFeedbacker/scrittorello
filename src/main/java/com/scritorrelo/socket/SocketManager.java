@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
@@ -24,7 +25,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Slf4j
 @Component
-public class SocketManager  {
+public class SocketManager {
 
     static final String KEY_COMMAND = "command";
 
@@ -36,6 +37,9 @@ public class SocketManager  {
 
     @Autowired
     private DatabaseManager databaseManager;
+
+    @Autowired
+    private Environment env;
 
     private static final String SERVER = "wss://zello.io/ws";
 
@@ -109,6 +113,12 @@ public class SocketManager  {
 
         log.info("Obtaining channel name.");
 
+        if (isDevProfile()) {
+            channelName = "Test1653";
+            log.info("Dev mode on, using default channel.");
+        }
+
+
         if (isEmpty(channelName)) {
             try {
                 channelName = databaseManager.getChannelName();
@@ -122,6 +132,10 @@ public class SocketManager  {
     private void obtainCredentials() {
 
         log.info("Obtaining account credentials.");
+
+        if (isDevProfile()) {
+            log.info("Dev mode on, don't use account.");
+        }
 
         if (isEmpty(username) || isEmpty(password)) {
             try {
@@ -167,6 +181,10 @@ public class SocketManager  {
         }
     }
 
+
+    private boolean isDevProfile() {
+        return ("dev".equals(env.getProperty("spring.profiles.active")));
+    }
 
 
 }
