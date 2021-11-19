@@ -5,10 +5,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -41,6 +38,9 @@ public class Audio extends Message {
     @Override
     public PreparedStatement getSqlStatement(Connection conn) throws SQLException {
 
+        Clob clob = conn.createClob();
+        clob.setString(1, framesToString() );
+
         var statement = conn.prepareStatement(SQL_STATEMENT);
 
         statement.setObject(1, uuid);
@@ -53,7 +53,7 @@ public class Audio extends Message {
         statement.setString(8, codec);
         statement.setString(9, codecHeader);
         statement.setDouble(10, packetDuration);
-        statement.setString(11, framesToString());
+        statement.setClob(11, clob);
 
         return statement;
     }
