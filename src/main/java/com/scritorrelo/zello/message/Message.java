@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.ToString;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -13,8 +12,6 @@ import java.util.UUID;
 
 @ToString
 public abstract class Message  {
-
-    protected static final String MESSAGE_FOLDER = File.separator + "data" + File.separator  + "messages" + File.separator ;
 
     @Getter
     protected final UUID uuid;
